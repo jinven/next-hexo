@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://yoursite.com').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="1. 用户管理用户表 user 存在初始数据库 mysql 中： 1234show databases;use mysql;show tables;select * from user;   查看所有用户  1select user, host, authentication_string fom mysql.user;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql-基本">
+<meta property="og:url" content="http://yoursite.com/2019/12/29/mysql-%E5%9F%BA%E6%9C%AC/index.html">
+<meta property="og:site_name" content="Jinwen">
+<meta property="og:description" content="1. 用户管理用户表 user 存在初始数据库 mysql 中： 1234show databases;use mysql;show tables;select * from user;   查看所有用户  1select user, host, authentication_string fom mysql.user;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-12-29T08:07:11.000Z">
+<meta property="article:modified_time" content="2019-12-29T08:28:34.545Z">
+<meta property="article:author" content="Jinwen">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/29/mysql-%E5%9F%BA%E6%9C%AC/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>mysql-基本 | Jinwen</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jinwen</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/29/mysql-%E5%9F%BA%E6%9C%AC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jinwen">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jinwen">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mysql-基本
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-12-29 16:07:11 / 修改时间：16:28:34" itemprop="dateCreated datePublished" datetime="2019-12-29T16:07:11+08:00">2019-12-29</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-用户管理"><a href="#1-用户管理" class="headerlink" title="1. 用户管理"></a>1. 用户管理</h2><p>用户表 <code>user</code> 存在初始数据库 <code>mysql</code> 中：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">databases</span>;</span><br><span class="line"><span class="keyword">use</span> mysql;</span><br><span class="line"><span class="keyword">show</span> <span class="keyword">tables</span>;</span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span>;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>查看所有用户</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">user</span>, host, authentication_string fom mysql.user;</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<ol start="2">
+<li>创建用户</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">'auser'</span>@<span class="string">'%'</span> <span class="keyword">IDENTIFIED</span> <span class="keyword">WITH</span> mysql_native_password <span class="keyword">BY</span> <span class="string">'123456'</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">'auser'</span>@<span class="string">'%'</span> <span class="keyword">IDENTIFIED</span> <span class="keyword">BY</span> <span class="string">'123456'</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> <span class="string">'buser'</span> <span class="keyword">IDENTIFIED</span> <span class="keyword">BY</span> <span class="string">'123456;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">% - 无限制，不填默认</span><br><span class="line">localhost - 通过UNIXsocket连接，只能本机访问</span><br><span class="line">127.0.0.1 - 通过TCP&#x2F;IP协议连接，只能本机访问</span><br><span class="line">::1 - 兼容支持ipv6</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>修改用户名</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">rename</span> buser <span class="keyword">to</span> cuser;</span><br><span class="line"><span class="keyword">update</span> mysql.user <span class="keyword">set</span> <span class="keyword">user</span>=<span class="string">'cuser'</span> <span class="keyword">where</span> <span class="keyword">user</span>=<span class="string">'buser'</span>;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>删除用户</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">drop</span> <span class="keyword">user</span> cuser;</span><br><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> mysql.user <span class="keyword">where</span> <span class="keyword">user</span>=<span class="string">'cuser'</span>;</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li>修改密码</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">USER</span> <span class="string">'root'</span>@<span class="string">'localhost'</span> <span class="keyword">IDENTIFIED</span> <span class="keyword">WITH</span> mysql_native_password <span class="keyword">BY</span> <span class="string">'123456'</span>;</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">user</span> buser <span class="keyword">identified</span> <span class="keyword">by</span> <span class="string">'123456'</span>;</span><br></pre></td></tr></table></figure>
+
+<ol start="6">
+<li>查看用户权限</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">grants</span> <span class="keyword">for</span> buser;</span><br></pre></td></tr></table></figure>
+
+<ol start="7">
+<li>赋予权限</li>
+</ol>
+<p>dmc_db数据库的select： <code>grant select on dmc_db.* to buser;</code></p>
+<p>所有权限： <code>GRANT ALL PRIVILEGES ON *.* TO &#39;buser&#39;@&#39;%&#39;;</code><br>基本权限： <code>GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,ALTER ON *.* TO &#39;buser&#39;@&#39;%&#39;;</code></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span>, <span class="keyword">insert</span>, <span class="keyword">update</span>, <span class="keyword">delete</span>, <span class="keyword">create</span>, <span class="keyword">alter</span>, <span class="keyword">drop</span>, <span class="keyword">references</span>, <span class="keyword">index</span>, <span class="keyword">show</span> <span class="keyword">view</span>, <span class="keyword">create</span> <span class="keyword">view</span>, <span class="keyword">create</span> routine, <span class="keyword">alter</span> routine, <span class="keyword">execute</span>, <span class="keyword">all</span>, <span class="keyword">lock</span> <span class="keyword">tables</span>, process, reload, <span class="keyword">replication</span> <span class="keyword">client</span>, <span class="keyword">replication</span> <span class="keyword">slave</span>, <span class="keyword">show</span> <span class="keyword">databases</span>, <span class="keyword">shutdown</span>, super, <span class="keyword">usage</span></span><br></pre></td></tr></table></figure>
+
+<ol start="8">
+<li>回收权限</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">revoke</span> <span class="keyword">select</span> <span class="keyword">on</span> dmc_db.* <span class="keyword">from</span> buser;</span><br><span class="line"><span class="keyword">revoke</span> <span class="keyword">all</span> <span class="keyword">ON</span> *.* <span class="keyword">FROM</span> <span class="string">'buser'</span>@<span class="string">'%'</span>;</span><br></pre></td></tr></table></figure>
+
+<ol start="9">
+<li>更新权限</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">flush</span> <span class="keyword">privileges</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-select、关联查询、子查询、联合查询、查询排序、分组查询、条件查询"><a href="#2-select、关联查询、子查询、联合查询、查询排序、分组查询、条件查询" class="headerlink" title="2. select、关联查询、子查询、联合查询、查询排序、分组查询、条件查询"></a>2. select、关联查询、子查询、联合查询、查询排序、分组查询、条件查询</h2><p>常量查询：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="number">1</span>;</span><br><span class="line"><span class="keyword">select</span> <span class="number">1</span> <span class="string">'a'</span>;</span><br><span class="line"><span class="keyword">select</span> <span class="number">1</span> <span class="keyword">as</span> <span class="string">'a'</span>;</span><br><span class="line"><span class="keyword">select</span> <span class="number">1</span>=<span class="number">1</span> <span class="keyword">as</span> a, <span class="number">2</span>&lt;&gt;<span class="number">3</span> <span class="keyword">as</span> b, <span class="number">2</span>!=<span class="number">3</span> <span class="keyword">as</span> c, <span class="number">4</span>&gt;<span class="number">5</span> <span class="keyword">as</span> d, <span class="number">6</span>&lt;<span class="number">7</span> <span class="keyword">as</span> e, <span class="number">8</span>&gt;=<span class="number">9</span> <span class="keyword">as</span> f, <span class="number">10</span>&lt;=<span class="number">11</span> <span class="keyword">as</span> g;</span><br><span class="line"><span class="keyword">select</span> <span class="keyword">ifnull</span>(<span class="literal">null</span>, <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>服务器版本： <code>select version()</code></li>
+<li>当前数据库： <code>select database()</code></li>
+<li>当前用户名： <code>select user()</code></li>
+<li>服务器状态： <code>show status</code></li>
+<li>服务器配置变量： <code>show variables</code></li>
+<li>第一个字符的ASCII码：select <code>ascii(&#39;a&#39;)</code></li>
+<li>字符串字数： <code>select char_length(&#39;abc&#39;);select character_length(&#39;abc&#39;)</code></li>
+<li>字符串合并： <code>select concat(&#39;ab&#39;,&#39;cd&#39;,&#39;ef&#39;,...);select concat_ws(&#39;,&#39;,&#39;a&#39;,&#39;b&#39;,...)</code></li>
+<li>第一个字符串的位置： <code>select field(&#39;d&#39;,&#39;a&#39;,&#39;b&#39;,&#39;c&#39;,&#39;d&#39;,&#39;e&#39;)</code></li>
+<li>格式化数字： <code>select format(123456.789, 2)</code></li>
+<li>字符串替换： <code>select insert(s1, index, len, s2)</code></li>
+<li>字符串位置获取： <code>select locate(&#39;st&#39;, &#39;myteststring&#39;)</code></li>
+<li>转为小写： <code>select lcase(&#39;ABCDEFG&#39;);select lower(&#39;ABCDE&#39;)</code></li>
+<li>前n个字符： <code>select left(&#39;abcdefg&#39;, 2)</code></li>
+<li>字符左填充： <code>select lpad(&#39;abc&#39;, 10, &#39;x&#39;)</code></li>
+<li>去除开始空格： <code>select ltrim(&#39;   abc&#39;)</code></li>
+<li>字符串截取： <code>select mid(&#39;abcdefg&#39;, 3, 2);select substr(s, start, length);select substring(s, start, length)</code></li>
+<li>字符串重复： <code>select repeat(&#39;abc&#39;,5)</code></li>
+<li>顺序取反： <code>select reverse(&#39;abcdefg&#39;)</code></li>
+<li>后n个字符： <code>select right(&#39;abcdefg&#39;,5)</code></li>
+<li>字符右填充： <code>select rpad(&#39;abc&#39;, 10, &#39;z&#39;)</code></li>
+<li>去除结尾空格： <code>select rtrim(&#39;abc     &#39;)</code></li>
+<li>取n个空格： <code>select space(n)</code></li>
+<li>字符串比较： <code>select strcmp(&#39;a&#39;,&#39;b&#39;)</code></li>
+<li>字符检索： <code>select substring_index(&#39;a*b&#39;, &#39;*&#39;, 1);select substring_index(substring_index(&#39;a*b*c*d*e&#39;,&#39;*&#39;,3), &#39;*&#39;, -1)</code></li>
+<li>去除开始结尾空格： <code>select trim(s)</code></li>
+<li>转为大写： <code>select ucase(s);select upper(s)</code></li>
+<li>绝对值： <code>abs(x)</code></li>
+<li>反余： <code>acos(x)</code></li>
+<li>反正弦： <code>asin(x)</code></li>
+<li>反正切： <code>atan(x)、atan2(n, m)</code></li>
+<li>平均值： <code>avg(expression)</code></li>
+<li>最小整数： <code>ceil(x)、ceiling(x)</code></li>
+<li>余弦： <code>cos(x)</code></li>
+<li>余切： <code>cot(x)</code></li>
+<li>总数： <code>count(expression)</code></li>
+<li>弧度转角度： <code>degrees(x)</code></li>
+<li>整除： <code>n DIV m</code></li>
+<li>e的x次方： <code>exp(x)</code></li>
+<li>最大整数： <code>floor(x)</code></li>
+<li>列表最大值： <code>greatest(expr1, expr2, expr3, ...)</code></li>
+<li>列表最小值： <code>least(expr1, expr2, expr3,...)</code></li>
+<li>自然对数： <code>ln(x)、log(x)、log10(x)、log10(x)、log2(x)</code></li>
+<li>最大值： <code>max(expression)</code></li>
+<li>最小值： <code>min(expression)</code></li>
+<li>余数： <code>mod(x, y)</code></li>
+<li>圆周率： <code>PI()</code></li>
+<li>x的y次方： <code>pow(x, y)、power(x, y)</code></li>
+<li>角度转弧度： <code>radians(x)，</code></li>
+<li>0到1随机数： <code>rand()</code></li>
+<li>离x最近的整数： <code>round(x)</code></li>
+<li>x的符号： <code>sign(x)，</code></li>
+<li>正弦： <code>sin(x)</code></li>
+<li>平方根： <code>sqrt(x)</code></li>
+<li>总和： <code>sum(expression)</code></li>
+<li>正切： <code>tan(x)</code></li>
+<li>小数四舍五入： <code>truncate(x, y</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">adddate(d, n)           日期d加上n天        select adddate(&#39;2019-10-10&#39;, interval 10 day);</span><br><span class="line">addtime(t, n)           时间t加上n秒        select addtime(&#39;2019-10-10 12:34:56&#39;, 5);</span><br><span class="line">curdate()               当前日期</span><br><span class="line">current_date()          当前日期</span><br><span class="line">current_time()          当前时间</span><br><span class="line">current_timestamp()     当前日期和时间</span><br><span class="line">curtime()               当前时间</span><br><span class="line">date(s)                 取得时间            select date(&#39;2019-10-10&#39;);</span><br><span class="line">datediff(d1, d2)        日期相隔天数        select datediff(&#39;1949-10-10&#39;,&#39;2019-10-10&#39;);</span><br><span class="line">date_add(d, n)          日期加上时间段</span><br><span class="line">day(d)                  日期d的天数部分      select day(&#39;2019-10-11&#39;);</span><br><span class="line">dayname(d)              日期d是星期几</span><br><span class="line">dayofmonth(d)           日期d是月份中第几天</span><br><span class="line">dayofweek(d)            日期d是星期几</span><br><span class="line">dayofyear(d)            日期d是年所在第几天</span><br><span class="line">extract(type from d)    日期d返回指定格式值     select extract(minute from &#39;2019-10-10 12:34:56&#39;);</span><br><span class="line">from_days(n)</span><br><span class="line">hour(t)</span><br><span class="line">last_day(d)</span><br><span class="line">localtime()</span><br><span class="line">localtimestamp()</span><br><span class="line">makedate(year, day-of-year)</span><br><span class="line">maketime(hour, minute, second)</span><br><span class="line">microsecond(date)</span><br><span class="line">minute(t)</span><br><span class="line">monthname(d)</span><br><span class="line">month(d)</span><br><span class="line">now()                   当前日期和时间</span><br><span class="line">period_add(period, n)</span><br><span class="line">period_diff(p1, p2)</span><br><span class="line">quarter(d)</span><br><span class="line">second(t)</span><br><span class="line">sec_to_time(s)</span><br><span class="line">str_to_date(s, format)</span><br><span class="line">subdate(d, n)           日期d减去n天</span><br><span class="line">subtime(t, n)</span><br><span class="line">sysdate()</span><br><span class="line">time(expression)</span><br><span class="line">time_format(t, f)</span><br><span class="line">time_to_sec(t)</span><br><span class="line">timediff(time1, time2)  计算时间差</span><br><span class="line">timestamp(exp, inter)</span><br><span class="line">to_days(d)</span><br><span class="line">week(d)</span><br><span class="line">weekday(d)</span><br><span class="line">weekofyear(d)</span><br><span class="line">year(d)</span><br><span class="line">yearweek(date, mode)</span><br><span class="line"></span><br><span class="line">bin(x)                  x的二进制编码</span><br><span class="line">binary(s)               字符串转为二进制字符串</span><br><span class="line">cast(x as type)         类型转换</span><br><span class="line">coalesce(p1, p2, ...)   返回从左到右第一个非空值</span><br><span class="line">connection_id()         服务器连接数</span><br><span class="line">conv(x, f1, f2)         f1进制数转为f2进制数                select conv(15, 10, 2);</span><br><span class="line">convert(s using cs)     函数将字符串s的字符集变成cs</span><br><span class="line">current_user()          当前用户</span><br><span class="line">if(expr, v1, v2)        如果expr成立，返回v1，否则v2        select if(1&gt;0, &#39;ok&#39;, &#39;no&#39;);</span><br><span class="line">ifnull(v1, v2)          v1为null返回v2，否则v1              select ifnull(null, &#39;isme&#39;);</span><br><span class="line">isnull(expression)      判断是否为null                      select isnull(null);</span><br><span class="line">last_insert_id()        返回最近生成的auto_increment值</span><br><span class="line">nullif(expr1, expr2)    expr1等于expr2返回null，否则expr1</span><br><span class="line">session_user()          当前用户</span><br><span class="line">system_user()           当前用户</span><br><span class="line">uuid()                  32位随机值</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">case expression when condition1 then result1 when condition2 then result2 ... when conditionN then resultN else result end</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 单表查询： </span></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">table</span>;</span><br><span class="line"><span class="keyword">select</span> a.* <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">as</span> a;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 单行查询：</span></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">limit</span> <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 分页查询：</span></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">limit</span> <span class="number">10</span>, <span class="number">20</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 条件查询： </span></span><br><span class="line"><span class="comment">-- 不区分大小写</span></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> <span class="keyword">column</span>=<span class="string">'auser'</span>;</span><br><span class="line"><span class="comment">-- 区分大小写    </span></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> <span class="built_in">binary</span> <span class="keyword">column</span>=<span class="string">'AUser'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> <span class="keyword">column</span> <span class="keyword">is</span> <span class="literal">NULL</span> <span class="keyword">or</span> <span class="keyword">column</span> <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 查询排序：</span></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">column</span> [<span class="keyword">ASC</span>|<span class="keyword">DESC</span>];</span><br><span class="line"><span class="comment">-- 唯一查询：</span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">distinct</span> column1 <span class="keyword">from</span> <span class="keyword">table</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 分组查询： </span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">column</span> <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">column</span>;</span><br><span class="line"><span class="keyword">select</span> <span class="keyword">column</span>,<span class="keyword">count</span>(*) <span class="keyword">as</span> <span class="string">'分组条数'</span> <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">column</span>;</span><br><span class="line"><span class="keyword">select</span> <span class="keyword">column</span> <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">column</span> <span class="keyword">having</span> <span class="keyword">count</span>(*)&gt;<span class="number">2</span>;</span><br><span class="line"><span class="comment">-- 最后多一行汇总数据</span></span><br><span class="line"><span class="keyword">select</span> <span class="keyword">coalesce</span>(<span class="keyword">column</span>,<span class="string">'总数'</span>), <span class="keyword">sum</span>(column2) <span class="keyword">as</span> 汇总 <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">group</span> <span class="keyword">by</span> <span class="keyword">column</span> <span class="keyword">with</span> <span class="keyword">rollup</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 联合查询：</span></span><br><span class="line"><span class="comment">-- 除去重复数据：</span></span><br><span class="line"><span class="keyword">select</span> column1, column2 <span class="keyword">from</span> table1 <span class="keyword">union</span> <span class="keyword">select</span> column1, column2 <span class="keyword">from</span> table2;</span><br><span class="line"><span class="comment">-- 返回所有结果：</span></span><br><span class="line"><span class="keyword">select</span> column1, column2 <span class="keyword">from</span> table1 <span class="keyword">union</span> <span class="keyword">all</span> <span class="keyword">select</span> column1, column2 <span class="keyword">from</span> table2;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 内连接查询：</span></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table1 <span class="keyword">as</span> a <span class="keyword">inner</span> <span class="keyword">join</span> table2 <span class="keyword">as</span> b <span class="keyword">on</span> a.id=b.id</span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table1 <span class="keyword">as</span> a <span class="keyword">inner</span> <span class="keyword">join</span> table2 <span class="keyword">as</span> b <span class="keyword">using</span>(<span class="keyword">id</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 左连接查询：</span></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table1 <span class="keyword">as</span> a <span class="keyword">left</span> <span class="keyword">join</span> table2 <span class="keyword">as</span> b <span class="keyword">on</span> a.id=b.id;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 右连接查询：</span></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> table1 <span class="keyword">as</span> a <span class="keyword">right</span> <span class="keyword">join</span> table2 <span class="keyword">as</span> b <span class="keyword">on</span> a.id=b.id;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 正则表达式查询：</span></span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> <span class="keyword">column</span> regexp <span class="string">'[a|b]user'</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">^ - 开始匹配</span><br><span class="line">$ - 结束匹配</span><br><span class="line">. - 单字符匹配</span><br><span class="line">[...] - 包含匹配</span><br><span class="line">[^...] - 不包含匹配</span><br><span class="line">|</span><br><span class="line">*</span><br><span class="line">+</span><br><span class="line">&#123;n&#125;</span><br><span class="line">&#123;n,m&#125;</span><br></pre></td></tr></table></figure>
+
+<p>条件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x3D; ：等于</span><br><span class="line">&gt; ：大于</span><br><span class="line">&gt;&#x3D; ：大于等于</span><br><span class="line">&lt; ：小于</span><br><span class="line">&lt;&#x3D; ：小于等于</span><br><span class="line">&lt;&gt;或!&#x3D; ：不等于</span><br><span class="line">like ：包含， like &#39;%abc%&#39;-包含abc，like &#39;abc%&#39;-abc开头，like &#39;%abc&#39;-abc结尾，like &#39;_abc_&#39;-中间为abc且前后各只有一个字符</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-insert、批量插入、表插入"><a href="#3-insert、批量插入、表插入" class="headerlink" title="3. insert、批量插入、表插入"></a>3. insert、批量插入、表插入</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">IGNORE</span> <span class="keyword">INTO</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="4-update"><a href="#4-update" class="headerlink" title="4. update"></a>4. update</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> <span class="keyword">table</span> <span class="keyword">set</span> column1=value1;</span><br><span class="line"><span class="keyword">update</span> <span class="keyword">table</span> <span class="keyword">set</span> column1=value1, column2=value2 <span class="keyword">where</span> column3=value3;</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-delete"><a href="#5-delete" class="headerlink" title="5. delete"></a>5. delete</h2><p>一般删除：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> <span class="keyword">table</span>;</span><br><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> <span class="keyword">column</span>=<span class="keyword">value</span>;</span><br></pre></td></tr></table></figure>
+
+<p>全表彻底删除，相当于删除表，再重新创建表：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">truncate</span> <span class="keyword">table</span> <span class="keyword">table</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="6-create"><a href="#6-create" class="headerlink" title="6. create"></a>6. create</h2><p>创建数据库：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">database</span> 数据库名称;</span><br></pre></td></tr></table></figure>
+
+<p>只有数据库不存在才创建数据库：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">database</span> 数据库名称 <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span>;</span><br></pre></td></tr></table></figure>
+
+<p>使用数据库：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> 数据库名称;</span><br></pre></td></tr></table></figure>
+
+<p>创建表：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> 表名(字段名称 字段类型);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span> 表名(字段名称 字段类型);</span><br><span class="line"></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span> <span class="keyword">test</span>(</span><br><span class="line">    <span class="keyword">id</span> <span class="built_in">int</span> <span class="keyword">unsigned</span> auto_increment, </span><br><span class="line">    <span class="keyword">name</span> <span class="built_in">varchar</span>(<span class="number">100</span>) <span class="keyword">not</span> <span class="literal">null</span>, </span><br><span class="line">    <span class="built_in">date</span> <span class="built_in">date</span>, </span><br><span class="line">    primary <span class="keyword">key</span>(<span class="keyword">id</span>)</span><br><span class="line">) <span class="keyword">engine</span>=<span class="keyword">innodb</span> <span class="keyword">default</span> <span class="keyword">charset</span>=utf8;</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-drop"><a href="#7-drop" class="headerlink" title="7. drop"></a>7. drop</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 删除数据库： </span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">database</span> 数据库名称；</span><br><span class="line"><span class="comment">-- 删除数据表：</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">table</span> 数据表;</span><br></pre></td></tr></table></figure>
+
+<h2 id="8-alter"><a href="#8-alter" class="headerlink" title="8. alter"></a>8. alter</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 删除表字段：</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 数据表 <span class="keyword">drop</span> 字段;</span><br><span class="line"><span class="comment">-- 添加字段：</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 数据表 <span class="keyword">add</span> 字段 类型;</span><br><span class="line"><span class="comment">-- 修改字段类型：</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 数据表 <span class="keyword">modify</span> 字段 类型;</span><br><span class="line"><span class="comment">-- 修改表名：</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> 数据表 <span class="keyword">rename</span> <span class="keyword">to</span> 名称;</span><br></pre></td></tr></table></figure>
+
+<h2 id="9-变量"><a href="#9-变量" class="headerlink" title="9. 变量"></a>9. 变量</h2><h2 id="10-索引index"><a href="#10-索引index" class="headerlink" title="10. 索引index"></a>10. 索引index</h2><p>创建索引： </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> 索引名称 <span class="keyword">on</span> 数据表(字段名称);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">index</span> indexName <span class="keyword">on</span> <span class="keyword">table</span>(<span class="keyword">column</span>);</span><br></pre></td></tr></table></figure>
+
+<p>创建表时指定：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> <span class="keyword">table</span>(</span><br><span class="line">    <span class="keyword">id</span> <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span>, </span><br><span class="line">    <span class="keyword">name</span> <span class="built_in">varchar</span>(<span class="number">50</span>) <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    <span class="keyword">index</span> indexName(<span class="keyword">name</span>(<span class="keyword">length</span>))</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 删除索引：</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">index</span> indexName <span class="keyword">on</span> <span class="keyword">table</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 唯一索引：</span></span><br><span class="line"><span class="keyword">create</span> <span class="keyword">unique</span> <span class="keyword">index</span> indexName <span class="keyword">on</span> <span class="keyword">table</span>(<span class="keyword">column</span>(<span class="keyword">length</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 修改表结构：</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> <span class="keyword">table</span> <span class="keyword">add</span> <span class="keyword">unique</span> indexName (<span class="keyword">column</span>(<span class="keyword">length</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 添加主键-唯一索引：</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> tableName <span class="keyword">add</span> primary <span class="keyword">key</span>(<span class="keyword">column</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 添加唯一索引：</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> tableName <span class="keyword">add</span> <span class="keyword">unique</span> indexName(<span class="keyword">column</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 添加普通索引：</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> tableName <span class="keyword">add</span> <span class="keyword">index</span> indexName(<span class="keyword">column</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 添加全文索引：</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> tableName <span class="keyword">add</span> fulltext indexName(<span class="keyword">column</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 删除表字段索引：</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> tableName <span class="keyword">drop</span> <span class="keyword">index</span> indexName;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 将普通可空列设置为主键：</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> tableName <span class="keyword">modify</span> columnName <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> tableName <span class="keyword">add</span> primary <span class="keyword">key</span>(columnName);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 删除主键：</span></span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> tableName <span class="keyword">drop</span> primary <span class="keyword">key</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="11-函数function"><a href="#11-函数function" class="headerlink" title="11. 函数function"></a>11. 函数function</h2><h2 id="12-存储过程PROCEDURE"><a href="#12-存储过程PROCEDURE" class="headerlink" title="12. 存储过程PROCEDURE"></a>12. 存储过程PROCEDURE</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> demo_in_parameter(<span class="keyword">IN</span> p_in <span class="built_in">int</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">CREATE</span> [DEFINER = &#123; <span class="keyword">user</span> | <span class="keyword">CURRENT_USER</span> &#125;] <span class="keyword">PROCEDURE</span> sp_name ([proc_parameter[,...]])</span><br><span class="line">        [characteristic ...] routine_body</span><br><span class="line">    </span><br><span class="line">    proc_parameter:</span><br><span class="line">        [ <span class="keyword">IN</span> | <span class="keyword">OUT</span> | INOUT ] param_name <span class="keyword">type</span></span><br><span class="line">    </span><br><span class="line">    characteristic:</span><br><span class="line">        <span class="keyword">COMMENT</span> <span class="string">'string'</span></span><br><span class="line">    | <span class="keyword">LANGUAGE</span> <span class="keyword">SQL</span></span><br><span class="line">    | [<span class="keyword">NOT</span>] <span class="keyword">DETERMINISTIC</span></span><br><span class="line">    | &#123; CONTAINS <span class="keyword">SQL</span> | <span class="keyword">NO</span> <span class="keyword">SQL</span> | <span class="keyword">READS</span> <span class="keyword">SQL</span> <span class="keyword">DATA</span> | MODIFIES <span class="keyword">SQL</span> <span class="keyword">DATA</span> &#125;</span><br><span class="line">    | <span class="keyword">SQL</span> <span class="keyword">SECURITY</span> &#123; DEFINER | INVOKER &#125;</span><br><span class="line">    </span><br><span class="line">    routine_body:</span><br><span class="line">    　　Valid <span class="keyword">SQL</span> routine <span class="keyword">statement</span></span><br><span class="line">    </span><br><span class="line">    [begin_label:] <span class="keyword">BEGIN</span></span><br><span class="line">    　　[statement_list]</span><br><span class="line">    　　　　……</span><br><span class="line">    <span class="keyword">END</span> [end_label]</span><br></pre></td></tr></table></figure>
+
+<p>如：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; delimiter $$</span><br><span class="line">mysql&gt; create procedure in_param(<span class="keyword">in</span> p_in int)</span><br><span class="line">    -&gt; begin</span><br><span class="line">    -&gt; 　　select p_in;</span><br><span class="line">    -&gt; 　　<span class="built_in">set</span> p_in=2;</span><br><span class="line">    -&gt;    select P_in;</span><br><span class="line">    -&gt; end$$</span><br><span class="line">mysql&gt; delimiter ;</span><br><span class="line"></span><br><span class="line">mysql &gt; DELIMITER //  </span><br><span class="line">mysql &gt; CREATE PROCEDURE proc4()  </span><br><span class="line">    -&gt; begin </span><br><span class="line">    -&gt; <span class="built_in">declare</span> var int;  </span><br><span class="line">    -&gt; <span class="built_in">set</span> var=0;  </span><br><span class="line">    -&gt; <span class="keyword">while</span> var&lt;6 <span class="keyword">do</span>  </span><br><span class="line">    -&gt; insert into t values(var);  </span><br><span class="line">    -&gt; <span class="built_in">set</span> var=var+1;  </span><br><span class="line">    -&gt; end <span class="keyword">while</span>;  </span><br><span class="line">    -&gt; end;  </span><br><span class="line">    -&gt; //  </span><br><span class="line">mysql &gt; DELIMITER ;</span><br></pre></td></tr></table></figure>
+
+<h2 id="13-事务"><a href="#13-事务" class="headerlink" title="13. 事务"></a>13. 事务</h2><p>ACID：原子性、一致性、隔离性、持久性</p>
+<p>普通事务：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">begin</span> 或 <span class="keyword">start</span> <span class="keyword">transaction</span>;</span><br><span class="line"><span class="keyword">update</span> <span class="keyword">table</span> <span class="keyword">set</span> column1=value1 <span class="keyword">where</span> column2=value2;</span><br><span class="line"><span class="keyword">commit</span>;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 回滚事务：</span></span><br><span class="line"><span class="keyword">rollback</span> 或 <span class="keyword">rollback</span> <span class="keyword">work</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 创建保存点：</span></span><br><span class="line">savepint identifier;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 删除保存点：</span></span><br><span class="line"><span class="keyword">release</span> <span class="keyword">savepoint</span> identifier;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 回滚到保存点：</span></span><br><span class="line"><span class="keyword">rollback</span> <span class="keyword">to</span> identifier;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 隔离级别：</span></span><br><span class="line"><span class="keyword">set</span> <span class="keyword">transaction</span> [<span class="keyword">READ</span> UNCOMMITTED、<span class="keyword">READ</span> COMMITTED、REPEATABLE <span class="keyword">READ</span>、<span class="keyword">SERIALIZABLE</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 禁止自动提交：</span></span><br><span class="line"><span class="keyword">set</span> autocommit=<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 开启自动提交：</span></span><br><span class="line"><span class="keyword">set</span> autocommit=<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="14-临时表、复制表"><a href="#14-临时表、复制表" class="headerlink" title="14. 临时表、复制表"></a>14. 临时表、复制表</h2><p>临时表只有当前连接可见，关闭连接临时表自动销毁；<br>创建临时表：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">temporary</span> <span class="keyword">table</span> tableName(</span><br><span class="line">    <span class="keyword">id</span> <span class="built_in">int</span> <span class="keyword">not</span> <span class="literal">null</span> auto_increment,</span><br><span class="line">    <span class="keyword">name</span> <span class="built_in">varchar</span>(<span class="number">50</span>) <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    primary <span class="keyword">key</span>(<span class="keyword">id</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>复制表： </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> 新表 <span class="keyword">like</span> 源表;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> 新表 <span class="keyword">select</span> * <span class="keyword">from</span> 源表 <span class="keyword">where</span> <span class="number">1</span>=<span class="number">2</span>;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> 新表 <span class="keyword">select</span> * <span class="keyword">from</span> 源表;</span><br></pre></td></tr></table></figure>
+
+<p>或</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">create</span> <span class="keyword">table</span> tableName \G;</span><br><span class="line">复制输出语句并修改表名称进行执行；</span><br></pre></td></tr></table></figure>
+
+<p>复制表数据： insert into 新表(字段1, 字段2, …) select 字段1, 字段2, … from 源表;</p>
+<h2 id="15-游标"><a href="#15-游标" class="headerlink" title="15. 游标"></a>15. 游标</h2><p>打开游标：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">open cursor_name;</span><br></pre></td></tr></table></figure>
+
+<p>关闭游标：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">close cursor_name;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">DELIMITER $$</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span></span><br><span class="line">    <span class="keyword">PROCEDURE</span> <span class="string">`test`</span>.<span class="string">`procedure_student2`</span>()</span><br><span class="line">    <span class="keyword">BEGIN</span></span><br><span class="line">    <span class="comment">-- declare some variable，必须在声明游标和句柄之前，而声明句柄必须在声明游标之后。</span></span><br><span class="line">    <span class="keyword">DECLARE</span> val <span class="keyword">DOUBLE</span> <span class="keyword">DEFAULT</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">DECLARE</span> tempRes <span class="built_in">VARCHAR</span>(<span class="number">10</span>) <span class="keyword">DEFAULT</span> <span class="string">''</span>;</span><br><span class="line">    <span class="keyword">DECLARE</span> res <span class="built_in">VARCHAR</span>(<span class="number">100</span>) <span class="keyword">DEFAULT</span> <span class="string">''</span> ;</span><br><span class="line">    <span class="comment">-- declare a cursor</span></span><br><span class="line">    <span class="keyword">DECLARE</span> cursor_avgScore <span class="keyword">CURSOR</span></span><br><span class="line">    <span class="keyword">FOR</span></span><br><span class="line">    <span class="keyword">SELECT</span> (mathScore+englishScore)/<span class="number">2</span>  <span class="keyword">AS</span> student_avgScore <span class="keyword">FROM</span> student2;</span><br><span class="line">    <span class="comment">-- declare a continue handler ,use finish while loop </span></span><br><span class="line">    <span class="keyword">DECLARE</span> CONTINUE <span class="keyword">HANDLER</span> <span class="keyword">FOR</span> <span class="keyword">SQLSTATE</span> <span class="string">'02000'</span>  <span class="keyword">SET</span> val= <span class="number">-1.0</span> ;  </span><br><span class="line">    <span class="comment">-- open cursor</span></span><br><span class="line">    OPEN cursor_avgScore ;</span><br><span class="line">    FETCH cursor_avgScore INTO val;</span><br><span class="line">    <span class="comment">-- fetch cursor</span></span><br><span class="line">    WHILE val!=-1 <span class="keyword">DO</span></span><br><span class="line">        <span class="keyword">SET</span> tempRes=<span class="keyword">CONCAT</span>(val,<span class="string">', '</span>);</span><br><span class="line">        <span class="keyword">SET</span> res=<span class="keyword">CONCAT</span>(res,tempRes);</span><br><span class="line">        FETCH cursor_avgScore INTO val;</span><br><span class="line">    <span class="keyword">END</span> <span class="keyword">WHILE</span>;                  </span><br><span class="line">    <span class="comment">-- close cursor</span></span><br><span class="line">    CLOSE cursor_avgScore ;</span><br><span class="line">    <span class="comment">-- 显示结果</span></span><br><span class="line">    <span class="keyword">SELECT</span> res;</span><br><span class="line">    <span class="keyword">END</span>$$</span><br></pre></td></tr></table></figure>
+
+<p>DELIMITER ;</p>
+<h2 id="16-导入导出"><a href="#16-导入导出" class="headerlink" title="16. 导入导出"></a>16. 导入导出</h2><p>导出txt文件：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">test</span> <span class="keyword">into</span> <span class="keyword">outfile</span> <span class="string">'#:/1.txt'</span>;</span><br></pre></td></tr></table></figure>
+
+<p>导出dump： </p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -u root -p --no-create-info --tab=/tmp 数据库名 表名(可选)</span><br><span class="line">mysqldump -u root -p 数据库名 &gt; dump.txt</span><br></pre></td></tr></table></figure>
+
+<p>导入：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql -u root -p 数据库名 &lt; dump.txt</span><br><span class="line">mysqldump -u root -p 数据库名 | mysql -h 服务器 数据库名</span><br></pre></td></tr></table></figure>
+
+<h2 id="17-表分区"><a href="#17-表分区" class="headerlink" title="17. 表分区"></a>17. 表分区</h2><h2 id="18-主从复制"><a href="#18-主从复制" class="headerlink" title="18. 主从复制"></a>18. 主从复制</h2><h2 id="19-显示当前时区"><a href="#19-显示当前时区" class="headerlink" title="19. 显示当前时区"></a>19. 显示当前时区</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">variables</span> <span class="keyword">like</span> <span class="string">'%time_zone%'</span>;</span><br></pre></td></tr></table></figure>
+
+<p>设置为 <code>+8:00</code> 时区</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> <span class="keyword">time_zone</span>=<span class="string">'+8:00'</span>;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/12/29/elasticsearch-%E5%9F%BA%E6%9C%AC/" rel="prev" title="elasticsearch-基本">
+      <i class="fa fa-chevron-left"></i> elasticsearch-基本
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/12/29/oracle-%E5%9F%BA%E6%9C%AC/" rel="next" title="oracle-基本">
+      oracle-基本 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+    <div id="gitmentContainer"></div>
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-用户管理"><span class="nav-number">1.</span> <span class="nav-text">1. 用户管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-select、关联查询、子查询、联合查询、查询排序、分组查询、条件查询"><span class="nav-number">2.</span> <span class="nav-text">2. select、关联查询、子查询、联合查询、查询排序、分组查询、条件查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-insert、批量插入、表插入"><span class="nav-number">3.</span> <span class="nav-text">3. insert、批量插入、表插入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-update"><span class="nav-number">4.</span> <span class="nav-text">4. update</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-delete"><span class="nav-number">5.</span> <span class="nav-text">5. delete</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-create"><span class="nav-number">6.</span> <span class="nav-text">6. create</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-drop"><span class="nav-number">7.</span> <span class="nav-text">7. drop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-alter"><span class="nav-number">8.</span> <span class="nav-text">8. alter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-变量"><span class="nav-number">9.</span> <span class="nav-text">9. 变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-索引index"><span class="nav-number">10.</span> <span class="nav-text">10. 索引index</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-函数function"><span class="nav-number">11.</span> <span class="nav-text">11. 函数function</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-存储过程PROCEDURE"><span class="nav-number">12.</span> <span class="nav-text">12. 存储过程PROCEDURE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-事务"><span class="nav-number">13.</span> <span class="nav-text">13. 事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-临时表、复制表"><span class="nav-number">14.</span> <span class="nav-text">14. 临时表、复制表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#15-游标"><span class="nav-number">15.</span> <span class="nav-text">15. 游标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#16-导入导出"><span class="nav-number">16.</span> <span class="nav-text">16. 导入导出</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#17-表分区"><span class="nav-number">17.</span> <span class="nav-text">17. 表分区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#18-主从复制"><span class="nav-number">18.</span> <span class="nav-text">18. 主从复制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#19-显示当前时区"><span class="nav-number">19.</span> <span class="nav-text">19. 显示当前时区</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jinwen</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jinwen</span>
+</div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+  // https://imsun.net/posts/gitment-introduction/
+  var gitment = new Gitment({
+    // id: 'about/me.html', // 可选。默认为 location.href
+    id: location.href,
+    owner: 'jinven',
+    repo: 'jinven.github.io',
+    oauth: {
+      client_id: 'c632308a327582f31107',
+      client_secret: '06592fcf5ed4c08e218fbf0c6ebe2dce1241d054',
+    },
+  })
+  if(document.getElementById('gitmentContainer')){
+    gitment.render('gitmentContainer')
+  }
+</script>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.6.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

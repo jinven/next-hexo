@@ -1,0 +1,1 @@
+{"ast":null,"code":"export var CURRENT_URL = 'https://nextjs-pi-gules.now.sh/';","map":{"version":3,"sources":["L:/git/next-hexo/utils/consts.js"],"names":["CURRENT_URL"],"mappings":"AAAA,OAAO,IAAMA,WAAW,GAAG,iCAApB","sourcesContent":["export const CURRENT_URL = 'https://nextjs-pi-gules.now.sh/'\r\n"]},"metadata":{},"sourceType":"module"}

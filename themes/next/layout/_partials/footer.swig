@@ -44,16 +44,20 @@
 <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
 <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
 <script>
+  // https://imsun.net/posts/gitment-introduction/
   var gitment = new Gitment({
-    // id: '页面 ID', // 可选。默认为 location.href
-    owner: 'jinwen',
-    repo: 'https://github.com/jinven/jinven.github.io',
+    // id: '{{ page.path }}', // 可选。默认为 location.href
+    id: location.href,
+    owner: 'jinven',
+    repo: 'jinven.github.io',
     oauth: {
       client_id: 'c632308a327582f31107',
       client_secret: '06592fcf5ed4c08e218fbf0c6ebe2dce1241d054',
     },
   })
-  gitment.render('container')
+  if(document.getElementById('gitmentContainer')){
+    gitment.render('gitmentContainer')
+  }
 </script>
 
 {%- if theme.footer.powered.enable %}

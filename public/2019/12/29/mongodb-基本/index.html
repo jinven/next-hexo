@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://yoursite.com').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="1. 运行服务&#x2F;客户端、概念服务：      .&#x2F;mongod.exe 客户端：    .&#x2F;mongo.exe 结构： 123456数据库 -&gt; 数据库表&#x2F;集合 -&gt; 数据记录行&#x2F;文档 -&gt; 数据字段&#x2F;域索引不支持表连接自动将_id字段设置为主键数据库名应小写，最多64字节，不能含空格、.、$、&#x2F;、\、\0空字符  保留数据库名： admi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mongodb-基本">
+<meta property="og:url" content="http://yoursite.com/2019/12/29/mongodb-%E5%9F%BA%E6%9C%AC/index.html">
+<meta property="og:site_name" content="Jinwen">
+<meta property="og:description" content="1. 运行服务&#x2F;客户端、概念服务：      .&#x2F;mongod.exe 客户端：    .&#x2F;mongo.exe 结构： 123456数据库 -&gt; 数据库表&#x2F;集合 -&gt; 数据记录行&#x2F;文档 -&gt; 数据字段&#x2F;域索引不支持表连接自动将_id字段设置为主键数据库名应小写，最多64字节，不能含空格、.、$、&#x2F;、\、\0空字符  保留数据库名： admi">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-12-29T08:06:11.000Z">
+<meta property="article:modified_time" content="2019-12-29T08:28:23.632Z">
+<meta property="article:author" content="Jinwen">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/29/mongodb-%E5%9F%BA%E6%9C%AC/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>mongodb-基本 | Jinwen</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jinwen</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/29/mongodb-%E5%9F%BA%E6%9C%AC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jinwen">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jinwen">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mongodb-基本
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-12-29 16:06:11 / 修改时间：16:28:23" itemprop="dateCreated datePublished" datetime="2019-12-29T16:06:11+08:00">2019-12-29</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-运行服务-客户端、概念"><a href="#1-运行服务-客户端、概念" class="headerlink" title="1. 运行服务/客户端、概念"></a>1. 运行服务/客户端、概念</h2><p>服务：      ./mongod.exe</p>
+<p>客户端：    ./mongo.exe</p>
+<p>结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">数据库 -&gt; 数据库表&#x2F;集合 -&gt; 数据记录行&#x2F;文档 -&gt; 数据字段&#x2F;域</span><br><span class="line">索引</span><br><span class="line">不支持表连接</span><br><span class="line">自动将_id字段设置为主键</span><br><span class="line"></span><br><span class="line">数据库名应小写，最多64字节，不能含空格、.、$、&#x2F;、\、\0空字符</span><br></pre></td></tr></table></figure>
+
+<p>保留数据库名： <code>admin</code>、<code>local</code>、<code>config</code></p>
+<a id="more"></a>
+
+<h4 id="文档-Document-："><a href="#文档-Document-：" class="headerlink" title="文档(Document)："></a>文档(Document)：</h4><ul>
+<li>是一组键值对key-value，BSON，如： <code>{&quot;name&quot;:&quot;abc&quot;, &quot;content&quot;:&quot;def&quot;}</code></li>
+<li>键值对是有序的</li>
+<li>区分类型和大小写</li>
+<li>不能有重复的键</li>
+<li>键是字符串</li>
+<li>键不能包含空字符、.、$</li>
+<li>下划线_保留，不推荐使用</li>
+</ul>
+<h4 id="集合：一个文档插入时，集合就会被创建"><a href="#集合：一个文档插入时，集合就会被创建" class="headerlink" title="集合：一个文档插入时，集合就会被创建"></a>集合：一个文档插入时，集合就会被创建</h4><p>集合名不能包含空字符，不能以 <code>system.</code> 开头</p>
+<h4 id="capped-collections："><a href="#capped-collections：" class="headerlink" title="capped collections："></a>capped collections：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.createCollection(&quot;mycoll&quot;, &#123;capped:true, size:100000&#125;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="元数据"><a href="#元数据" class="headerlink" title="元数据"></a>元数据</h4><p>数据库的信息是存储在集合中。它们使用了系统的命名空间：</p>
+<ul>
+<li>dbname.system.*</li>
+<li>dbname.system.namespaces列出所有名字空间。</li>
+<li>dbname.system.indexes    列出所有索引。</li>
+<li>dbname.system.profile    包含数据库概要(profile)信息。</li>
+<li>dbname.system.users    列出所有可访问数据库的用户。</li>
+<li>dbname.local.sources    包含复制对端（slave）的服务器信息和状态。</li>
+</ul>
+<h4 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h4><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>String</td>
+<td>字符串。存储数据常用的数据类型。在 MongoDB 中，UTF-8 编码的字符串才是合法的。</td>
+</tr>
+<tr>
+<td>Integer</td>
+<td>整型数值。用于存储数值。根据你所采用的服务器，可分为 32 位或 64 位。</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>布尔值。用于存储布尔值（真/假）。</td>
+</tr>
+<tr>
+<td>Double</td>
+<td>双精度浮点值。用于存储浮点值。</td>
+</tr>
+<tr>
+<td>Min /Max keys</td>
+<td>将一个值与 BSON（二进制的 JSON）元素的最低值和最高值相对比。</td>
+</tr>
+<tr>
+<td>Array</td>
+<td>用于将数组或列表或多个值存储为一个键。</td>
+</tr>
+<tr>
+<td>Timestamp</td>
+<td>时间戳。记录文档修改或添加的具体时间。</td>
+</tr>
+<tr>
+<td>Object</td>
+<td>用于内嵌文档。</td>
+</tr>
+<tr>
+<td>Null</td>
+<td>用于创建空值。</td>
+</tr>
+<tr>
+<td>Symbol</td>
+<td>符号。该数据类型基本上等同于字符串类型，但不同的是，它一般用于采用特殊符号类型的语言。</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>日期时间。用 UNIX 时间格式来存储当前日期或时间。你可以指定自己的日期时间：创建 Date 对象，传入年月日信息。</td>
+</tr>
+<tr>
+<td>Object ID</td>
+<td>对象 ID。用于创建文档的 ID。</td>
+</tr>
+<tr>
+<td>Binary Data</td>
+<td>二进制数据。用于存储二进制数据。</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>代码类型。用于在文档中存储 JavaScript 代码。</td>
+</tr>
+<tr>
+<td>Regular expression</td>
+<td>正则表达式类型。用于存储正则表达式。</td>
+</tr>
+</tbody></table>
+<h4 id="ObjectId"><a href="#ObjectId" class="headerlink" title="ObjectId"></a>ObjectId</h4><p>ObjectId 类似唯一主键，可以很快的去生成和排序，包含 12 bytes，含义是：</p>
+<p>前 4 个字节表示创建 unix 时间戳,格林尼治时间 UTC 时间，比北京时间晚了 8 个小时<br>接下来的 3 个字节是机器标识码，紧接的两个字节由进程 id 组成 PID，最后三个字节是随机数</p>
+<p>文档必须有一个 _id 键。这个键的值可以是任何类型的，默认是个 ObjectId 对象<br>由于 ObjectId 中保存了创建的时间戳，所以你不需要为你的文档保存时间戳字段，你可以通过 getTimestamp 函数来获取文档的创建时间:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; var newObject &#x3D; ObjectId()</span><br><span class="line">&gt; newObject.getTimestamp()</span><br><span class="line">ISODate(&quot;2017-11-25T07:21:10Z&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>ObjectId 转为字符串</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; newObject.str</span><br><span class="line">5a1919e63df83ce79df8b38f</span><br></pre></td></tr></table></figure>
+
+<p>日期</p>
+<p>表示当前距离 Unix新纪元（1970年1月1日）的毫秒数。日期类型是有符号的, 负数表示 1970 年之前的日期。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&gt; var mydate1 &#x3D; new Date()     &#x2F;&#x2F;格林尼治时间</span><br><span class="line">&gt; mydate1</span><br><span class="line">&gt; typeof mydate1</span><br><span class="line"></span><br><span class="line">&gt; var mydate2 &#x3D; ISODate() &#x2F;&#x2F;格林尼治时间</span><br><span class="line">&gt; mydate2</span><br><span class="line">&gt; typeof mydate2</span><br><span class="line"></span><br><span class="line">&gt; var mydate1str &#x3D; mydate1.toString()</span><br><span class="line">&gt; mydate1str</span><br><span class="line">&gt; typeof mydate1str</span><br><span class="line">&gt; Date()</span><br></pre></td></tr></table></figure>
+
+<h4 id="用户的权限"><a href="#用户的权限" class="headerlink" title="用户的权限"></a>用户的权限</h4><p>默认是没有用户名及密码的，即无权限访问限制。为了方便数据库的管理和安全，需创建数据库用户。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Read                    允许用户读取指定数据库</span><br><span class="line">readWrite               允许用户读写指定数据库</span><br><span class="line">dbAdmin                 允许用户在指定数据库中执行管理函数，如索引创建、删除，查看统计或访问system.profile</span><br><span class="line">userAdmin               允许用户向system.users集合写入，可以找指定数据库里创建、删除和管理用户</span><br><span class="line">clusterAdmin            只在admin数据库中可用，赋予用户所有分片和复制集相关函数的管理权限。</span><br><span class="line">readAnyDatabase         只在admin数据库中可用，赋予用户所有数据库的读权限</span><br><span class="line">readWriteAnyDatabase    只在admin数据库中可用，赋予用户所有数据库的读写权限</span><br><span class="line">userAdminAnyDatabase    只在admin数据库中可用，赋予用户所有数据库的userAdmin权限</span><br><span class="line">dbAdminAnyDatabase      只在admin数据库中可用，赋予用户所有数据库的dbAdmin权限。</span><br><span class="line">root                    只在admin数据库中可用。超级账号，超级权限</span><br></pre></td></tr></table></figure>
+
+<p>创建管理员用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&gt; use admin</span><br><span class="line">&gt; db.createUser(</span><br><span class="line">        &#123;</span><br><span class="line">            user: &quot;root&quot;,</span><br><span class="line">            pwd: &quot;123456&quot;,</span><br><span class="line">            roles: [&#123; role: &quot;root&quot;, db: &quot;admin&quot; &#125;]</span><br><span class="line">        &#125;</span><br><span class="line">    );</span><br><span class="line">&gt; show tables;</span><br><span class="line">&gt; show users;</span><br><span class="line">&gt; db.auth(&quot;root&quot;, &quot;123456&quot;);        &#x2F;&#x2F; 验证用户是否</span><br></pre></td></tr></table></figure>
+
+<p>创建完成后在配置文件中开启用户验证</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;&gt;/application/mongodb/conf/mongod.conf&lt;&lt;-<span class="string">'EOF'</span></span><br><span class="line">security:</span><br><span class="line">authorization: enabled</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>重启服务</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/mongod  restart</span><br></pre></td></tr></table></figure>
+
+<p>命令行中进行登陆</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongo -uroot -proot admin</span><br></pre></td></tr></table></figure>
+
+<p>创建对某库的只读用户，在test库创建只读用户test</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; use test</span><br><span class="line">&gt; db.createUser(</span><br><span class="line">    &#123;</span><br><span class="line">        user: &quot;test&quot;,</span><br><span class="line">        pwd: &quot;test&quot;,</span><br><span class="line">        roles: [ &#123; role: &quot;read&quot;, db: &quot;test&quot; &#125; ]</span><br><span class="line">    &#125;</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>测试用户是否创建成功</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.auth(&quot;test&quot;,&quot;test&quot;);</span><br><span class="line">&gt; show users;</span><br></pre></td></tr></table></figure>
+
+<p>登录test用户，并测试是否只读</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; show collections;</span><br><span class="line">&gt; db.createCollection(&#39;b&#39;);</span><br></pre></td></tr></table></figure>
+
+<p>创建某库的读写用户，创建test1用户，权限为读写</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.createUser(</span><br><span class="line">        &#123;</span><br><span class="line">            user: &quot;test1&quot;,</span><br><span class="line">            pwd: &quot;test1&quot;,</span><br><span class="line">            roles: [ &#123; role: &quot;readWrite&quot;, db: &quot;test&quot; &#125; ]</span><br><span class="line">        &#125;</span><br><span class="line">    );</span><br></pre></td></tr></table></figure>
+
+<p>查看并测试用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; show users;</span><br><span class="line">&gt; db.auth(&quot;test1&quot;,&quot;test1&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>创建对多库不同权限的用户，创建对app为读写权限，对test库为只读权限的用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; use app</span><br><span class="line">&gt; db.createUser(</span><br><span class="line">        &#123;</span><br><span class="line">            user: &quot;app&quot;,</span><br><span class="line">            pwd: &quot;app&quot;,</span><br><span class="line">            roles: [ &#123; role: &quot;readWrite&quot;, db: &quot;app&quot; &#125;, &#123; role: &quot;read&quot;, db: &quot;test&quot; &#125;]</span><br><span class="line">        &#125;</span><br><span class="line">    );</span><br></pre></td></tr></table></figure>
+
+<p>查看并测试用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; show users;</span><br><span class="line">&gt; db.auth(&quot;app&quot;,&quot;app&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>删除用户，删除app用户：先登录到admin数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongo -uroot –proot 127.0.0.1&#x2F;admin</span><br></pre></td></tr></table></figure>
+
+<p>进入app库删除app用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; use app;</span><br><span class="line">&gt; db.dropUser(&quot;app&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>自定义数据库，创建app数据库的管理员：先登录到admin数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; use app;</span><br><span class="line">&gt; db.createUser(</span><br><span class="line">    &#123;</span><br><span class="line">        user: &quot;admin&quot;,</span><br><span class="line">        pwd: &quot;admin&quot;,</span><br><span class="line">        roles: [ &#123; role: &quot;dbAdmin&quot;, db: &quot;app&quot; &#125; ]</span><br><span class="line">    &#125;</span><br><span class="line">    );</span><br></pre></td></tr></table></figure>
+
+<p>创建app数据库读写权限的用户并具有clusterAdmin权限：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; use app;</span><br><span class="line">&gt; db.createUser(</span><br><span class="line">    &#123;</span><br><span class="line">        user: &quot;app04&quot;,</span><br><span class="line">        pwd: &quot;app04&quot;,</span><br><span class="line">        roles: [ &#123; role: &quot;readWrite&quot;, db: &quot;app&quot; &#125;, &#123; role: &quot;clusterAdmin&quot;, db: &quot;admin&quot; &#125;]</span><br><span class="line">    &#125;</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-基本命令"><a href="#2-基本命令" class="headerlink" title="2. 基本命令"></a>2. 基本命令</h2><p>数据库版本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.version();</span><br></pre></td></tr></table></figure>
+
+<p>连接机器地址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.getMongo();</span><br></pre></td></tr></table></figure>
+
+<p>显示所有数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; show dbs;</span><br></pre></td></tr></table></figure>
+
+<p>显示当前所在库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; db;</span><br><span class="line">&gt; db.getName();</span><br></pre></td></tr></table></figure>
+
+<p>当前数据库状态：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.stats();</span><br></pre></td></tr></table></figure>
+
+<p>切换到local库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; use local;</span><br></pre></td></tr></table></figure>
+
+<p>显示所有表/集合</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; show tables;</span><br><span class="line">&gt; db.getCollectionNames();</span><br></pre></td></tr></table></figure>
+
+<p>创建数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; use newdb;</span><br><span class="line">&gt; db.newdb.insert(&#123;&quot;name&quot;:&quot;hello&quot;&#125;);</span><br><span class="line">&gt; show dbs;</span><br></pre></td></tr></table></figure>
+
+<p>删除数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; use newdb;</span><br><span class="line">&gt; db.dropDatabase();</span><br><span class="line">&gt; show dbs;</span><br></pre></td></tr></table></figure>
+
+<p>删除集合</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.collection.drop();</span><br><span class="line"></span><br><span class="line">&gt; use newdb</span><br><span class="line">&gt; db.createCollection(&quot;mycol&quot;);</span><br><span class="line">&gt; show tables;</span><br><span class="line">&gt; db.mycol.drop();</span><br><span class="line">&gt; show tables;</span><br></pre></td></tr></table></figure>
+
+<p>创建集合</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">db.createCollection(name, options);</span><br><span class="line"></span><br><span class="line">capped        布尔（可选）如果为 true，则创建固定集合。固定集合是指有着固定大小的集合，当达到最大值时，它会自动覆盖最早的文档。当该值为 true 时，必须指定 size 参数。</span><br><span class="line">autoIndexId    布尔（可选）如为 true，自动在 _id 字段创建索引。默认为 false。</span><br><span class="line">size        数值（可选）为固定集合指定一个最大值，以千字节计（KB）。如果 capped 为 true，也需要指定该字段。</span><br><span class="line">max            数值（可选）指定固定集合中包含文档的最大数量。</span><br></pre></td></tr></table></figure>
+
+<p>重命名集合</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.mycol.renameCollection(&quot;mycol1&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>创建mycol集合</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&gt; use newdb;</span><br><span class="line">&gt; db.createCollection(&quot;mycol&quot;);</span><br><span class="line">&gt; show collections;</span><br><span class="line">&gt; db.createCollection(&quot;mycol2&quot;, &#123;capped: true, autoIndexId: true, size: 6142800, max: 10000&#125;);</span><br><span class="line">&gt; db.mycol3.insert(&#123;&quot;name&quot;: &quot;hello&quot;&#125;);</span><br><span class="line">&gt; db.mycol4.insert(&#123;title: &quot;test&quot;, description: &quot;tortoise&quot;, by: &quot;code&quot;, url: &quot;not yeah&quot;, tags:[&#39;mongodb&#39;, &#39;database&#39;, &#39;NoSQL&#39;]&#125;);</span><br><span class="line">&gt; variableOne&#x3D;(&#123;title: &#39;book&#39;, description: &#39;MongoDB Book&#39;, author: &#39;jw&#39;, price: 100&#125;);</span><br><span class="line">&gt; db.mycol5.insert(variableOne);</span><br><span class="line">&gt; show collections;</span><br><span class="line">&gt; db.mycol4.find();</span><br><span class="line">&gt; db.mycol5.find();</span><br></pre></td></tr></table></figure>
+
+<p>插入1w行数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; for(i&#x3D;0; i&lt;10000; i++) &#123; db.log.insert(&#123; uid: i, name: &quot;mongodb&quot;, age: 6, date: new Date()&#125;); &#125;;</span><br><span class="line">&gt; db.log.find();</span><br><span class="line">&gt; db.log.find().pretty();    &#x2F;&#x2F; 显示优化</span><br><span class="line">&gt; db.log.find(&#123; &#125;, &#123;_id: 0, uid: 1, name: 1, age: 1&#125;);  &#x2F;&#x2F; 第一个对象是条件，第二个是指定显示列</span><br></pre></td></tr></table></figure>
+
+<p>it显示下一页，默认每页显示20条记录，修改为50条记录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; it</span><br><span class="line">&gt; DBQuery.shellBatchSize&#x3D;50;</span><br></pre></td></tr></table></figure>
+
+<p>查看第一条记录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.log.findOne();</span><br></pre></td></tr></table></figure>
+
+<p>查看记录总数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.log.count();</span><br></pre></td></tr></table></figure>
+
+<p>查看uid为1000的数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.log.find(&#123;uid:1000&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>移除uid为1001的数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.log.remove(&#123;uid: 1001&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>修改uid为1002的数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.log.update(&#123; uid: 1002&#125;, &#123;$inc: &#123; age: 3 &#125;&#125;, &#123; multi: true&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>删除集合总的记录数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.log.distinct(&quot;name&quot;);</span><br><span class="line">&gt; db.log.remove(&#123;&#125;);</span><br><span class="line">&gt; db.log.distinct(&quot;name&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>查看集合存储信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.log.stats();           &#x2F;&#x2F; 查看数据状态</span><br><span class="line">&gt; db.log.dataSize();        &#x2F;&#x2F; 集合中数据的原始大小</span><br><span class="line">&gt; db.log.totalIndexSize();  &#x2F;&#x2F; 集合中索引数据的原始大小</span><br><span class="line">&gt; db.log.totalSize();       &#x2F;&#x2F; 集合中索引+数据压缩存储之后的大小</span><br><span class="line">&gt; db.log.storageSize();     &#x2F;&#x2F; 集合中数据压缩存储的大小</span><br></pre></td></tr></table></figure>
+
+<p>集合/表添加删除字段 join_date，集合没有数据结构的概念，但再document级可实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.users.update(&#123; &#125;, &#123; $set: &#123; join_date: new Date() &#125;&#125;, &#123; multi: true&#125;);</span><br><span class="line">&gt; db.users.update(&#123; &#125;, &#123; $unset: &#123; join_date: &quot;&quot; &#125; &#125;, &#123; multi: true &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>创建索引</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.users.createIndex( &#123; user_id: 1 &#125; );</span><br><span class="line">&gt; db.users.createIndex( &#123; user_id: 1, age: -1 &#125; );</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/12/29/redis-%E9%9B%86%E7%BE%A4/" rel="prev" title="redis-集群">
+      <i class="fa fa-chevron-left"></i> redis-集群
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/12/29/elasticsearch-%E5%9F%BA%E6%9C%AC/" rel="next" title="elasticsearch-基本">
+      elasticsearch-基本 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+    <div id="gitmentContainer"></div>
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-运行服务-客户端、概念"><span class="nav-number">1.</span> <span class="nav-text">1. 运行服务&#x2F;客户端、概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#文档-Document-："><span class="nav-number">1.0.1.</span> <span class="nav-text">文档(Document)：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#集合：一个文档插入时，集合就会被创建"><span class="nav-number">1.0.2.</span> <span class="nav-text">集合：一个文档插入时，集合就会被创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#capped-collections："><span class="nav-number">1.0.3.</span> <span class="nav-text">capped collections：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#元数据"><span class="nav-number">1.0.4.</span> <span class="nav-text">元数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据类型"><span class="nav-number">1.0.5.</span> <span class="nav-text">数据类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ObjectId"><span class="nav-number">1.0.6.</span> <span class="nav-text">ObjectId</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#用户的权限"><span class="nav-number">1.0.7.</span> <span class="nav-text">用户的权限</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-基本命令"><span class="nav-number">2.</span> <span class="nav-text">2. 基本命令</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jinwen</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jinwen</span>
+</div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+  // https://imsun.net/posts/gitment-introduction/
+  var gitment = new Gitment({
+    // id: 'about/me.html', // 可选。默认为 location.href
+    id: location.href,
+    owner: 'jinven',
+    repo: 'jinven.github.io',
+    oauth: {
+      client_id: 'c632308a327582f31107',
+      client_secret: '06592fcf5ed4c08e218fbf0c6ebe2dce1241d054',
+    },
+  })
+  if(document.getElementById('gitmentContainer')){
+    gitment.render('gitmentContainer')
+  }
+</script>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.6.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

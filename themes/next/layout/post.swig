@@ -7,6 +7,7 @@
 
   <div class="posts-expand">
     {{ partial('_macro/post.swig', {post: page}) }}
+    <div id="gitmentContainer"></div>
   </div>
 
 {% endblock %}

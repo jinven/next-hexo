@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://yoursite.com').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="XML 扩展标记语言：EXtensible Markup Lanuage 与 HTML 的区别：   xml 被设计用来传输和存储数据，纯文本，没有预定义标签和文档结构，需自定义  HTML 被设计用来显示数据，有预定义标签和自己的文档结构 XML 不是对 HTML 的替代，是对 HTML 的补充，简化数据的共享、传输  XML 用于创建新的 Internet 语言，很多语言是通过 XML 创建的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="xml">
+<meta property="og:url" content="http://yoursite.com/2019/12/29/xml/index.html">
+<meta property="og:site_name" content="Jinwen">
+<meta property="og:description" content="XML 扩展标记语言：EXtensible Markup Lanuage 与 HTML 的区别：   xml 被设计用来传输和存储数据，纯文本，没有预定义标签和文档结构，需自定义  HTML 被设计用来显示数据，有预定义标签和自己的文档结构 XML 不是对 HTML 的替代，是对 HTML 的补充，简化数据的共享、传输  XML 用于创建新的 Internet 语言，很多语言是通过 XML 创建的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-12-29T08:07:43.000Z">
+<meta property="article:modified_time" content="2019-12-29T08:30:07.829Z">
+<meta property="article:author" content="Jinwen">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/29/xml/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>xml | Jinwen</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jinwen</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/29/xml/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jinwen">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jinwen">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          xml
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-12-29 16:07:43 / 修改时间：16:30:07" itemprop="dateCreated datePublished" datetime="2019-12-29T16:07:43+08:00">2019-12-29</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="XML-扩展标记语言：EXtensible-Markup-Lanuage"><a href="#XML-扩展标记语言：EXtensible-Markup-Lanuage" class="headerlink" title="XML 扩展标记语言：EXtensible Markup Lanuage"></a>XML 扩展标记语言：EXtensible Markup Lanuage</h2><ol>
+<li>与 <code>HTML</code> 的区别：</li>
+</ol>
+<ul>
+<li><p><code>xml</code> 被设计用来传输和存储数据，纯文本，没有预定义标签和文档结构，需自定义</p>
+</li>
+<li><p><code>HTML</code> 被设计用来显示数据，有预定义标签和自己的文档结构</p>
+<pre><code>XML 不是对 HTML 的替代，是对 HTML 的补充，简化数据的共享、传输</code></pre><p>  <code>XML</code> 用于创建新的 <code>Internet</code> 语言，很多语言是通过 <code>XML</code> 创建的</p>
+<pre><code>XHTML       最新的 HTML 版本
+WSDL        用于描述可用的 web service
+WAP/WML     用于手持设备的标记语言
+RSS         用于 RSS feed 的语言
+RDF/OWL     用于描述资源和本体
+SMIL        用于描述针对 web 的多媒体</code></pre></li>
+</ul>
+<a id="more"></a>
+
+<ol start="2">
+<li><p>一个 <code>XML</code> 文档实例</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
+&lt;note&gt;
+&lt;to&gt;George&lt;/to&gt;
+&lt;from&gt;John&lt;/from&gt;
+&lt;heading&gt;Reminder&lt;/heading&gt;
+&lt;body&gt;Don&apos;t forget the meeting!&lt;/body&gt;
+&lt;/note&gt;</code></pre><p> 第一行是 XML 声明。它定义 XML 的版本 (1.0) 和所使用的编码 (ISO-8859-1 = Latin-1/西欧字符集)。<br> 第二行描述文档的根元素（像在说：“本文档是一个便签”）<br> 接下来 4 行描述根的 4 个子元素（to, from, heading 以及 body）<br> 最后一行定义根元素的结尾</p>
+</li>
+<li><p><code>XML</code> 文档形成一种树结构</p>
+<p> XML 文档必须包含根元素。该元素是所有其他元素的父元素。<br> XML 文档中的元素形成了一棵文档树。这棵树从根部开始，并扩展到树的最底端。<br> 所有元素均可拥有子元素：</p>
+<pre><code>&lt;root&gt;
+    &lt;child&gt;
+        &lt;subchild&gt;.....&lt;/subchild&gt;
+    &lt;/child&gt;
+&lt;/root&gt;</code></pre><p> 父、子以及同胞等术语用于描述元素之间的关系。父元素拥有子元素。相同层级上的子元素成为同胞（兄弟或姐妹）。<br> 所有元素均可拥有文本内容和属性（类似 HTML 中）。</p>
+</li>
+<li><p>所有 <code>XML</code> 元素都须有关闭标签</p>
+<p> 在 HTML，经常会看到没有关闭标签的元素：</p>
+<pre><code>&lt;p&gt;This is a paragraph
+&lt;p&gt;This is another paragraph</code></pre><p> 在 <code>XML</code> 中，省略关闭标签是非法的。所有元素都必须有关闭标签：</p>
+<pre><code>&lt;p&gt;This is a paragraph&lt;/p&gt;
+&lt;p&gt;This is another paragraph&lt;/p&gt;  
+
+注释：XML 声明没有关闭标签。这不是错误。声明不属于XML本身的组成部分。它不是 XML 元素，也不需要关闭标签。</code></pre></li>
+<li><p><code>XML</code> 标签对大小写敏感</p>
+<pre><code>&lt;Message&gt;这是错误的。&lt;/message&gt;
+&lt;message&gt;这是正确的。&lt;/message&gt; </code></pre></li>
+<li><p><code>XML</code> 必须正确地嵌套</p>
+<p> 在 HTML 中，常会看到没有正确嵌套的元素：</p>
+<pre><code>&lt;b&gt;&lt;i&gt;This text is bold and italic&lt;/b&gt;&lt;/i&gt;</code></pre><p> 在 XML 中，所有元素都必须彼此正确地嵌套：</p>
+<pre><code>&lt;b&gt;&lt;i&gt;This text is bold and italic&lt;/i&gt;&lt;/b&gt;</code></pre></li>
+<li><p>XML 文档必须有根元素</p>
+</li>
+<li><p>XML 的属性值须加引号</p>
+<p> 错误：</p>
+<pre><code>&lt;note date=08/08/2008&gt;
+&lt;to&gt;George&lt;/to&gt;
+&lt;from&gt;John&lt;/from&gt;
+&lt;/note&gt; </code></pre><p> 正确：</p>
+<pre><code>&lt;note date=&quot;08/08/2008&quot;&gt;
+&lt;to&gt;George&lt;/to&gt;
+&lt;from&gt;John&lt;/from&gt;
+&lt;/note&gt; </code></pre></li>
+<li><p>实体引用</p>
+<p> 如果你把字符 <code>&lt;</code> 或 <code>&amp;</code> 放在 XML 元素中，会发生错误，这是因为解析器会把它当作新元素的开始，这样会产生 XML 错误：</p>
+<pre><code>&lt;message&gt;if salary &lt; 1000 then&lt;/message&gt;</code></pre><p> 为了避免这个错误，用实体引用来代替 <code>&lt;</code> 字符：</p>
+<pre><code>&lt;message&gt;if salary &amp;lt; 1000 then&lt;/message&gt; </code></pre><p> 在 XML 中，有 5 个预定义的实体引用：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&amp;lt;</code></td>
+<td>&lt;</td>
+<td>小于</td>
+</tr>
+<tr>
+<td><code>&amp;gt;</code></td>
+<td>&gt;</td>
+<td>大于</td>
+</tr>
+<tr>
+<td><code>&amp;amp;</code></td>
+<td>&amp;</td>
+<td>和号</td>
+</tr>
+<tr>
+<td><code>&amp;apos;</code></td>
+<td>&apos;</td>
+<td>单引号</td>
+</tr>
+<tr>
+<td><code>&amp;quot;</code></td>
+<td>&quot;</td>
+<td>引号</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>在 XML 中，空格会被保留</p>
+</li>
+<li><p>XML 以 LF 存储换行</p>
+<p>在 Windows 应用程序中，换行通常以一对字符来存储：回车符 (CR) 和换行符 (LF)。这对字符与打字机设置新行的动作有相似之处。在 Unix 应用程序中，新行以 LF 字符存储。而 Macintosh 应用程序使用 CR 来存储新行。</p>
+</li>
+<li><p>XML 命名规则</p>
+<p>XML 元素必须遵循以下命名规则：</p>
+<pre><code>名称可以含字母、数字以及其他的字符
+名称不能以数字或者标点符号开始
+名称不能以字符 “xml”（或者 XML、Xml）开始
+名称不能包含空格</code></pre><p>可使用任何名称，没有保留的字词。<br>使名称具有描述性。使用下划线的名称也很不错。<br>名称应当比较简短，比如：<code>&lt;book_title&gt;</code>，而不是：<code>&lt;the_title_of_the_book&gt;</code></p>
+<p>避免 “-“ 字符。如果您按照这样的方式进行命名：”first-name”，一些软件会认为你需要提取第一个单词。</p>
+<p>避免 “.” 字符。如果您按照这样的方式进行命名：”first.name”，一些软件会认为 “name” 是对象 “first” 的属性。</p>
+<p>避免 “:” 字符。冒号会被转换为命名空间来使用。</p>
+<p>XML 文档经常有一个对应的数据库，其中的字段会对应 XML 文档中的元素。有一个实用的经验，即使用数据库的名称规则来命名 XML 文档中的元素。</p>
+</li>
+<li><p>XML 属性</p>
+<p>在 HTML 中（以及在 XML 中），属性提供有关元素的额外信息：</p>
+<pre><code>&lt;img src=&quot;computer.gif&quot;&gt;
+&lt;a href=&quot;demo.asp&quot;&gt; </code></pre><p>属性通常提供不属于数据组成部分的信息。文件类型与数据无关，但是对需要处理这个元素的软件来说却很重要：</p>
+<pre><code>&lt;file type=&quot;gif&quot;&gt;computer.gif&lt;/file&gt;</code></pre><p>在 XML 中，您应该尽量避免使用属性。如果信息感觉起来很像数据，那么请使用子元素。</p>
+<p>因使用属性而引起的一些问题：</p>
+<pre><code>属性无法包含多重的值（元素可以）
+属性无法描述树结构（元素可以）
+属性不易扩展（为未来的变化）
+属性难以阅读和维护</code></pre></li>
+<li><p>验证 XML 文档</p>
+<p>合法的 XML 文档是“形式良好”的 XML 文档，同样遵守文档类型定义 (DTD) 的语法规则：</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
+&lt;!DOCTYPE note SYSTEM &quot;Note.dtd&quot;&gt;
+&lt;note&gt;
+&lt;to&gt;George&lt;/to&gt;
+&lt;from&gt;John&lt;/from&gt;
+&lt;heading&gt;Reminder&lt;/heading&gt;
+&lt;body&gt;Don&apos;t forget the meeting!&lt;/body&gt;
+&lt;/note&gt;  </code></pre><p>DTD 的作用是定义 XML 文档的结构。它使用一系列合法的元素来定义文档结构：</p>
+<pre><code>&lt;!DOCTYPE note [
+&lt;!ELEMENT note (to,from,heading,body)&gt;
+&lt;!ELEMENT to      (#PCDATA)&gt;
+&lt;!ELEMENT from    (#PCDATA)&gt;
+&lt;!ELEMENT heading (#PCDATA)&gt;
+&lt;!ELEMENT body    (#PCDATA)&gt;
+]&gt; </code></pre></li>
+<li><p>使用 <code>CSS</code> 显示 <code>XML</code></p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
+&lt;?xml-stylesheet type=&quot;text/css&quot; href=&quot;cd_catalog.css&quot;?&gt;
+&lt;CATALOG&gt;
+&lt;CD&gt;
+    &lt;TITLE&gt;Empire Burlesque&lt;/TITLE&gt;
+    &lt;ARTIST&gt;Bob Dylan&lt;/ARTIST&gt;
+    &lt;COUNTRY&gt;USA&lt;/COUNTRY&gt;
+    &lt;COMPANY&gt;Columbia&lt;/COMPANY&gt;
+    &lt;PRICE&gt;10.90&lt;/PRICE&gt;
+    &lt;YEAR&gt;1985&lt;/YEAR&gt;
+&lt;/CD&gt;
+&lt;CD&gt;
+    &lt;TITLE&gt;Hide your heart&lt;/TITLE&gt;
+    &lt;ARTIST&gt;Bonnie Tyler&lt;/ARTIST&gt;
+    &lt;COUNTRY&gt;UK&lt;/COUNTRY&gt;
+    &lt;COMPANY&gt;CBS Records&lt;/COMPANY&gt;
+    &lt;PRICE&gt;9.90&lt;/PRICE&gt;
+    &lt;YEAR&gt;1988&lt;/YEAR&gt;
+&lt;/CD&gt;
+&lt;/CATALOG&gt;</code></pre><p><code>&lt;?xml-stylesheet type=&quot;text/css&quot; href=&quot;cd_catalog.css&quot;?&gt;</code>，把这个 XML 文件链接到 CSS 文件</p>
+<p>cd_catalog.css</p>
+<pre><code>CATALOG
+{
+    background-color: #ffffff;
+    width: 100%;
+}
+CD
+{
+    display: block;
+    margin-bottom: 30pt;
+    margin-left: 0;
+}
+TITLE
+{
+    color: #FF0000;
+    font-size: 20pt;
+}
+ARTIST
+{
+    color: #0000FF;
+    font-size: 20pt;
+}
+COUNTRY,PRICE,YEAR,COMPANY
+{
+    display: block;
+    color: #000000;
+    margin-left: 20pt;
+}</code></pre></li>
+<li><p>使用 XSLT 显示 XML</p>
+<p>XSLT 是首选的 XML 样式表语言。<br>XSLT (eXtensible Stylesheet Language Transformations) 远比 CSS 更加完善。<br>使用 XSLT 的方法之一是在浏览器显示 XML 文件之前，先把它转换为 HTML，正如以下的这些例子演示的那样：</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
+&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;simple.xsl&quot;?&gt;
+&lt;breakfast_menu&gt;
+&lt;food&gt;
+    &lt;name&gt;Belgian Waffles&lt;/name&gt;
+    &lt;price&gt;$5.95&lt;/price&gt;
+    &lt;description&gt;
+    two of our famous Belgian Waffles
+    &lt;/description&gt;
+    &lt;calories&gt;650&lt;/calories&gt;
+&lt;/food&gt;
+&lt;/breakfast_menu&gt;</code></pre><p><code>&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;simple.xsl&quot;?&gt;</code>，把这个 XML 文件链接到 XSL 文件</p>
+<p>simple.xsl</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;ISO-8859-1&quot;?&gt;
+&lt;!-- Edited with XML Spy v2007 (http://www.altova.com) --&gt;
+&lt;html xsl:version=&quot;1.0&quot; xmlns:xsl=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+&lt;body style=&quot;font-family:Arial,helvetica,sans-serif;font-size:12pt;
+        background-color:#EEEEEE&quot;&gt;
+    &lt;xsl:for-each select=&quot;breakfast_menu/food&quot;&gt;
+    &lt;div style=&quot;background-color:teal;color:white;padding:4px&quot;&gt;
+        &lt;span style=&quot;font-weight:bold;color:white&quot;&gt;
+        &lt;xsl:value-of select=&quot;name&quot;/&gt;&lt;/span&gt;
+        - &lt;xsl:value-of select=&quot;price&quot;/&gt;
+    &lt;/div&gt;
+    &lt;div style=&quot;margin-left:20px;margin-bottom:1em;font-size:10pt&quot;&gt;
+        &lt;xsl:value-of select=&quot;description&quot;/&gt;
+        &lt;span style=&quot;font-style:italic&quot;&gt;
+        (&lt;xsl:value-of select=&quot;calories&quot;/&gt; calories per serving)
+        &lt;/span&gt;
+    &lt;/div&gt;
+    &lt;/xsl:for-each&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre><p>直接使用样式：</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-16&quot;?&gt;&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot;&gt;&lt;body style=&quot;font-family:Arial,helvetica,sans-serif;font-size:12pt;&amp;#xA;        background-color:#EEEEEE&quot;&gt;&lt;div style=&quot;background-color:teal;color:white;padding:4px&quot;&gt;&lt;span style=&quot;font-weight:bold;color:white&quot;&gt;Belgian Waffles&lt;/span&gt;
+        - $5.95&lt;/div&gt;&lt;div style=&quot;margin-left:20px;margin-bottom:1em;font-size:10pt&quot;&gt;two of our famous Belgian Waffles with plenty of real maple syrup&lt;span style=&quot;font-style:italic&quot;&gt;
+        (650 calories per serving)
+        &lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;background-color:teal;color:white;padding:4px&quot;&gt;&lt;span style=&quot;font-weight:bold;color:white&quot;&gt;Strawberry Belgian Waffles&lt;/span&gt;
+        - $7.95&lt;/div&gt;&lt;div style=&quot;margin-left:20px;margin-bottom:1em;font-size:10pt&quot;&gt;light Belgian waffles covered with strawberries and whipped cream&lt;span style=&quot;font-style:italic&quot;&gt;
+        (900 calories per serving)
+        &lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;background-color:teal;color:white;padding:4px&quot;&gt;&lt;span style=&quot;font-weight:bold;color:white&quot;&gt;Berry-Berry Belgian Waffles&lt;/span&gt;
+        - $8.95&lt;/div&gt;&lt;div style=&quot;margin-left:20px;margin-bottom:1em;font-size:10pt&quot;&gt;light Belgian waffles covered with an assortment of fresh berries and whipped cream&lt;span style=&quot;font-style:italic&quot;&gt;
+        (900 calories per serving)
+        &lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;background-color:teal;color:white;padding:4px&quot;&gt;&lt;span style=&quot;font-weight:bold;color:white&quot;&gt;French Toast&lt;/span&gt;
+        - $4.50&lt;/div&gt;&lt;div style=&quot;margin-left:20px;margin-bottom:1em;font-size:10pt&quot;&gt;thick slices made from our homemade sourdough bread&lt;span style=&quot;font-style:italic&quot;&gt;
+        (600 calories per serving)
+        &lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;background-color:teal;color:white;padding:4px&quot;&gt;&lt;span style=&quot;font-weight:bold;color:white&quot;&gt;Homestyle Breakfast&lt;/span&gt;
+        - $6.95&lt;/div&gt;&lt;div style=&quot;margin-left:20px;margin-bottom:1em;font-size:10pt&quot;&gt;two eggs, bacon or sausage, toast, and our ever-popular hash browns&lt;span style=&quot;font-style:italic&quot;&gt;
+        (950 calories per serving)
+        &lt;/span&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;</code></pre></li>
+<li><p>XMLHttpRequest 对象</p>
+<p>XMLHttpRequest 对象用于在后台与服务器交换数据。</p>
+<pre><code>在不重新加载页面的情况下更新网页
+在页面已加载后从服务器请求数据
+在页面已加载后从服务器接收数据
+在后台向服务器发送数据</code></pre><p>创建 XMLHttpRequest 对象的语法：</p>
+<pre><code>xmlhttp=new XMLHttpRequest();</code></pre><p>老版本的 Internet Explorer （IE5 和 IE6）使用 ActiveX 对象：</p>
+<pre><code>xmlhttp=new ActiveXObject(&quot;Microsoft.XMLHTTP&quot;);</code></pre><p>实例 1</p>
+<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
+var xmlhttp;
+function loadXMLDoc(url)
+{
+xmlhttp=null;
+if (window.XMLHttpRequest)
+{// code for all new browsers
+xmlhttp=new XMLHttpRequest();
+}
+else if (window.ActiveXObject)
+{// code for IE5 and IE6
+xmlhttp=new ActiveXObject(&quot;Microsoft.XMLHTTP&quot;);
+}
+if (xmlhttp!=null)
+{
+xmlhttp.onreadystatechange=state_Change;
+xmlhttp.open(&quot;GET&quot;,url,true);
+xmlhttp.send(null);
+}
+else
+{
+alert(&quot;Your browser does not support XMLHTTP.&quot;);
+}
+}
+
+function state_Change()
+{
+if (xmlhttp.readyState==4)
+{// 4 = &quot;loaded&quot;
+if (xmlhttp.status==200)
+    {// 200 = OK
+    console.log(xmlhttp.responseText);
+    }
+else
+    {
+    alert(&quot;Problem retrieving XML data:&quot; + xmlhttp.statusText);
+    }
+}
+}
+&lt;/script&gt;</code></pre><p>注释：onreadystatechange 是一个事件句柄。它的值 (state_Change) 是一个函数的名称，当 XMLHttpRequest 对象的状态发生改变时，会触发此函数。状态从 0 (uninitialized) 到 4 (complete) 进行变化。仅在状态为 4 时，我们才执行代码。</p>
+<p>open() 的第三个参数中使用了 “true”。<br>该参数规定请求是否异步处理。<br>True 表示脚本会在 send() 方法之后继续执行，而不等待来自服务器的响应。<br>onreadystatechange 事件使代码复杂化了。但是这是在没有得到服务器响应的情况下，防止代码停止的最安全的方法。<br>通过把该参数设置为 “false”，可以省去额外的 onreadystatechange 代码。如果在请求失败时是否执行其余的代码无关紧要，那么可以使用这个参数。</p>
+<p>加载并解析 XML 文件：</p>
+<pre><code>&lt;script type=&quot;text/javascript&quot;&gt;
+if (window.XMLHttpRequest)
+{// code for IE7+, Firefox, Chrome, Opera, Safari
+xmlhttp=new XMLHttpRequest();
+}
+else
+{// code for IE6, IE5
+xmlhttp=new ActiveXObject(&quot;Microsoft.XMLHTTP&quot;);
+}
+xmlhttp.open(&quot;GET&quot;,&quot;/example/xmle/note.xml&quot;,false);
+xmlhttp.send();
+xmlDoc=xmlhttp.responseXML;
+
+var to =
+xmlDoc.getElementsByTagName(&quot;to&quot;)[0].childNodes[0].nodeValue;
+var from =
+xmlDoc.getElementsByTagName(&quot;from&quot;)[0].childNodes[0].nodeValue;
+var body =
+xmlDoc.getElementsByTagName(&quot;body&quot;)[0].childNodes[0].nodeValue;
+&lt;/script&gt;</code></pre><p>加载并解析 XML 字符串：</p>
+<pre><code>&lt;script&gt;
+txt=&quot;&lt;note&gt;&quot;;
+txt=txt+&quot;&lt;to&gt;George&lt;/to&gt;&quot;;
+txt=txt+&quot;&lt;from&gt;John&lt;/from&gt;&quot;;
+txt=txt+&quot;&lt;heading&gt;Reminder&lt;/heading&gt;&quot;;
+txt=txt+&quot;&lt;body&gt;Don&apos;t forget the meeting!&lt;/body&gt;&quot;;
+txt=txt+&quot;&lt;/note&gt;&quot;;
+if (window.DOMParser)
+{
+parser=new DOMParser();
+xmlDoc=parser.parseFromString(txt,&quot;text/xml&quot;);
+}
+else // Internet Explorer
+{
+xmlDoc=new ActiveXObject(&quot;Microsoft.XMLDOM&quot;);
+xmlDoc.async=&quot;false&quot;;
+xmlDoc.loadXML(txt);
+}
+var to=xmlDoc.getElementsByTagName(&quot;to&quot;)[0].childNodes[0].nodeValue;
+var from=xmlDoc.getElementsByTagName(&quot;from&quot;)[0].childNodes[0].nodeValue;
+var body=xmlDoc.getElementsByTagName(&quot;body&quot;)[0].childNodes[0].nodeValue;
+&lt;/script&gt;</code></pre></li>
+<li><p>解析 XML 文档</p>
+<pre><code>if (window.XMLHttpRequest)
+{// code for IE7+, Firefox, Chrome, Opera, Safari
+    xmlhttp=new XMLHttpRequest();
+}
+else
+{// code for IE6, IE5
+    xmlhttp=new ActiveXObject(&quot;Microsoft.XMLHTTP&quot;);
+}
+xmlhttp.open(&quot;GET&quot;,&quot;books.xml&quot;,false);
+xmlhttp.send();
+xmlDoc=xmlhttp.responseXML; </code></pre><p>1：通过微软的 XML 解析器来加载 XML</p>
+<pre><code>var xmlDoc=new ActiveXObject(&quot;Microsoft.XMLDOM&quot;);
+xmlDoc.async=&quot;false&quot;;
+xmlDoc.load(&quot;note.xml&quot;);</code></pre><p>2：在 Firefox 及其他浏览器中的 XML 解析器</p>
+<pre><code>var xmlDoc=document.implementation.createDocument(&quot;&quot;,&quot;&quot;,null);
+xmlDoc.async=&quot;false&quot;;
+xmlDoc.load(&quot;note.xml&quot;);</code></pre><p>解析 XML 字符串</p>
+<pre><code>txt=&quot;&lt;bookstore&gt;&lt;book&gt;&quot;;
+txt=txt+&quot;&lt;title&gt;Everyday Italian&lt;/title&gt;&quot;;
+txt=txt+&quot;&lt;author&gt;Giada De Laurentiis&lt;/author&gt;&quot;;
+txt=txt+&quot;&lt;year&gt;2005&lt;/year&gt;&quot;;
+txt=txt+&quot;&lt;/book&gt;&lt;/bookstore&gt;&quot;;
+if (window.DOMParser)
+{
+    parser=new DOMParser();
+    xmlDoc=parser.parseFromString(txt,&quot;text/xml&quot;);
+}
+else // Internet Explorer
+{
+    xmlDoc=new ActiveXObject(&quot;Microsoft.XMLDOM&quot;);
+    xmlDoc.async=&quot;false&quot;;
+    xmlDoc.loadXML(txt);
+}</code></pre><p>注释：loadXML() 方法用于加载字符串（文本），load() 用于加载文件。</p>
+</li>
+<li><p>XML DOM</p>
+<pre><code>xmlDoc.getElementsByTagName(&quot;to&quot;)[0].childNodes[0].nodeValue
+
+xmlDoc -由解析器创建的 XML 文档
+getElementsByTagName(&quot;to&quot;)[0] - 第一个 &lt;to&gt; 元素
+childNodes[0] - &lt;to&gt; 元素的第一个子元素（文本节点）
+nodeValue - 节点的值（文本本身）</code></pre></li>
+<li><p>XML 命名空间（XML Namespaces）</p>
+<p>在 XML 中，元素名称是由开发者定义的，当两个不同的文档使用相同的元素名时，就会发生命名冲突。<br>这个 XML 文档携带着某个表格中的信息：</p>
+<pre><code>&lt;table&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Apples&lt;/td&gt;
+        &lt;td&gt;Bananas&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</code></pre><p>这个 XML 文档携带有关桌子的信息（一件家具）：</p>
+<pre><code>&lt;table&gt;
+    &lt;name&gt;African Coffee Table&lt;/name&gt;
+    &lt;width&gt;80&lt;/width&gt;
+    &lt;length&gt;120&lt;/length&gt;
+&lt;/table&gt;</code></pre><p>假如这两个 XML 文档被一起使用，由于两个文档都包含带有不同内容和定义的 <code>&lt;table&gt;</code> 元素，就会发生命名冲突。<br>XML 解析器无法确定如何处理这类冲突。</p>
+<p>使用前缀来避免命名冲突</p>
+<pre><code>&lt;h:table&gt;
+    &lt;h:tr&gt;
+        &lt;h:td&gt;Apples&lt;/h:td&gt;
+        &lt;h:td&gt;Bananas&lt;/h:td&gt;
+    &lt;/h:tr&gt;
+&lt;/h:table&gt;</code></pre><p>此 XML 文档携带着有关一件家具的信息：</p>
+<pre><code>&lt;f:table&gt;
+    &lt;f:name&gt;African Coffee Table&lt;/f:name&gt;
+    &lt;f:width&gt;80&lt;/f:width&gt;
+    &lt;f:length&gt;120&lt;/f:length&gt;
+&lt;/f:table&gt;</code></pre><p>现在，命名冲突不存在了，这是由于两个文档都使用了不同的名称来命名它们的 <code>&lt;table&gt;</code> 元素 (<code>&lt;h:table&gt;</code> 和 <code>&lt;f:table&gt;)</code>。</p>
+<p>通过使用前缀，我们创建了两种不同类型的 <code>&lt;table&gt;</code> 元素。</p>
+<p>使用命名空间（Namespaces）</p>
+<p>这个 XML 文档携带着某个表格中的信息：</p>
+<pre><code>&lt;h:table xmlns:h=&quot;http://www.w3.org/TR/html4/&quot;&gt;
+    &lt;h:tr&gt;
+        &lt;h:td&gt;Apples&lt;/h:td&gt;
+        &lt;h:td&gt;Bananas&lt;/h:td&gt;
+    &lt;/h:tr&gt;
+&lt;/h:table&gt;</code></pre><p>此 XML 文档携带着有关一件家具的信息：</p>
+<pre><code>&lt;f:table xmlns:f=&quot;http://www.w3school.com.cn/furniture&quot;&gt;
+    &lt;f:name&gt;African Coffee Table&lt;/f:name&gt;
+    &lt;f:width&gt;80&lt;/f:width&gt;
+    &lt;f:length&gt;120&lt;/f:length&gt;
+&lt;/f:table&gt;</code></pre><p>与仅仅使用前缀不同，我们为 <code>&lt;table&gt;</code> 标签添加了一个 xmlns 属性，这样就为前缀赋予了一个与某个命名空间相关联的限定名称。</p>
+<p>XML Namespace (xmlns) 属性<br>XML 命名空间属性被放置于元素的开始标签之中，并使用以下的语法：</p>
+<pre><code>xmlns:namespace-prefix=&quot;namespaceURI&quot;</code></pre><p>当命名空间被定义在元素的开始标签中时，所有带有相同前缀的子元素都会与同一个命名空间相关联。</p>
+</li>
+<li><p>XML CDATA</p>
+<p>所有 XML 文档中的文本均会被解析器解析。<br>只有 CDATA 区段（CDATA section）中的文本会被解析器忽略。<br>PCDATA 指的是被解析的字符数据（Parsed Character Data）。<br>XML 解析器通常会解析 XML 文档中所有的文本。<br>当某个 XML 元素被解析时，其标签之间的文本也会被解析：</p>
+<pre><code>&lt;message&gt;此文本也会被解析&lt;/message&gt;</code></pre><p>术语 CDATA 指的是不应由 XML 解析器进行解析的文本数据（Unparsed Character Data）。<br>在 XML 元素中，<code>&lt;</code> 和 <code>&amp;</code> 是非法的。<br><code>&lt;</code> 会产生错误，因为解析器会把该字符解释为新元素的开始。<br><code>&amp;</code> 也会产生错误，因为解析器会把该字符解释为字符实体的开始。<br>某些文本，比如 JavaScript 代码，包含大量 <code>&lt;</code> 或 <code>&amp;</code> 字符。为了避免错误，可以将脚本代码定义为 CDATA。<br>CDATA 部分中的所有内容都会被解析器忽略。<br>CDATA 部分由 <code>&lt;![CDATA[</code> 开始，由 <code>]]&gt;</code> 结束：</p>
+<pre><code>&lt;script&gt;
+&lt;![CDATA[
+    function matchwo(a,b)
+    {
+        if (a &lt; b &amp;&amp; a &lt; 0) then
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+]]&gt;
+&lt;/script&gt;</code></pre><p>解析器会忽略 CDATA 部分中的所有内容</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/12/29/oracle-%E5%9F%BA%E6%9C%AC/" rel="prev" title="oracle-基本">
+      <i class="fa fa-chevron-left"></i> oracle-基本
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/12/29/xml-DTD/" rel="next" title="xml-DTD">
+      xml-DTD <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+    <div id="gitmentContainer"></div>
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#XML-扩展标记语言：EXtensible-Markup-Lanuage"><span class="nav-number">1.</span> <span class="nav-text">XML 扩展标记语言：EXtensible Markup Lanuage</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jinwen</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jinwen</span>
+</div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+  // https://imsun.net/posts/gitment-introduction/
+  var gitment = new Gitment({
+    // id: 'about/me.html', // 可选。默认为 location.href
+    id: location.href,
+    owner: 'jinven',
+    repo: 'jinven.github.io',
+    oauth: {
+      client_id: 'c632308a327582f31107',
+      client_secret: '06592fcf5ed4c08e218fbf0c6ebe2dce1241d054',
+    },
+  })
+  if(document.getElementById('gitmentContainer')){
+    gitment.render('gitmentContainer')
+  }
+</script>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.6.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

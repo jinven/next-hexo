@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://yoursite.com').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.6.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="&#x2F;根目录，一般根目录下只存放目录，不要存放文件。&#x2F;etc、&#x2F;bin、&#x2F;dev、&#x2F;lib、&#x2F;sbin应该和根目录放置在一个分区中 &#x2F;bin存放系统中最常用的二进制可执行文件（二进制文件）。基础系统所需要的那些命令位于此目录，也是最小系统所需要的命令；例如ls、cp、mkdir等命令。功能和&#x2F;usr&#x2F;bin类似，这个目录中的文件都是可执行的，普通用户都可以使用命令 &#x2F;boot存放Linux内核和系统启">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux目录">
+<meta property="og:url" content="http://yoursite.com/2019/12/29/linux-%E7%9B%AE%E5%BD%95/index.html">
+<meta property="og:site_name" content="Jinwen">
+<meta property="og:description" content="&#x2F;根目录，一般根目录下只存放目录，不要存放文件。&#x2F;etc、&#x2F;bin、&#x2F;dev、&#x2F;lib、&#x2F;sbin应该和根目录放置在一个分区中 &#x2F;bin存放系统中最常用的二进制可执行文件（二进制文件）。基础系统所需要的那些命令位于此目录，也是最小系统所需要的命令；例如ls、cp、mkdir等命令。功能和&#x2F;usr&#x2F;bin类似，这个目录中的文件都是可执行的，普通用户都可以使用命令 &#x2F;boot存放Linux内核和系统启">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-12-29T08:03:02.000Z">
+<meta property="article:modified_time" content="2019-12-29T08:27:34.974Z">
+<meta property="article:author" content="Jinwen">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2019/12/29/linux-%E7%9B%AE%E5%BD%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>linux目录 | Jinwen</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jinwen</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/29/linux-%E7%9B%AE%E5%BD%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jinwen">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jinwen">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          linux目录
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2019-12-29 16:03:02 / 修改时间：16:27:34" itemprop="dateCreated datePublished" datetime="2019-12-29T16:03:02+08:00">2019-12-29</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id=""><a href="#" class="headerlink" title="/"></a><code>/</code></h3><p>根目录，一般根目录下只存放目录，不要存放文件。/etc、/bin、/dev、/lib、/sbin应该和根目录放置在一个分区中</p>
+<h3 id="bin"><a href="#bin" class="headerlink" title="/bin"></a><code>/bin</code></h3><p>存放系统中最常用的二进制可执行文件（二进制文件）。基础系统所需要的那些命令位于此目录，也是最小系统所需要的命令；例如ls、cp、mkdir等命令。功能和/usr/bin类似，这个目录中的文件都是可执行的，普通用户都可以使用命令</p>
+<h3 id="boot"><a href="#boot" class="headerlink" title="/boot"></a><code>/boot</code></h3><p>存放Linux内核和系统启动文件，包括Grub、lilo启动程序</p>
+<a id="more"></a>
+
+<h3 id="dev"><a href="#dev" class="headerlink" title="/dev"></a><code>/dev</code></h3><p>存放所有设备文件，包括硬盘、分区、键盘、鼠标、USB等</p>
+<h3 id="etc"><a href="#etc" class="headerlink" title="/etc"></a><code>/etc</code></h3><p>存放系统所有配置文件，例如passwd存放用户账户信息，hostname存放主机名等。/etc/fstab是开机自动挂载一些分区的，在里面写入一些分区信息，就能实现开机挂载分区</p>
+<h3 id="etc-rc-d-init-d"><a href="#etc-rc-d-init-d" class="headerlink" title="/etc/rc.d/init.d"></a><code>/etc/rc.d/init.d</code></h3><p>类似与windows中的注册表，在系统启动的时候某些指定脚本将被执行 </p>
+<h3 id="home"><a href="#home" class="headerlink" title="/home"></a><code>/home</code></h3><p>用户目录的默认位置</p>
+<h3 id="initrd"><a href="#initrd" class="headerlink" title="/initrd"></a><code>/initrd</code></h3><p>存放启动时挂载initrd.img映像文件的目录，以及载入所需设备模块的目录</p>
+<h3 id="lib"><a href="#lib" class="headerlink" title="/lib"></a><code>/lib</code></h3><p>存放共享的库文件，包含许多被/bin和/sbin中程序使用的库文件</p>
+<h3 id="lost-found"><a href="#lost-found" class="headerlink" title="/lost+found"></a><code>/lost+found</code></h3><p>在ext2或者ext3文件系统中，当系统意外崩溃或者计算机意外关机，而产生一些文件碎片存放在这里。当系统启动的过程中fsck工具会检查这里，并修复已经损坏的文件系统。有时系统发生问题，有很多的文件被移动到这个目录中，可能会用手工的方式来修复或移动到文件的原位置上</p>
+<h3 id="media"><a href="#media" class="headerlink" title="/media"></a><code>/media</code></h3><p>即插即用型设备的挂载点自动在这个目录下创建。例如USB自动挂载后会在这个目录下产生一个目录；CDROM/DVD自动挂载后，也会在这个目录中创建一个目录，存放临时读入的文件</p>
+<h3 id="mnt"><a href="#mnt" class="headerlink" title="/mnt"></a><code>/mnt</code></h3><p>此目录通常用于作为被挂载的文件系统的挂载点</p>
+<h3 id="proc"><a href="#proc" class="headerlink" title="/proc"></a><code>/proc</code></h3><p>存放所有标志为文件的进程，它们是通过进程号或其他的系统动态信息进行标识。例如CPU、硬盘分区、内存信息等存放在这里</p>
+<h3 id="opt"><a href="#opt" class="headerlink" title="/opt"></a><code>/opt</code></h3><p>作为可选文件和程序的存放目录。有些软件包也会被安装在这里，也就是自定义软件包；有些用户自己编译的软件包，就可以安装在这个目录中</p>
+<h3 id="root"><a href="#root" class="headerlink" title="/root"></a><code>/root</code></h3><p>根用户（超级用户）的主目录</p>
+<h3 id="sbin"><a href="#sbin" class="headerlink" title="/sbin"></a><code>/sbin</code></h3><p>大多是涉及系统管理的命令的存放地，也是超级权限用户root的可执行命令存放地。普通用户无权限执行这个目录下的命令，这个目录和/usr/sbin; /usr/X11R6/sbin或/usr/local/sbin目录是相似的。注意，凡是目录sbin中包含的都是root权限才能执行的</p>
+<h3 id="srv"><a href="#srv" class="headerlink" title="/srv"></a><code>/srv</code></h3><p>存放系统所提供的服务数据</p>
+<h3 id="sys"><a href="#sys" class="headerlink" title="/sys"></a><code>/sys</code></h3><p>该目录用于将系统设备组织或层次结构，并向用户提供详细的内核数据信息</p>
+<h3 id="tmp"><a href="#tmp" class="headerlink" title="/tmp"></a><code>/tmp</code></h3><p>临时文件目录，有时用户运行程序的时候，会产生临时文件。/var/tmp目录和这个目录相似</p>
+<h3 id="usr"><a href="#usr" class="headerlink" title="/usr"></a><code>/usr</code></h3><p>用于存放与系统用户直接有关的文件和目录，如应用程序及支出系统的库文件</p>
+<h3 id="usr-X11R6"><a href="#usr-X11R6" class="headerlink" title="/usr/X11R6"></a><code>/usr/X11R6</code></h3><p>X Window系统</p>
+<h3 id="usr-bin"><a href="#usr-bin" class="headerlink" title="/usr/bin"></a><code>/usr/bin</code></h3><p>用户管理员的标准命令</p>
+<h3 id="usr-include"><a href="#usr-include" class="headerlink" title="/usr/include"></a><code>/usr/include</code></h3><p>C/C++等开发工具语言环境的标准include文件</p>
+<h3 id="usr-lib"><a href="#usr-lib" class="headerlink" title="/usr/lib"></a><code>/usr/lib</code></h3><p>应用程序及程序报的链接库</p>
+<h3 id="usr-local"><a href="#usr-local" class="headerlink" title="/usr/local"></a><code>/usr/local</code></h3><p>系统管理员安装的应用程序</p>
+<h3 id="usr-local-share"><a href="#usr-local-share" class="headerlink" title="/usr/local/share"></a><code>/usr/local/share</code></h3><p>系统管理员安装的共享文件</p>
+<h3 id="usr-sbin"><a href="#usr-sbin" class="headerlink" title="/usr/sbin"></a><code>/usr/sbin</code></h3><p>用户和管理员的标准命令</p>
+<h3 id="usr-share"><a href="#usr-share" class="headerlink" title="/usr/share"></a><code>/usr/share</code></h3><p>存放使用手册等共享文件的地方</p>
+<h3 id="usr-share-dict"><a href="#usr-share-dict" class="headerlink" title="/usr/share/dict"></a><code>/usr/share/dict</code></h3><p>存放词表的目录</p>
+<h3 id="usr-share-man"><a href="#usr-share-man" class="headerlink" title="/usr/share/man"></a><code>/usr/share/man</code></h3><p>系统使用手册</p>
+<h3 id="usr-share-misc"><a href="#usr-share-misc" class="headerlink" title="/usr/share/misc"></a><code>/usr/share/misc</code></h3><p>一般数据</p>
+<h3 id="usr-share-sgml"><a href="#usr-share-sgml" class="headerlink" title="/usr/share/sgml"></a><code>/usr/share/sgml</code></h3><p>SGML数据</p>
+<h3 id="usr-share-xml"><a href="#usr-share-xml" class="headerlink" title="/usr/share/xml"></a><code>/usr/share/xml</code></h3><p>XML数据</p>
+<h3 id="var"><a href="#var" class="headerlink" title="/var"></a><code>/var</code></h3><p>通常用于存放长度可变的文件，例如日志文件和打印机文件</p>
+<h3 id="var-cache"><a href="#var-cache" class="headerlink" title="/var/cache"></a><code>/var/cache</code></h3><p>应用程序缓存目录</p>
+<h3 id="var-crash"><a href="#var-crash" class="headerlink" title="/var/crash"></a><code>/var/crash</code></h3><p>系统错误信息</p>
+<h3 id="var-games"><a href="#var-games" class="headerlink" title="/var/games"></a><code>/var/games</code></h3><p>游戏数据</p>
+<h3 id="var-lib"><a href="#var-lib" class="headerlink" title="/var/lib"></a><code>/var/lib</code></h3><p>各种状态数据</p>
+<h3 id="var-lock"><a href="#var-lock" class="headerlink" title="/var/lock"></a><code>/var/lock</code></h3><p>文件锁定记录</p>
+<h3 id="var-log"><a href="#var-log" class="headerlink" title="/var/log"></a><code>/var/log</code></h3><p>日志记录</p>
+<h3 id="var-mail"><a href="#var-mail" class="headerlink" title="/var/mail"></a><code>/var/mail</code></h3><p>电子邮件</p>
+<h3 id="var-opt"><a href="#var-opt" class="headerlink" title="/var/opt"></a><code>/var/opt</code></h3><p>/opt目录的变量数据</p>
+<h3 id="var-run"><a href="#var-run" class="headerlink" title="/var/run"></a><code>/var/run</code></h3><p>进程的标示数据</p>
+<h3 id="var-spool"><a href="#var-spool" class="headerlink" title="/var/spool"></a><code>/var/spool</code></h3><p>存放电子邮件，打印任务等的队列目录</p>
+<h3 id="var-tmp"><a href="#var-tmp" class="headerlink" title="/var/tmp"></a><code>/var/tmp</code></h3><p>临时文件目录</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/12/29/linux-%E7%94%A8%E6%88%B7%E6%93%8D%E4%BD%9C/" rel="prev" title="linux用户操作">
+      <i class="fa fa-chevron-left"></i> linux用户操作
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/12/29/linux-%E8%A7%A3%E5%8E%8B%E7%BC%A9/" rel="next" title="linux解压缩">
+      linux解压缩 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+    <div id="gitmentContainer"></div>
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#null"><span class="nav-number">1.</span> <span class="nav-text">&#x2F;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bin"><span class="nav-number">2.</span> <span class="nav-text">&#x2F;bin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#boot"><span class="nav-number">3.</span> <span class="nav-text">&#x2F;boot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dev"><span class="nav-number">4.</span> <span class="nav-text">&#x2F;dev</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#etc"><span class="nav-number">5.</span> <span class="nav-text">&#x2F;etc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#etc-rc-d-init-d"><span class="nav-number">6.</span> <span class="nav-text">&#x2F;etc&#x2F;rc.d&#x2F;init.d</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#home"><span class="nav-number">7.</span> <span class="nav-text">&#x2F;home</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#initrd"><span class="nav-number">8.</span> <span class="nav-text">&#x2F;initrd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lib"><span class="nav-number">9.</span> <span class="nav-text">&#x2F;lib</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lost-found"><span class="nav-number">10.</span> <span class="nav-text">&#x2F;lost+found</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#media"><span class="nav-number">11.</span> <span class="nav-text">&#x2F;media</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mnt"><span class="nav-number">12.</span> <span class="nav-text">&#x2F;mnt</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#proc"><span class="nav-number">13.</span> <span class="nav-text">&#x2F;proc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#opt"><span class="nav-number">14.</span> <span class="nav-text">&#x2F;opt</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#root"><span class="nav-number">15.</span> <span class="nav-text">&#x2F;root</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sbin"><span class="nav-number">16.</span> <span class="nav-text">&#x2F;sbin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#srv"><span class="nav-number">17.</span> <span class="nav-text">&#x2F;srv</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sys"><span class="nav-number">18.</span> <span class="nav-text">&#x2F;sys</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tmp"><span class="nav-number">19.</span> <span class="nav-text">&#x2F;tmp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usr"><span class="nav-number">20.</span> <span class="nav-text">&#x2F;usr</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usr-X11R6"><span class="nav-number">21.</span> <span class="nav-text">&#x2F;usr&#x2F;X11R6</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usr-bin"><span class="nav-number">22.</span> <span class="nav-text">&#x2F;usr&#x2F;bin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usr-include"><span class="nav-number">23.</span> <span class="nav-text">&#x2F;usr&#x2F;include</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usr-lib"><span class="nav-number">24.</span> <span class="nav-text">&#x2F;usr&#x2F;lib</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usr-local"><span class="nav-number">25.</span> <span class="nav-text">&#x2F;usr&#x2F;local</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usr-local-share"><span class="nav-number">26.</span> <span class="nav-text">&#x2F;usr&#x2F;local&#x2F;share</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usr-sbin"><span class="nav-number">27.</span> <span class="nav-text">&#x2F;usr&#x2F;sbin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usr-share"><span class="nav-number">28.</span> <span class="nav-text">&#x2F;usr&#x2F;share</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usr-share-dict"><span class="nav-number">29.</span> <span class="nav-text">&#x2F;usr&#x2F;share&#x2F;dict</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usr-share-man"><span class="nav-number">30.</span> <span class="nav-text">&#x2F;usr&#x2F;share&#x2F;man</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usr-share-misc"><span class="nav-number">31.</span> <span class="nav-text">&#x2F;usr&#x2F;share&#x2F;misc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usr-share-sgml"><span class="nav-number">32.</span> <span class="nav-text">&#x2F;usr&#x2F;share&#x2F;sgml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#usr-share-xml"><span class="nav-number">33.</span> <span class="nav-text">&#x2F;usr&#x2F;share&#x2F;xml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#var"><span class="nav-number">34.</span> <span class="nav-text">&#x2F;var</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#var-cache"><span class="nav-number">35.</span> <span class="nav-text">&#x2F;var&#x2F;cache</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#var-crash"><span class="nav-number">36.</span> <span class="nav-text">&#x2F;var&#x2F;crash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#var-games"><span class="nav-number">37.</span> <span class="nav-text">&#x2F;var&#x2F;games</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#var-lib"><span class="nav-number">38.</span> <span class="nav-text">&#x2F;var&#x2F;lib</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#var-lock"><span class="nav-number">39.</span> <span class="nav-text">&#x2F;var&#x2F;lock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#var-log"><span class="nav-number">40.</span> <span class="nav-text">&#x2F;var&#x2F;log</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#var-mail"><span class="nav-number">41.</span> <span class="nav-text">&#x2F;var&#x2F;mail</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#var-opt"><span class="nav-number">42.</span> <span class="nav-text">&#x2F;var&#x2F;opt</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#var-run"><span class="nav-number">43.</span> <span class="nav-text">&#x2F;var&#x2F;run</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#var-spool"><span class="nav-number">44.</span> <span class="nav-text">&#x2F;var&#x2F;spool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#var-tmp"><span class="nav-number">45.</span> <span class="nav-text">&#x2F;var&#x2F;tmp</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Jinwen</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jinwen</span>
+</div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+  // https://imsun.net/posts/gitment-introduction/
+  var gitment = new Gitment({
+    // id: 'about/me.html', // 可选。默认为 location.href
+    id: location.href,
+    owner: 'jinven',
+    repo: 'jinven.github.io',
+    oauth: {
+      client_id: 'c632308a327582f31107',
+      client_secret: '06592fcf5ed4c08e218fbf0c6ebe2dce1241d054',
+    },
+  })
+  if(document.getElementById('gitmentContainer')){
+    gitment.render('gitmentContainer')
+  }
+</script>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.6.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
