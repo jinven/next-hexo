@@ -1,6 +1,7 @@
 node_modules
 package-lock.json
 .next
+.next-dev
 dist
 .DS_Store
 Thumbs.db
