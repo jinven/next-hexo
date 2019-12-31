@@ -10,3 +10,5 @@ db.json
 node_modules/
 .deploy*/
 /public
+.git
+.github
