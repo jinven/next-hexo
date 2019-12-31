@@ -12,7 +12,8 @@
     "hexo-build": "hexo generate",
     "hexo-clean": "hexo clean",
     "hexo-deploy": "hexo deploy",
-    "hexo-server": "hexo server"
+    "hexo-server": "hexo server",
+    "hexo-push": "hexo clean && hexo generate && hexo deploy"
   },
   "hexo": {
     "version": "4.2.0"
