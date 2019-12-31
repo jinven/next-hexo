@@ -41,24 +41,7 @@
     <span title="{{ __('symbols_count_time.time_total') }}">{{ symbolsTimeTotal(site, theme.symbols_count_time.awl, theme.symbols_count_time.wpm, __('symbols_count_time.time_minutes')) }}</span>
   {%- endif %}
 </div>
-<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
-<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
-<script>
-  // https://imsun.net/posts/gitment-introduction/
-  var gitment = new Gitment({
-    // id: '{{ page.path }}', // 可选。默认为 location.href
-    id: location.href,
-    owner: 'jinven',
-    repo: 'jinven.github.io',
-    oauth: {
-      client_id: 'c632308a327582f31107',
-      client_secret: '06592fcf5ed4c08e218fbf0c6ebe2dce1241d054',
-    },
-  })
-  if(document.getElementById('gitmentContainer')){
-    gitment.render('gitmentContainer')
-  }
-</script>
+{{ partial('_scripts/gitment.swig', {post: page}) }}
 
 {%- if theme.footer.powered.enable %}
   <div class="powered-by">

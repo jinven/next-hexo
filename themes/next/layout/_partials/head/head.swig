@@ -54,8 +54,12 @@
 {%- if theme.pace.enable %}
   {%- set pace_css_uri = theme.vendors.pace_css or next_vendors('pace/pace-theme-' + theme.pace.theme + '.min.css') %}
   {%- set pace_js_uri = theme.vendors.pace or next_vendors('pace/pace.min.js') %}
-  <link rel="stylesheet" href="{{ pace_css_uri }}">
-  <script src="{{ pace_js_uri }}"></script>
+  <!-- 
+    <link rel="stylesheet" href="{{ pace_css_uri }}">
+    <script src="{{ pace_js_uri }}" async></script>
+  -->
+  <link rel="stylesheet" href="{{ url_for(theme.css) }}/third/pace-theme-minimal.css">
+  <script src="{{ url_for(theme.js) }}/third/pace.min.js"></script>
 {%- endif %}
 
 {# Export some Hexo Configurations to Front-End #}

@@ -13,7 +13,7 @@ timezone: 'Asia/ShangHai'
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: https://jinven.github.io/
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -98,3 +98,25 @@ deploy:
   type: 'git'
   repo: https://github.com/jinven/jinven.github.io.git
   branch: master
+
+Plugins:
+- hexo-generator-baidu-sitemap
+- hexo-generator-sitemap
+
+baidusitemap:
+  path: baidusitemap.xml
+sitemap:
+  path: sitemap.xml
+
+algolia:
+  applicationID: 'TTEP1D8FD8'
+  appId: 'TTEP1D8FD8'
+  apiKey: 'e4ce9422094b2c7623570a8ba17abd52'
+  adminApiKey: '0a724a90e3d94c41758b514c7418c108'
+  indexName: 'jwindex'
+  chunkSize: 50000
+  fields:
+    - title
+    - slug
+    - path
+    # - content:strip
