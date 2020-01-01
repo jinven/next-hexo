@@ -168,3 +168,32 @@ NexT.motion.middleWares = {
     integrator.next();
   }
 };
+
+// 夜间模式
+(function(){
+  var eleBar = document.getElementById('night-switch');
+  var eleInp = document.getElementById('switch-style');
+  var isNight = localStorage.getItem('night')==='true';
+  if(eleBar){
+    var fooClick = function(ev) {
+      var bodyClass = document.body.className || '';
+      if(eleInp.checked){
+        // 夜间
+        if((' ' + bodyClass + ' ').indexOf(' night-body ')===-1){
+          document.body.className = (bodyClass ? 'night-body ' : 'night-body') + bodyClass
+        }
+      } else {
+        // 白天
+        if((' ' + bodyClass + ' ').indexOf(' night-body ')>=0){
+          document.body.className = bodyClass.replace('night-body', '')
+        }
+      }
+      localStorage.setItem('night', eleInp.checked ? 'true' : 'false');
+    };
+    eleBar.addEventListener('click', fooClick, false);
+  }
+  if(isNight){
+    document.body.className = (document.body.className ? 'night-body ' : 'night-body') + document.body.className;
+    eleInp.checked = true;
+  }
+}());

@@ -14,6 +14,23 @@
         {%- set display_toc = toc.length > 1 and display_toc %}
       {%- endif %}
 
+      <div class="night-mode">
+        <div class="toggle-mode">
+          <div class="icon" title="白天模式">
+            <i class="fa fa-sun-o" aria-hidden="true"></i>
+          </div>
+          <div class="toggle-switch">
+            <label class="switch" id="night-switch">
+              <input type="checkbox" id="switch-style">
+              <div class="slider round"></div>
+            </label>
+          </div>
+          <div class="icon" title="夜间模式">
+            <i class="fa fa-moon-o" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
           {{ __('sidebar.toc') }}
