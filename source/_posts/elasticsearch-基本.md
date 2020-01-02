@@ -1,7 +1,7 @@
 ---
 title: elasticsearch-基本
 date: 2019-12-29 16:06:33
-tags:
+tags: database
 ---
 
 ## 1. 安装

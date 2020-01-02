@@ -1,7 +1,7 @@
 ---
 title: NUXTJS
 date: 2019-12-29 16:08:50
-tags:
+tags: node
 ---
 
 https://zh.nuxtjs.org/

@@ -125,48 +125,154 @@ if (hexo-config('sidebar.position') == 'right') {
 
 .night-body {
   background-color: #111;
+  transition: .5s;
   color: #aaa;
   a {
     color: #bbb;
   }
+  .sidebar{
+    background-color: #111;
+    transition: .5s;
+  }
   .header-inner {
     background-color: #333;
+    transition: .5s;
     .menu-item-active a {
       background-color: #555;
     }
   }
+  .menu .menu-item a:hover{
+    background-color: rgba(170, 170, 170, 0.3);
+  }
   .post-block {
     background-color: #333;
+    transition: .5s;
     .btn {
       background-color: #333;
+      transition: .5s;
     }
+  }
+  .post-body{
+    .table-container{
+      tbody tr:nth-of-type(odd){
+        background-color:transparent;
+      }
+      tbody tr:hover{
+        background-color:transparent;
+      }
+    }
+  }
+  .posts-collapse .post-title a{
+    color:#aaa;
+  }
+  .fa-sun-o{
+    color:#ddd;
   }
   .sidebar-inner {
     background-color: #333;
+    transition: .5s;
     .night-mode {
       border-color: #555;
     }
   }
+  .site-author-name{
+    color:#999;
+  }
+  .site-state-item-count{
+    color:#aaa;
+  }
   .posts-expand .post-title-link{
     color: #bbb;
   }
+  .posts-collapse::before{
+    background-color:#aaa;
+  }
   code {
-    background-color: #555;
+    background-color: transparent;
     color: #bbb;
   }
   .highlight{
     background-color:#111;
+    transition: .5s;
     pre {
       background-color:#111;
+      transition: .5s;
     }
   }
   pre {
     background-color:#111;
+    color:#aaa;
+    transition: .5s;
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      background: #222;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #555;
+      border-radius: 2px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: #777;
+    }
   }
   .pagination{
     background-color:#333;
+    transition: .5s;
     .current {
       background-color: #555;
+    }
+  }
+  .gitment-container{
+    .gitment-header-like-btn{
+      color:#999;
+      background-color: rgba(255,255,255,.2);
+      border-radius:15px;
+      padding: 3px 10px 3px 3px;
+    }
+    .gitment-comments-error{
+      color:#ccc;
+    }
+    .gitment-editor-login{
+      color:#ccc;
+    }
+    .gitment-editor-preview{
+      color:#999;
+    }
+    .gitment-footer-container{
+      color:#aaa;
+    }
+    .gitment-editor-tab:first-child{
+      float:left;
+      background-color: transparent !important;
+    }
+    .gitment-editor-tab.gitment-selected{
+      background-color: rgba(150,150,150,.3) !important;
+      color:#aaa;
+    }
+    .gitment-editor-write-field textarea{
+      background-color: transparent !important;
+    }
+  }
+  .site-search{
+    .search-popup{
+      background-color:#333;
+      .search-header{
+        background-color:#444;
+        .search-input input{
+          color:#aaa;
+        }
+      }
+    }
+    .algolia-results{
+      color:#999;
+      .algolia-powered{
+        img{
+          background-color:#ccc;
+          border-radius:3px;
+          padding:2px 5px;
+        }
+      }
     }
   }
 }

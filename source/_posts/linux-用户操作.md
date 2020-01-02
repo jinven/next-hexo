@@ -1,7 +1,7 @@
 ---
 title: linux用户操作
 date: 2019-12-29 16:02:49
-tags:
+tags: linux
 ---
 
 # 1. 查看所有用户：

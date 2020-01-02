@@ -1,7 +1,7 @@
 ---
 title: redis-集群
 date: 2019-12-29 16:05:43
-tags:
+tags: cache
 ---
 
 ## Redis 5.0.0 以上    

@@ -1,7 +1,7 @@
 ---
 title: linux常用命令
 date: 2019-12-29 16:03:36
-tags:
+tags: linux
 ---
 
 ## 基本

@@ -1,7 +1,7 @@
 ---
 title: npm-发布
 date: 2019-12-29 16:01:54
-tags:
+tags: node
 ---
 
 # 初始化项目

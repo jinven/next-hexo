@@ -1,7 +1,7 @@
 ---
 title: linux解压缩
 date: 2019-12-29 16:03:15
-tags:
+tags: linux
 ---
 
 # 1. 解压

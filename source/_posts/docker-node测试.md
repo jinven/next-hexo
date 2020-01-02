@@ -1,7 +1,7 @@
 ---
 title: docker-node测试
 date: 2019-12-29 16:01:25
-tags:
+tags: docker
 ---
 
 # 搭建环境

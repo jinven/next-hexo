@@ -1,7 +1,7 @@
 ---
 title: docker
 date: 2019-12-29 16:01:25
-tags:
+tags: docker
 ---
 
 # centos安装
@@ -139,7 +139,7 @@ tags:
 
 # dotnet core
 
-1. 安装 `dotnet` 镜像，打开 https://hub.docker.com，右上角搜索 `dotnet`，选择 `microsoft/dotnet`
+1. 安装 `dotnet` 镜像，打开 https://hub.docker.com ，右上角搜索 `dotnet`，选择 `microsoft/dotnet`
 
 2. 安装 `asp.net core` 镜像：
 
