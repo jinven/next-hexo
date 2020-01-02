@@ -130,6 +130,14 @@ if (hexo-config('sidebar.position') == 'right') {
   a {
     color: #bbb;
   }
+  .site-nav{
+    .menu{
+      .badge{
+        background-color:#333;
+        color:#999;
+      }
+    }
+  }
   .sidebar{
     background-color: #111;
     transition: .5s;
@@ -243,6 +251,9 @@ if (hexo-config('sidebar.position') == 'right') {
       background-color: rgba(255,255,255,.2);
       border-radius:15px;
       padding: 3px 10px 3px 3px;
+    }
+    .gitment-comments-empty{
+      color:#999;
     }
     .gitment-comments-error{
       color:#ccc;
