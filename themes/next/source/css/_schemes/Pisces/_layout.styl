@@ -153,6 +153,9 @@ if (hexo-config('sidebar.position') == 'right') {
     }
   }
   .post-body{
+    h2{
+      border-bottom-color:#999;
+    }
     .table-container{
       tbody tr:nth-of-type(odd){
         background-color:transparent;
@@ -165,6 +168,9 @@ if (hexo-config('sidebar.position') == 'right') {
   .posts-collapse .post-title a{
     color:#aaa;
   }
+  .post-nav{
+    border-top-color:#999;
+  }
   .fa-sun-o{
     color:#ddd;
   }
@@ -173,6 +179,14 @@ if (hexo-config('sidebar.position') == 'right') {
     transition: .5s;
     .night-mode {
       border-color: #555;
+    }
+    .links-of-author-item{
+      a{
+        color:#aaa;
+        &:hover{
+          background-color:rgba(255,255,255,.3);
+        }
+      }
     }
   }
   .site-author-name{
@@ -236,6 +250,18 @@ if (hexo-config('sidebar.position') == 'right') {
     .gitment-editor-login{
       color:#ccc;
     }
+    .gitment-editor-main{
+      border-color:#777;
+      .gitment-editor-header{
+        border-bottom-color:#777;
+      }
+      &::before{
+        border-right-color:#777;
+      }
+      &::after{
+        border-right-color:#777;
+      }
+    }
     .gitment-editor-preview{
       color:#999;
     }
@@ -249,6 +275,7 @@ if (hexo-config('sidebar.position') == 'right') {
     .gitment-editor-tab.gitment-selected{
       background-color: rgba(150,150,150,.3) !important;
       color:#aaa;
+      border-color:#777;
     }
     .gitment-editor-write-field textarea{
       background-color: transparent !important;

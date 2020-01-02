@@ -120,7 +120,11 @@ const myTheme = {
                 initHint.appendChild(initButton);
                 errorBlock.appendChild(initHint);
             } else {
-                errorBlock.innerText = error;
+                if(error && error.message === 'Comments Not Initialized') {
+                    errorBlock.innerText = '评论未初始化';
+                } else {
+                    errorBlock.innerText = error;
+                }
             }
             container.appendChild(errorBlock);
             return container;
