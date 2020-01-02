@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "new": "hexo new ",
     "analyze": "cross-env ANALYZE=true yarn build",
     "lint": "eslint --ext .js --ignore-path .gitignore .",
     "lint-fix": "eslint --ext .js --ignore-path .gitignore . --fix",
