@@ -14,6 +14,8 @@ cd publish-test
 npm init -y
 ```
 
+<!-- more -->
+
 2. 修改 `package.json` 信息，如：
 
 ```json

@@ -18,6 +18,8 @@ tags:
 2. 配置 `JAVA_HOME` 环境变量
 3. 将 `JAVA_HOME` 环境变量加入 `PATH` 变量
 
+<!-- more -->
+
 ## 安装 vs code 插件
 
 下载插件合集

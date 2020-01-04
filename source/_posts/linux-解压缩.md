@@ -15,6 +15,8 @@ tags: linux
 
     tar -xzvf file.tar.gz
     tar -xzvf file.tar.gz -C 指定目录
+    
+<!-- more -->
 
 `*.tar.bz2` 格式：
 

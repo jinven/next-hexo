@@ -122,6 +122,8 @@ const myTheme = {
             } else {
                 if(error && error.message === 'Comments Not Initialized') {
                     errorBlock.innerText = '评论未初始化';
+                } else if(error && error.message === 'Bad credentials') {
+                    errorBlock.innerText = '错误： 认证失败';
                 } else {
                     errorBlock.innerText = error;
                 }
@@ -329,8 +331,8 @@ var gitment = new Gitment({
     repo: 'jinven.github.io',
     // repo: config.hostname,
     oauth: {
-        client_id: 'c632308a327582f31107',
-        client_secret: '06592fcf5ed4c08e218fbf0c6ebe2dce1241d054',
+        client_id: 'b086cb47e7458ee5c7ba',
+        client_secret: '62c492e68fad5ccd2db61e0badf7326e9641a53f',
     },
     theme: myTheme,
 })
