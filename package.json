@@ -25,6 +25,7 @@
     "@hapi/hapi": "^18.4.0",
     "@next/bundle-analyzer": "^9.1.6",
     "@zeit/next-sass": "^1.0.1",
+    "apollo-server-micro": "^2.9.15",
     "cacheable-response": "^1.10.0",
     "cross-env": "^6.0.3",
     "express": "^4.17.1",
