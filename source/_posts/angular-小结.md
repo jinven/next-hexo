@@ -1,6 +1,6 @@
 ---
 title: angular-小结
-date: 2020-01-06 09:33:59
+date: 2020-01-06 09:33:57
 tags: node
 ---
 
@@ -20,9 +20,9 @@ npm install -g @angular/cli
 ng help
 ng generate --help
 # 创建项目
-ng new my-frist-project
+ng new angular-app
 # 运行项目
-cd my-first-project
+cd angular-app
 ng serve
 # 或
 npm start
@@ -142,9 +142,9 @@ https://angular.cn/guide/structural-directives
 - `(ngSubmit)="方法"` 用于表单提交
 - `[ngSwitch]="变量"、*ngSwitchCase="值"` 条件指令，如：`<div [ngSwitch]="'1'"><a *ngSwitchCase="'1'">1</a><a *ngSwitchCase="'2'">2</a></div>`
 - `#变量` 模板引用变量，如： `<input value="110" #phone><button (click)="alert(phone.value)">Call</button>`
-- `{{ 变量 | 函数 }}` 管道，可以多个管道，如： `{{'ABCDE' | uppercase | lowercase }}`
-- `{{ 变量!.属性 }}` 非空断言操作符，当变量不为 `null` 时，取属性，否则为 `null`
-- `{{ $any(变量或表达式) }}` 类型转换函数，将变量转为 `any` 类型
+- `{`{ 变量 | 函数 }`}` 管道，可以多个管道，如： `{`{'ABCDE' | uppercase | lowercase }`}`
+- `{`{ 变量！.属性 }`}` 非空断言操作符，当变量不为 `null` 时，取属性，否则为 `null`
+- `{`{ $any(变量或表达式) }`}` 类型转换函数，将变量转为 `any` 类型
 - `<ng-template>` 渲染 `HTML`
 - `<ng-container>` 直接渲染子元素，如 `<ng-container *ngIf="true">text</ng-container`，直接显示文本 `text`，无父元素
 
@@ -187,7 +187,7 @@ export class UnlessDirective {
 
 内置的管道： `DatePipe`、`UpperCasePipe`、`LowerCasePipe`、`CurrencyPipe` 和 `PercentPipe`
 
-如： `<p>The hero's birthday is {{ birthday | date:"MM/dd/yy" }} </p>`
+如： `<p>The hero's birthday is {`{ birthday | date:"MM/dd/yy" }`} </p>`
 
 写一个名叫 `ExponentialStrengthPipe` 的管道
 
@@ -205,7 +205,7 @@ export class ExponentialStrengthPipe implements PipeTransform {
 在其他组件中使用
 
 ```html
-<p>Super power boost: {{2 | exponentialStrength: 10}}</p>
+<p>Super power boost: { {2 | exponentialStrength: 10} }</p>
 ```
 
 ## 属性指令
@@ -674,7 +674,7 @@ export class AppComponent {
 <!-- app.component.html -->
 <p [translate]="menu"></p>
 <p translate>title</p>
-<p>{{ 'text' | translate }}</p>
+<p>{ { 'text' | translate } }</p>
 ```
 
 # i18n国际化
