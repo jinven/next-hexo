@@ -1,13 +1,15 @@
 ---
 title: angular-小结
 date: 2020-01-06 09:33:59
-tags:
+tags: node
 ---
-
-# 搭建
 
 源码： https://github.com/jinven/angular-app
 演示： https://angular-new.now.sh/
+
+<!-- more -->
+
+# 搭建
 
 ## 初始化项目
 
