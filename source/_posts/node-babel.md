@@ -4,6 +4,10 @@ date: 2019-12-29 16:01:42
 tags: node
 ---
 
+- [babel](https://github.com/babel/babel)
+- [core-js](https://github.com/zloirock/core-js)
+- [polyfill](https://github.com/financial-times/polyfill-service)
+
 # `.babelrc`
 
 Babel的配置文件
