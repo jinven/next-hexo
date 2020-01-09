@@ -2097,6 +2097,41 @@ function combineReducers(reducers) {
 
 ## applyMiddleware
 
+日志记录和崩溃报告
+
+```jsx
+const logger = store => next => action => {
+  console.log('dispatching', action)
+  let result = next(action)
+  console.log('next state', store.getState())
+  return result
+}
+const crashReporter = store => next => action => {
+  try {
+    return next(action)
+  } catch (err) {
+    console.error('Caught an exception!', err)
+    Raven.captureException(err, {
+      extra: {
+        action,
+        state: store.getState()
+      }
+    })
+    throw err
+  }
+}
+```
+
+```jsx
+import { createStore, combineReducers, applyMiddleware } from 'redux'
+let todoApp = combineReducers(reducers)
+let store = createStore(
+  todoApp,
+  // applyMiddleware() 告诉 createStore() 如何处理中间件
+  applyMiddleware(logger, crashReporter)
+)
+```
+
 ## connect
 
 ```jsx
@@ -2289,6 +2324,13 @@ TodoList.propTypes = {
 }
 export default TodoList
 ```
+
+```jsx
+// 将经过 logger 和 crashReporter 两个 middleware！
+store.dispatch(addTodo('Use Redux'))
+```
+
+## 异步 Action
 
 # 路由
 
