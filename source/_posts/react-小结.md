@@ -97,9 +97,94 @@ const element = <img src={avatarUrl}></img>;
 ## 样式
 
 ```jsx
+import '../assets/css/h1.css'
+const h1Style = {
+  fontSize: 20,
+  margin: 0,
+  background: '#eee'
+}
 <h1 className="head"></h1>
-<h1 style={{fontSize: 20, margin: 0}}></h1>
+<h1 style={{fontSize: 20, margin: 0}}>h1</h1>
+<h1 style={h1Style}>h1</h1>
+<div>
+  <p>plain text</p>
+  <style>{`
+    p {
+      font-size: 20px;
+    }
+  `}</style>
+</div>
 ```
+
+### Styled
+
+https://www.styled-components.com/
+https://github.com/styled-components/styled-components
+
+```
+npm install --save styled-components
+```
+
+```jsx
+import styled from 'styled-components';
+const Button = styled.a`
+  /* This renders the buttons above... Edit me! */
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0.5rem 0;
+  margin: 0.5rem 1rem;
+  width: 11rem;
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+  /* The GitHub button is a primary button
+   * edit this to target it specifically! */
+  ${props => props.primary && css`
+    background: white;
+    color: palevioletred;
+  `}
+`
+const Title = styled.h1`
+  font-size: 1.5em;
+  text-align: center;
+  color: palevioletred;
+`
+const Wrapper = styled.section`
+  padding: 4em;
+  background: papayawhip;
+`
+render(
+  <div>
+    <Button
+      href="https://github.com/styled-components/styled-components"
+      target="_blank"
+      rel="noopener"
+      primary
+    >
+      GitHub
+    </Button>
+    <Button as={Link} href="/docs" prefetch>
+      Documentation
+    </Button>
+    <Wrapper>
+      <Title>Hello World!</Title>
+    </Wrapper>
+  </div>
+)
+```
+
+### 局部样式
+
+只在本组件中使用
+
+`css`或`scss`命名以 `.module.css`、`.module.scss` 结尾
+
+```jsx
+import styleScss from '../assets/css/head.module.scss'
+import styleCss from '../assets/css/head.module.css'
+<h1 className="head"></h1>
+```
+
 
 ## 元素渲染
 
@@ -1913,6 +1998,18 @@ npm install --save-dev redux-devtools
 
 ## 使用
 
+- 永远不要直接修改 reducer 的参数
+
+```jsx
+return [
+        ...state,
+        {
+          text: action.text,
+          completed: false
+        }
+      ]
+```
+
 1. 创建  `reducer` 函数
 
 ```jsx
@@ -1978,7 +2075,129 @@ export default function Redux(props) {
 }
 ```
 
-## useReducer
+## createStore
+
+Redux 应用只有一个单一的 store
+
+当需要拆分数据处理逻辑时，应该使用 reducer 组合 而不是创建多个 store
+
+源码
+
+```jsx
+export default function createStore(reducer, preloadedState, enhancer) {
+  if ((typeof preloadedState === 'function' && typeof enhancer === 'function') ||
+    (typeof enhancer === 'function' && typeof arguments[3] === 'function')
+  ) {
+    throw new Error('not supported.')
+  }
+  if (typeof preloadedState === 'function' && typeof enhancer === 'undefined') {
+    enhancer = preloadedState
+    preloadedState = undefined
+  }
+  if (typeof enhancer !== 'undefined') {
+    if (typeof enhancer !== 'function') {
+      throw new Error('Expected the enhancer to be a function.')
+    }
+    return enhancer(createStore)(reducer, preloadedState)
+  }
+  if (typeof reducer !== 'function') {
+    throw new Error('Expected the reducer to be a function.')
+  }
+  let currentReducer = reducer
+  let currentState = preloadedState
+  let currentListeners = []
+  let nextListeners = currentListeners
+  let isDispatching = false
+  function ensureCanMutateNextListeners() {
+    if (nextListeners === currentListeners) {
+      nextListeners = currentListeners.slice()
+    }
+  }
+  function getState() {
+    if (isDispatching) {
+      throw new Error('reducer is executing. ')
+    }
+    return currentState
+  }
+  function subscribe(listener) {
+    if (typeof listener !== 'function') {
+      throw new Error('Expected the listener to be a function.')
+    }
+    if (isDispatching) {
+      throw new Error('reducer is executing. ')
+    }
+    let isSubscribed = true
+    ensureCanMutateNextListeners()
+    nextListeners.push(listener)
+    return function unsubscribe() {
+      if (!isSubscribed) {
+        return
+      }
+      if (isDispatching) {
+        throw new Error('reducer is executing. ')
+      }
+      isSubscribed = false
+      ensureCanMutateNextListeners()
+      const index = nextListeners.indexOf(listener)
+      nextListeners.splice(index, 1)
+      currentListeners = null
+    }
+  }
+  function dispatch(action) {
+    if (!isPlainObject(action)) {
+      throw new Error('Actions must be plain objects. ')
+    }
+    if (typeof action.type === 'undefined') {
+      throw new Error('Actions may not have an undefined "type" property. ')
+    }
+    if (isDispatching) {
+      throw new Error('Reducers may not dispatch actions.')
+    }
+    try {
+      isDispatching = true
+      currentState = currentReducer(currentState, action)
+    } finally {
+      isDispatching = false
+    }
+    const listeners = (currentListeners = nextListeners)
+    for (let i = 0; i < listeners.length; i++) {
+      const listener = listeners[i]
+      listener()
+    }
+    return action
+  }
+  function replaceReducer(nextReducer) {
+    if (typeof nextReducer !== 'function') {
+      throw new Error('Expected the nextReducer to be a function.')
+    }
+    currentReducer = nextReducer
+    dispatch({ type: ActionTypes.REPLACE })
+  }
+  function observable() {
+    const outerSubscribe = subscribe
+    return {
+      subscribe(observer) {
+        if (typeof observer !== 'object' || observer === null) {
+          throw new TypeError('Expected the observer to be an object.')
+        }
+        function observeState() {
+          if (observer.next) {
+            observer.next(getState())
+          }
+        }
+        observeState()
+        const unsubscribe = outerSubscribe(observeState)
+        return { unsubscribe }
+      },
+      [$$observable]() {
+        return this
+      }
+    }
+  }
+  dispatch({ type: ActionTypes.INIT })
+  return { dispatch, subscribe, getState, replaceReducer, [$$observable]: observable }
+}
+```
 
 ## combineReducers
 
@@ -2097,39 +2316,140 @@ function combineReducers(reducers) {
 
 ## applyMiddleware
 
-日志记录和崩溃报告
+7个示例
 
 ```jsx
+// 1. 记录所有被发起的 action 以及产生的新的 state。
 const logger = store => next => action => {
-  console.log('dispatching', action)
+  console.group(action.type)
+  console.info('dispatching', action)
   let result = next(action)
   console.log('next state', store.getState())
+  console.groupEnd(action.type)
   return result
 }
+// 2. 在 state 更新完成和 listener 被通知之后发送崩溃报告。
 const crashReporter = store => next => action => {
   try {
     return next(action)
   } catch (err) {
     console.error('Caught an exception!', err)
-    Raven.captureException(err, {
-      extra: {
-        action,
-        state: store.getState()
-      }
-    })
+    Raven.captureException(err, { extra: { action, state: store.getState() } })
     throw err
   }
 }
+
+// 3. 用 { meta: { delay: N } } 来让 action 延迟 N 毫秒。
+// 让 `dispatch` 返回一个取消 timeout 的函数。
+const timeoutScheduler = store => next => action => {
+  if (!action.meta || !action.meta.delay) {
+    return next(action)
+  }
+  let timeoutId = setTimeout(() => next(action), action.meta.delay)
+  return function cancel() {
+    clearTimeout(timeoutId)
+  }
+}
+
+// 4. 通过 { meta: { raf: true } } 让 action 在一个 rAF 循环帧中被发起。
+// 让 `dispatch` 返回一个从队列中移除该 action 的函数。
+const rafScheduler = store => next => {
+  let queuedActions = []
+  let frame = null
+  function loop() {
+    frame = null
+    try {
+      if (queuedActions.length) {
+        next(queuedActions.shift())
+      }
+    } finally {
+      maybeRaf()
+    }
+  }
+  function maybeRaf() {
+    if (queuedActions.length && !frame) {
+      frame = requestAnimationFrame(loop)
+    }
+  }
+  return action => {
+    if (!action.meta || !action.meta.raf) {
+      return next(action)
+    }
+    queuedActions.push(action)
+    maybeRaf()
+    return function cancel() {
+      queuedActions = queuedActions.filter(a => a !== action)
+    }
+  }
+}
+// 5. 使你除了 action 之外还可以发起 promise。
+// 如果这个 promise 被 resolved，他的结果将被作为 action 发起。
+// 这个 promise 会被 `dispatch` 返回，因此调用者可以处理 rejection。
+const vanillaPromise = store => next => action => {
+  if (typeof action.then !== 'function') {
+    return next(action)
+  }
+  return Promise.resolve(action).then(store.dispatch)
+}
+
+// 6. 让你可以发起带有一个 { promise } 属性的特殊 action。
+// 这个 middleware 会在开始时发起一个 action，并在这个 `promise` resolve 时发起另一个成功（或失败）的 action。
+// 为了方便起见，`dispatch` 会返回这个 promise 让调用者可以等待。
+const readyStatePromise = store => next => action => {
+  if (!action.promise) {
+    return next(action)
+  }
+  function makeAction(ready, data) {
+    let newAction = Object.assign({}, action, { ready }, data)
+    delete newAction.promise
+    return newAction
+  }
+  next(makeAction(false))
+  return action.promise.then(
+    result => next(makeAction(true, { result })),
+    error => next(makeAction(true, { error }))
+  )
+}
+
+// 7. 可以发起一个函数来替代 action。
+// 这个函数接收 `dispatch` 和 `getState` 作为参数。
+// 对于（根据 `getState()` 的情况）提前退出，或者异步控制流（ `dispatch()` 一些其他东西）来说，这非常有用。
+// `dispatch` 会返回被发起函数的返回值。
+const thunk = store => next => action =>
+  typeof action === 'function' ? action(store.dispatch, store.getState) : next(action)
 ```
+
+使用
 
 ```jsx
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 let todoApp = combineReducers(reducers)
 let store = createStore(
   todoApp,
-  // applyMiddleware() 告诉 createStore() 如何处理中间件
-  applyMiddleware(logger, crashReporter)
+  applyMiddleware(rafScheduler, timeoutScheduler, thunk, vanillaPromise, readyStatePromise, logger, crashReporter)
 )
+```
+
+源码
+
+```jsx
+export default function applyMiddleware(...middlewares) {
+  return createStore => (...args) => {
+    const store = createStore(...args)
+    let dispatch = () => {
+      throw new Error('Dispatching while constructing your middleware is not allowed. ' +
+        'Other middleware would not be applied to this dispatch.'
+      )
+    }
+    const middlewareAPI = {
+      getState: store.getState,
+      dispatch: (...args) => dispatch(...args)
+    }
+    const chain = middlewares.map(middleware => middleware(middlewareAPI))
+    dispatch = compose(...chain)(store.dispatch)
+    return { ...store, dispatch }
+  }
+}
 ```
 
 ## connect
@@ -2140,27 +2460,15 @@ import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 import rootReducer from './reducers'
 const store = createStore(rootReducer)
-ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById('root')
-);
+ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));
 
 // /src/App.js
 import Footer from './components/Footer'
 import AddTodo from './containers/AddTodo'
 import VisibleTodoList from './containers/VisibleTodoList'
-function App() {
-  return (
-    <div className="App">
-      <AddTodo />
-      <VisibleTodoList />
-      <Footer />
-    </div>
-  );
+export default function App() {
+  return (<div className="App"><AddTodo /><VisibleTodoList /><Footer /></div>);
 }
-export default App;
 ```
 
 ```jsx
@@ -2171,7 +2479,7 @@ import visibilityFilter from './visibilityFilter'
 export default combineReducers({ todos, visibilityFilter })
 
 // /src/reducers/todos.js
-const todos = (state = [], action) => {
+export default todos = (state = [], action) => {
   switch (action.type) {
     case 'ADD_TODO':
       return [...state, { id: action.id, text: action.text, completed: false } ]
@@ -2181,24 +2489,22 @@ const todos = (state = [], action) => {
       return state
   }
 }
-export default todos
 
 // /src/reducers/visibilityFilter.js
 import { VisibilityFilters } from './actions'
-const visibilityFilter = (state = VisibilityFilters.SHOW_ALL, action) => {
+export default visibilityFilter = (state = VisibilityFilters.SHOW_ALL, action) => {
   switch (action.type) {
     case 'SET_VISIBILITY_FILTER': return action.filter
     default: return state
   }
 }
-export default visibilityFilter
 
 // /src/reducers/actions/index.js
 let nextTodoId = 0
 export const addTodo = text => ({ type: 'ADD_TODO', id: nextTodoId++, text })
 export const setVisibilityFilter = filter => ({ type: 'SET_VISIBILITY_FILTER', filter })
 export const toggleTodo = id => ({ type: 'TOGGLE_TODO', id })
-export const VisibilityFilters = { 
+export const VisibilityFilters = {
   SHOW_ALL: 'SHOW_ALL',
   SHOW_COMPLETED: 'SHOW_COMPLETED',
   SHOW_ACTIVE: 'SHOW_ACTIVE'
@@ -2256,10 +2562,7 @@ const getVisibleTodos = (todos, filter) => {
 }
 const mapStateToProps = state => ({ todos: getVisibleTodos(state.todos, state.visibilityFilter) })
 const mapDispatchToProps = dispatch => ({ toggleTodo: id => dispatch(toggleTodo(id)) })
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(TodoList)
+export default connect(mapStateToProps, mapDispatchToProps)(TodoList)
 ```
 
 ```jsx
@@ -2267,7 +2570,7 @@ export default connect(
 import React from 'react'
 import FilterLink from '../containers/FilterLink'
 import { VisibilityFilters } from '../reducers/actions'
-const Footer = () => (
+export default Footer = () => (
   <div>
     <span>Show: </span>
     <FilterLink filter={VisibilityFilters.SHOW_ALL}>All</FilterLink>
@@ -2275,7 +2578,6 @@ const Footer = () => (
     <FilterLink filter={VisibilityFilters.SHOW_COMPLETED}>Completed</FilterLink>
   </div>
 )
-export default Footer
 
 // /src/components/Link.js
 import React from 'react'
@@ -2325,16 +2627,158 @@ TodoList.propTypes = {
 export default TodoList
 ```
 
-```jsx
-// 将经过 logger 和 crashReporter 两个 middleware！
-store.dispatch(addTodo('Use Redux'))
-```
-
 ## 异步 Action
+
+重点是 `redux-thunk`
+
+```jsx
+// /src/index.js
+import { createStore, applyMiddleware, combineReducers } from 'redux'
+import { Provider } from 'react-redux'
+import thunkMiddleware from 'redux-thunk'
+function posts(state = { isFetching: false, didInvalidate: false, items: [] }, action) {
+  switch (action.type) {
+    case 'INVALIDATE_SUBREDDIT': return Object.assign({}, state, { didInvalidate: true })
+    case 'REQUEST_POSTS': return Object.assign({}, state, { isFetching: true, didInvalidate: false })
+    case 'RECEIVE_POSTS':
+      return Object.assign({}, state, {
+        isFetching: false,
+        didInvalidate: false,
+        items: action.posts,
+        lastUpdated: action.receivedAt
+      })
+    default: return state
+  }
+}
+function selectedSubreddit(state = 'reactjs', action) {
+  switch (action.type) {
+    case 'SELECT_SUBREDDIT': return action.subreddit
+    default: return state
+  }
+}
+function postsBySubreddit(state = {}, action) {
+  switch (action.type) {
+    case 'INVALIDATE_SUBREDDIT':
+    case 'RECEIVE_POSTS':
+    case 'REQUEST_POSTS':
+      return Object.assign({}, state, { [action.subreddit]: posts(state[action.subreddit], action) })
+    default: return state
+  }
+}
+const reducers =  combineReducers({ postsBySubreddit, selectedSubreddit })
+const store = createStore(reducers, applyMiddleware(thunkMiddleware))
+export default class Root extends Component {
+  render() {
+    return (
+      <Provider store={store}>
+        <App />
+      </Provider>
+    )
+  }
+}
+
+// /src/App.js
+import { connect } from 'react-redux'
+function fetchPosts(subreddit) {
+  return dispatch => {
+    dispatch({ type: 'REQUEST_POSTS', subreddit })
+    return fetch(`https://www.reddit.com/r/${subreddit}.json`)
+      .then(response => response.json())
+      .then(json => dispatch({
+        type: 'RECEIVE_POSTS',
+        subreddit,
+        posts: json.data.children.map(child => child.data),
+        receivedAt: Date.now()
+      }))
+  }
+}
+export function fetchPostsIfNeeded(subreddit) {
+  return (dispatch, getState) => {
+    return dispatch(fetchPosts(subreddit))
+  }
+}
+class App extends Component {
+  constructor(props) {
+    super(props)
+  }
+  componentDidMount() {
+    const { dispatch } = this.props
+    dispatch(fetchPostsIfNeeded('reactjs'))
+  }
+  render() {
+    return (<div></div>)
+  }
+}
+export default connect()(App)
+```
 
 # 路由
 
+https://reacttraining.com/react-router/
 
+## 安装
+
+```sh
+npm install react-router-dom
+```
+
+## 使用
+
+```jsx
+import { BrowserRouter as Router, Switch, Link, Route, useRouteMatch, useParams } from 'react-router-dom'
+function Home() { 
+  return <h2>Home</h2>
+}
+function About() { 
+  return <h2>About</h2>
+}
+function Topic() {
+  let { topicId } = useParams()
+  return <h3>Requested topic ID: {topicId}</h3>
+}
+function Topics() {
+  let match = useRouteMatch();
+  return (
+    <div>
+      <h2>Topics</h2>
+      <ul>
+        <li><Link to={`${match.url}/components`}>Components</Link></li>
+        <li><Link to={`${match.url}/props-v-state`}>Props v. State</Link></li>
+      </ul>
+      <Switch>
+        <Route path={`${match.path}/:topicId`}><Topic /></Route>
+        <Route path={match.path}><h3>Please select a topic.</h3></Route>
+      </Switch>
+    </div>
+  )
+}
+export default function App() {
+  return (
+    <Router>
+      <div>
+        <ul>
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/about">About</Link></li>
+          <li><Link to="/topics">Topics</Link></li>
+        </ul>
+        <Switch>
+          <Route path="/about"><About /></Route>
+          <Route path="/topics"><Topics /></Route>
+          <Route path="/"><Home /></Route>
+        </Switch>
+      </div>
+    </Router>
+  )
+}
+```
+
+- NavLink 当前页面启用指定样式
+- Redirect 重定向
+- useHistory
+- useParams
+- StaticRouter
+- matchPath 
+- withRouter
 
 # 国际化
 

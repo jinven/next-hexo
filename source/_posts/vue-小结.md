@@ -1248,6 +1248,102 @@ Vue.use(Vuex)
 
 ## 使用
 
+- State 必须是纯粹状态对象数据
+- Getter 从 store 中的 state 中派生出一些状态
+- Mutation 状态的唯一方法，进行状态更改的地方，接受 state 作为第一个参数，必须是同步函数
+- Action 提交的是 mutation，而不是直接变更状态，可以包含任意异步操作
+- Module 将 store 分割成模块，每个模块拥有自己的 state、mutation、action、getter、甚至是嵌套子模块
+
+```js
+const store = new Vuex.Store({
+  state: {
+    count: 0,
+    todos: [
+      { id: 1, text: '...', done: true },
+      { id: 2, text: '...', done: false }
+    ]
+  },
+  getters: {
+    doneTodos: state => {
+      return state.todos.filter(todo => todo.done)
+    },
+    doneTodosCount: (state, getters) => {
+      return getters.doneTodos.length
+    },
+    getTodoById: (state) => (id) => state.todos.find(todo => todo.id === id)
+  },
+  mutations: {
+    increment (state) {
+      state.count++
+    },
+    incrementBy (state, payload) {
+      state.count += payload.amount
+    }
+  },
+  actions: {
+    increment (context) {
+      conext.commit('increment')
+    },
+    incrementAsync ({ commit }, payload) {
+      setTimeout(() => {
+        commit('incrementBy', payload)
+      }, 1000)
+    },
+    async actionA({ commit }) {
+      commit('gotData', await getDate())
+    },
+    async actionB({ dispatch, commit }) {
+      await dispatch('actionA')
+      commit('gotOtherData', await getOtherData())
+    }
+  }
+})
+// 组件中使用
+// this.$store.getters.doneTodos
+// this.$store.getters.doneTodosCount
+// this.$store.getters.getTodoById(2)
+// this.$store.commit('increment')
+// this.$store.commit('incrementBy', { amount: 10 })
+// this.$store.commit({ type: 'incrementBy', amount: 10 })
+// this.$store.dispatch('increment')
+// this.$store.dispatch({ type: 'incrementAsync', amount: 10 })
+```
+
+1. mapState 生成计算属性： `computed: mapState({ count: state => state.count, ... })`
+
+计算属性于state名称相同时，可以传字符串数组： `computed: mapState(['count', ...])`
+与本地计算属性混用： `computed: { 本地计算属性, ...mapState(['count', ...]) }`
+
+2. mapGetters 映射 getter 到局部计算属性： `computed: { ...mapGetters(['doneTodosCount', ...])}`
+
+指定名称映射： `mapGetters({ doneCount: 'doneTodosCount' })`
+
+3. mapMutations 映射 mutations 到方法： `methods: { ...mapMutations(['increment']), ... }`
+
+4. mapActions 映射 actions 到方法： `methods: { ...mapActions(['increment']), ... }`
+
+```js
+const moduleA = {
+  state: { ... },
+  mutations: { ... },
+  actions: { ... },
+  getters: { ... }
+}
+const moduleB = {
+  state: { ... },
+  mutations: { ... },
+  actions: { ... }
+}
+const store = new Vuex.Store({
+  modules: {
+    a: moduleA,
+    b: moduleB
+  }
+})
+store.state.a // -> moduleA 的状态
+store.state.b // -> moduleB 的状态
+```
+
 登录状态管理
 
 ```js
