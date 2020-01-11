@@ -2712,6 +2712,74 @@ class App extends Component {
 export default connect()(App)
 ```
 
+## redux-saga
+
+https://redux-saga.js.org/
+https://github.com/redux-saga/redux-saga
+
+是一个 redux 中间件
+
+用于管理应用程序 Side Effect（副作用，例如异步获取数据，访问浏览器缓存等）的 library
+
+目标是让副作用管理更容易，执行更高效，测试更简单，在处理故障时更容易。
+
+就像是应用程序中一个单独的线程，它独自负责处理副作用
+
+```sh
+npm install --save redux-saga
+```
+
+示例：同步计数和延时1秒计数
+
+```jsx
+import '@babel/polyfill'
+import * as React from 'react'
+import ReactDOM from 'react-dom'
+import PropTypes from 'prop-types'
+import { createStore, applyMiddleware } from 'redux'
+import createSagaMiddleware from 'redux-saga'
+import { put, takeEvery, delay } from 'redux-saga/effects'
+
+const reducer = function(state = 0, action) {
+  switch (action.type) {
+    case 'INCREMENT': return state + 1
+    default: return state
+  }
+}
+const incrementAsync = function*() {
+  yield delay(1000)
+  yield put({ type: 'INCREMENT' })
+}
+const rootSaga = function*() {
+  yield takeEvery('INCREMENT_ASYNC', incrementAsync)
+}
+
+const sagaMiddleware = createSagaMiddleware()
+const store = createStore(reducer, applyMiddleware(sagaMiddleware))
+sagaMiddleware.run(rootSaga)
+
+const Counter = ({ value, onIncrement, onIncrementAsync }) => (
+  <p>
+    Clicked: {value} times <button onClick={onIncrement}>+</button>{' '}
+    <button onClick={onIncrementAsync}>Increment async</button>
+  </p>
+)
+Counter.propTypes = {
+  value: PropTypes.number.isRequired,
+  onIncrement: PropTypes.func.isRequired,
+  onIncrementIfOdd: PropTypes.func.isRequired,
+}
+const action = type => store.dispatch({ type })
+function render() {
+  ReactDOM.render(
+    <Counter value={store.getState()} onIncrement={() => action('INCREMENT')} onIncrementAsync={() => action('INCREMENT_ASYNC')} />,
+    document.getElementById('root'),
+  )
+}
+render()
+store.subscribe(render)
+```
+
 # 路由
 
 https://reacttraining.com/react-router/
@@ -2772,13 +2840,263 @@ export default function App() {
 }
 ```
 
+## js跳转
+
+```jsx
+// /src/index.js
+import { withRouter } from 'react-router';
+import { BrowserRouter, Switch, Link, Route, useRouteMatch, useParams, NavLink, Redirect, useHistory } from 'react-router-dom'
+function Home(){
+  return <h2>Home</h2>
+}
+function About(){
+  return <h2>About</h2>
+}
+function ContactUs(){
+  return <h2>Contact us</h2>
+}
+export default withRouter(function App(props){
+  let history = useHistory()
+  let match = useRouteMatch()
+  function toAbout(){
+    props.history.push(`${match.url}/about`)
+  }
+  return (
+    <BrowserRouter>
+      <div>
+        <ul>
+          <li><Link to={`${match.url}/home`}>home</Link></li>
+          <li><button onClick={toAbout}>about</button></li>
+          <li><button onClick={() => history.push(`${match.url}/contact`)}>contact us</button></li>
+        </ul>
+        <Switch>
+          <Route path={`${match.path}/home`}>
+            <Home />
+          </Route>
+          <Route path={`${match.path}/about`}>
+            <About />
+          </Route>
+          <Route path={`${match.path}/contact`}>
+            <ContactUs />
+          </Route>
+        </Switch>
+      </div>
+    </BrowserRouter>
+  )
+})
+```
+
+示例：点击后5秒内可取消，5秒后加1
+
+```jsx
+// /src/index.js
+import '@babel/polyfill'
+import * as React from 'react'
+import { render } from 'react-dom'
+import { Provider, connect } from 'react-redux'
+import { combineReducers, createStore, applyMiddleware } from 'redux'
+import createSagaMiddleware, { eventChannel, END } from 'redux-saga'
+import { take, put, call, fork, race, cancelled } from 'redux-saga/effects'
+import PropTypes from 'prop-types'
+const INCREMENT = 'INCREMENT'
+const INCREMENT_ASYNC = 'INCREMENT_ASYNC'
+const CANCEL_INCREMENT_ASYNC = 'CANCEL_INCREMENT_ASYNC'
+const COUNTDOWN_TERMINATED = 'COUNTDOWN_TERMINATED'
+const countdown = function (state = 0, action) {
+  switch (action.type) {
+    case INCREMENT_ASYNC: return action.value
+    case COUNTDOWN_TERMINATED: 
+    case CANCEL_INCREMENT_ASYNC: return 0
+    default: return state
+  }
+}
+const counter = function (state = 0, action) {
+  switch (action.type) {
+    case INCREMENT: return state + 1
+    default: return state
+  }
+}
+const countdownAsync = secs => {
+  console.log('countdown', secs)
+  return eventChannel(listener => {
+    const iv = setInterval(() => {
+      secs -= 1
+      console.log('countdown', secs)
+      if (secs > 0) listener(secs)
+      else {
+        listener(END)
+        clearInterval(iv)
+        console.log('countdown terminated')
+      }
+    }, 1000)
+    return () => {
+      clearInterval(iv)
+      console.log('countdown cancelled')
+    }
+  })
+}
+const incrementAsync = function* ({ value }) {
+  const chan = yield call(countdownAsync, value)
+  try {
+    while (true) {
+      let seconds = yield take(chan)
+      yield put({ type: INCREMENT_ASYNC, value: seconds })
+    }
+  } finally {
+    if (!(yield cancelled())) {
+      yield put({ type: INCREMENT })
+      yield put({ type: COUNTDOWN_TERMINATED })
+    }
+    chan.close()
+  }
+}
+const watchIncrementAsync = function* () {
+  try {
+    while (true) {
+      const action = yield take(INCREMENT_ASYNC)
+      yield race([call(incrementAsync, action), take(CANCEL_INCREMENT_ASYNC)])
+    }
+  } finally {
+    console.log('watchIncrementAsync terminated')
+  }
+}
+const rootSaga = function*() {
+  yield fork(watchIncrementAsync)
+}
+const reducer = combineReducers({ countdown, counter })
+const sagaMiddleware = createSagaMiddleware()
+const store = createStore(reducer, applyMiddleware(sagaMiddleware))
+sagaMiddleware.run(rootSaga)
+
+function CounterComponent({ counter, countdown, dispatch }) {
+  const action = (type, value) => () => dispatch({ type, value })
+  return (
+    <div>
+      Clicked: {counter} times <button onClick={action(INCREMENT)}>+</button>{' '}
+      <button onClick={countdown ? action(CANCEL_INCREMENT_ASYNC) : action(INCREMENT_ASYNC, 5)}
+        style={{ color: countdown ? 'red' : 'black' }}>
+        {countdown ? `Cancel increment (${countdown})` : 'increment after 5s'}
+      </button>
+    </div>
+  )
+}
+CounterComponent.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  counter: PropTypes.number.isRequired,
+  countdown: PropTypes.number.isRequired,
+}
+const Counter = connect((state) => ({counter: state.counter, countdown: state.countdown}))(CounterComponent)
+render(<Provider store={store}><Counter /></Provider>, document.getElementById('root'))
+```
+
+## 关键点
+
 - NavLink 当前页面启用指定样式
 - Redirect 重定向
 - useHistory
 - useParams
+- useLocation
+- useRouteMatch
+- HashRouter
 - StaticRouter
 - matchPath 
 - withRouter
+- Switch
+- MemoryRouter
+- Route render, children, component
 
 # 国际化
+
+https://github.com/formatjs/react-intl
+
+```sh
+npm install --save react-intl
+```
+
+```jsx
+// /src/index.js
+import React from 'react'
+import ReactDOM from 'react-dom'
+import {createStore} from 'redux'
+import {Provider} from 'react-redux'
+import {IntlProvider} from 'react-intl'
+import App from './App'
+const langs = (state = 'zh', action) => {
+  switch(action.type){
+    case 'zh': return 'zh'
+    case 'en': return 'en'
+    default: return state || 'zh'
+  }
+}
+let messages = {}
+messages['en'] = { home: 'Home', about: 'About', contact: 'Contact' }
+messages['zh'] = { home: '主页', about: '关于', contact: '联系' }
+const storeLangs = createStore(langs);
+function render() {
+  const lang = storeLangs.getState();
+  ReactDOM.render(
+    <IntlProvider locale={lang} messages={messages[lang]}>
+      <Provider store={storeLangs}>
+        <App onChangeLangs={lang => storeLangs.dispatch({type: lang})} />
+      </Provider>
+    </IntlProvider>,
+    document.getElementById('root')
+  )
+}
+render()
+storeLangs.subscribe(render)
+
+// /src/App.js
+import React from 'react';
+import {connect} from 'react-redux'
+import {FormattedMessage, injectIntl} from 'react-intl';
+const mapStateToProps = (state, ownProps) => {
+  return {
+    lang: state,
+    ownProps: ownProps
+  }
+}
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    onSwitchLangs: (lang) => {
+      dispatch({type: lang})
+    }
+  }
+}
+const About = () => <p><FormattedMessage id="about" /></p>
+const Contact = injectIntl((props) => <p>{props.intl.formatMessage({id: 'contact'})}</p>)
+export default connect(mapStateToProps, mapDispatchToProps)(function App(props){
+  const {lang, onChangeLangs, onSwitchLangs} = props
+  return (
+    <div>
+      <p>
+        <label><input type="radio" name="lang" value="en" onChange={() => onChangeLangs('en')} checked={lang==='en'} />English</label>
+        <label><input type="radio" name="lang" value="zh" onChange={() => onSwitchLangs('zh')} checked={lang==='zh'} />中文</label>
+      </p>
+      <p><FormattedMessage id="home" /></p>
+      <About />
+      <Contact />
+    </div>
+  )
+})
+```
+
+# Gatsby
+
+https://www.gatsbyjs.org/
+https://github.com/gatsbyjs/gatsby
+
+```sh
+npm install -g gatsby-cli
+```
+
+示例
+
+```sh
+gatsby new hello-world https://github.com/gatsbyjs/gatsby-starter-hello-world
+cd hello-word
+gatsby develop
+# gatsby develop --host=0.0.0.0
+# http://localhost:8000
+```
 
