@@ -2,6 +2,7 @@
 title: ECMAScript
 date: 2019-12-29 16:09:23
 tags:
+- javascript
 ---
 
 ## es6-es2015

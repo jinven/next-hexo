@@ -1,7 +1,9 @@
 ---
 title: node
 date: 2019-12-29 16:01:41
-tags: node
+tags: 
+- node
+- javascript
 ---
 
 # 1. 知识点

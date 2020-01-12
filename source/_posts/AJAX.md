@@ -2,6 +2,7 @@
 title: AJAX
 date: 2019-12-29 16:08:49
 tags:
+- javascript
 ---
 
 ## AJAX

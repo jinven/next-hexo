@@ -2,6 +2,7 @@
 title: xml-XPath
 date: 2019-12-29 16:08:15
 tags:
+- xml
 ---
 
 XPath 是一门在 XML 文档中查找信息的语言。XPath 可用来在 XML 文档中对元素和属性进行遍历。

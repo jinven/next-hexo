@@ -1,7 +1,8 @@
 ---
 title: mongodb-基本
 date: 2019-12-29 16:06:11
-tags: database
+tags: 
+- database
 ---
 
 ## 1. 运行服务/客户端、概念

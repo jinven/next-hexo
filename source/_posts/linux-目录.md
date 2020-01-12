@@ -1,7 +1,8 @@
 ---
 title: linux目录
 date: 2019-12-29 16:03:02
-tags: linux
+tags: 
+- linux
 ---
 
 ### `/`

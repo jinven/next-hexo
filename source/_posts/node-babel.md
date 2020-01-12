@@ -1,7 +1,9 @@
 ---
 title: node-babel
 date: 2019-12-29 16:01:42
-tags: node
+tags: 
+- node
+- javascript
 ---
 
 - [babel](https://github.com/babel/babel)

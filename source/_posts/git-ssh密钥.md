@@ -2,6 +2,7 @@
 title: git-ssh临时连接
 date: 2019-12-29 16:02:08
 tags:
+- git
 ---
 
 # 生成密钥

@@ -1,7 +1,8 @@
 ---
 title: docker
 date: 2019-12-29 16:01:25
-tags: docker
+tags: 
+- docker
 ---
 
 # centos安装

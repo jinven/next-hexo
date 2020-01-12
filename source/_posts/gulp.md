@@ -1,7 +1,9 @@
 ---
 title: gulp
 date: 2019-12-29 16:02:08
-tags: node
+tags: 
+- node
+- javascript
 ---
 
 # task

@@ -1,7 +1,9 @@
 ---
 title: NUXTJS
-date: 2019-12-29 16:08:50
-tags: node
+date: 2019-12-29 16:00:47
+tags: 
+- vue
+- javascript
 ---
 
 https://zh.nuxtjs.org/

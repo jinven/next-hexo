@@ -2,6 +2,7 @@
 title: AMD、CommonJS
 date: 2019-12-29 16:09:07
 tags:
+- javascript
 ---
 
 ## `CommonJS`

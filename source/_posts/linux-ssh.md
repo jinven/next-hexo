@@ -1,7 +1,8 @@
 ---
 title: linux-ssh
 date: 2019-12-29 16:03:54
-tags: linux
+tags: 
+- linux
 ---
 
 - https://www.ibm.com/developerworks/cn/aix/library/au-sshsecurity/index.html

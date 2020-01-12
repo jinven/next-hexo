@@ -1,7 +1,8 @@
 ---
 title: linux防火墙
 date: 2019-12-29 16:03:31
-tags: linux
+tags: 
+- linux
 ---
 
 ## 不同 `linux` 发行版本防火墙命令有区别

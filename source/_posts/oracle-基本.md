@@ -1,7 +1,8 @@
 ---
 title: oracle-基本
 date: 2019-12-29 16:07:26
-tags: database
+tags: 
+- database
 ---
 
 ## 1. 配置

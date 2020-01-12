@@ -1,7 +1,8 @@
 ---
 title: linux网络设置
 date: 2019-12-29 16:02:30
-tags: linux
+tags: 
+- linux
 ---
 
 1. 查看网络

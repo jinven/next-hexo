@@ -1,7 +1,8 @@
 ---
 title: mysql-基本
 date: 2019-12-29 16:07:11
-tags: database
+tags: 
+- database
 ---
 
 ## 1. 用户管理

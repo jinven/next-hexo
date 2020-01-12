@@ -2,6 +2,7 @@
 title: xml-DTD
 date: 2019-12-29 16:08:03
 tags:
+- xml
 ---
 
 ## 文档类型定义(Document Type Definition)

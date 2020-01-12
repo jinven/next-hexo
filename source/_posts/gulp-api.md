@@ -1,7 +1,9 @@
 ---
 title: gulp-api
 date: 2019-12-29 16:00:10
-tags: node
+tags: 
+- node
+- javascript
 ---
 
 # Concepts

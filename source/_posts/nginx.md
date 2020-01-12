@@ -2,6 +2,7 @@
 title: nginx
 date: 2019-12-29 15:56:11
 tags:
+- web
 ---
 
 # centos安装
