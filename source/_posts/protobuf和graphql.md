@@ -5,8 +5,6 @@ tags:
 - protobuf
 ---
 
-GraphQL vs gRPC and JSON vs Protocol Buffers
-
 ```sh
 # protobufjs 
 # https://github.com/protobufjs/protobuf.js
@@ -89,6 +87,8 @@ message 定义了每一个属性的类型和名字，类型可以是：
 - 消息实例
 - plain javascript 对象
 
+## 常用方法
+
 - `Message.verify(message: Object): null|string`
 
 验证纯JavaScript对象是否满足有效消息的要求
@@ -169,7 +169,7 @@ var object = AwesomeMessage.toObject(message, {
 });
 ```
 
-## 示例
+## 官方示例
 
 ### get/set
 
@@ -702,13 +702,19 @@ annotates a property as a protobuf oneof covering the specified fields.
 - `--force-long` 确保对s- / u- / int64和s- / fixed64字段使用'Long'。
 - `--force-message` 确保使用消息实例而不是普通对象。
 
-对于生产环境，建议将所有.proto文件捆绑到一个.json文件中，这样可以最大程度地减少网络请求的数量，并避免任何解析器开销（提示：仅适用于light库）：
+## 生产环境
+
+两种方式：
+
+1. 将所有.proto文件捆绑到一个.json文件中，这样可以最大程度地减少网络请求的数量，并避免任何解析器开销（提示：仅适用于light库）
+2. （推荐）生成的 js 静态代码，仅适用于最小库
 
 ```json
 // package.json
 {
   "scripts": {
-    "pbjs": "pbjs -t json file1.proto file2.proto > bundle.json"
+    "pbjs-json": "pbjs -t json file1.proto file2.proto > bundle.json",
+    "pbjs-js": "pbjs -t static-module -w commonjs -o compiled.js file1.proto file2.proto",
   }
 }
 ```
@@ -720,21 +726,27 @@ npm run pbjs
 现在，将这个文件包含在最终捆绑包中：
 
 ```js
+// json
 var root = protobuf.Root.fromJSON(require("./bundle.json"));
+// js
+import root from './compiled'
 ```
 
 或以通常的方式加载它：
 
 ```js
+// json
 protobuf.load("bundle.json", function(err, root) {
   // ...
 });
-```
-
-另一方面，生成的静态代码仅适用于最小库。 例如
-
-```sh
-pbjs -t static-module -w commonjs -o compiled.js file1.proto file2.proto
+// js
+root.包名称.消息名称.方法() // create/encode/decode/toObject...
 ```
 
 # graphql
+
+GraphQL vs gRPC and JSON vs Protocol Buffers
+
+---
+
+***待续***
