@@ -16,10 +16,7 @@ tags:
 
 <!-- more -->
 
-# 二、例子
-1. https://zzzzzz
-
-# 三、正文
+# 二、正文
 
 - [1.概述](#overview)
 - [2.布局概述](#layoutoverview)
@@ -21196,6 +21193,7 @@ MIRP
 
 <h3 id="appendices-mirroring">11.4.OpenType镜像对列表</h3>
 
+```
 #
 # OpenType Mirroring Pairs List (OMPL)
 # 
@@ -21577,6 +21575,7 @@ FF62; FF63 # [BEST FIT] HALFWIDTH LEFT CORNER BRACKET
 FF63; FF62 # [BEST FIT] HALFWIDTH RIGHT CORNER BRACKET
 
 # EOF
+```
 
 <h3 id="appendices-format">11.5.压缩字体格式规范</h3>
 
@@ -23177,6 +23176,8 @@ USE对Unicode类别使用以下覆盖，以实现所需的整形行为。
 覆盖到Indic_Syllabic_Category
 
 复制
+
+```
   # Indic_Syllabic_Category=Bindu
   AA29       ; Bindu          # Mn       CHAM VOWEL SIGN AA
   # ================================================
@@ -23191,10 +23192,13 @@ USE对Unicode类别使用以下覆盖，以实现所需的整形行为。
   # ================================================
   # Indic_Syllabic_Category=Gemination_Mark 
   11134      ; Gemination_Mark # Mc      CHAKMA MAAYYAA
+```
 
 覆盖到Indic_Positional_Category
 
 复制
+
+```
   # Indic_Matra_Category=Top
   0F74        ; Top     # Mn      TIBETAN VOWEL SIGN U
   AA35        ; Top     # Mn      CHAM CONSONANT SIGN
@@ -23208,6 +23212,7 @@ USE对Unicode类别使用以下覆盖，以实现所需的整形行为。
   11127..11129; Bottom  # Mn  [3] CHAKMA VOWEL SIGN A..CHAKMA VOWEL SIGN II
   1112D       ; Bottom  # Mn      CHAKMA VOWEL SIGN AI
   11130       ; Bottom  # Mn      CHAKMA VOWEL SIGN OI
+```
 
 拆分元音处理
 USE根据UnicodeData.txt中定义的字符分解映射分解属于UISC = Vowel_Dependent的拆分元音字符：

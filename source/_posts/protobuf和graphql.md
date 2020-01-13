@@ -3,6 +3,7 @@ title: protobuf和graphql
 date: 2020-01-11 14:30:28
 tags:
 - protobuf
+- graphql
 ---
 
 ```sh
@@ -11,12 +12,14 @@ tags:
 npm install protobufjs --save
 ```
 
-演示页面： https://next-new.now.sh/protobuf
-源码： https://github.com/jinven/next-demo/blob/master/pages/protobuf.js
+- Protocol Buffer 演示页面： https://next-new.now.sh/protobuf
+- GraphiQL 演示页面：https://next-new.now.sh/graphql
 
 <!-- more -->
 
 # protobuf
+
+[测试页面源码](https://github.com/jinven/next-demo/blob/master/pages/protobuf.js)、[测试接口源码](https://github.com/jinven/next-demo/blob/master/pages/api/protobuf.js)
 
 ```js
 // 全库：19kb gzipped
@@ -29,7 +32,7 @@ var protobuf = require("protobufjs");
 
 Protocol Buffer 是谷歌开发的处理结构化数据的工具。
 
-是TensorFlow系统中使用到的重要工具。
+是TensorFlow系统、gRPC框架中使用到的重要工具。
 
 如：
 
@@ -476,7 +479,10 @@ $type 和 AwesomeMesage＃$type 引用其反射类型之外，各个自定义类
 - AwesomeMessage.encode 和 AwesomeMessage.encodeDelimited
 - AwesomeMessage.decode 和 AwesomeMessage.decodeDelimited
 - AwesomeMessage.verify
-- AwesomeMessage.fromObject, AwesomeMessage.toObject, AwesomeMessage#toObject 和 AwesomeMessage#toJSON
+- AwesomeMessage.fromObject
+- AwesomeMessage.toObject
+- AwesomeMessage#toObject
+- AwesomeMessage#toJSON
 
 然后，此类型的解码消息为AwesomeMessage的instance。
 
@@ -552,7 +558,7 @@ npm包由于 `Buffer` 而依赖于 [@types/node](https://www.npmjs.com/package/@
 
 上面显示的API与TypeScript的工作原理几乎相同。
 
-但是，由于所有内容均已键入，因此访问动态生成的消息类的实例上的字段需要使用方括号（即message [“ awesomeField”]）或显式强制转换。
+但是，由于所有内容均已键入，因此访问动态生成的消息类的实例上的字段需要使用方括号（即`message["awesomeField"]`）或显式强制转换。
 
 或者，可以使用为其静态副本生成的类型文件。
 
@@ -590,7 +596,7 @@ let decoded = AwesomeMessage.decode(buffer);
 
 请注意，装饰器是TypeScript中的实验功能，并且声明顺序很重要，具体取决于JS目标。
 
-例如，`@Field.d(2，AwesomeArrayMessage)` 要求在定位ES5时已提前定义AwesomeArrayMessage。
+例如，`@Field.d(2,AwesomeArrayMessage)` 要求在定位ES5时已提前定义 AwesomeArrayMessage。
 
 ```ts
 import { Message, Type, Field, OneOf } from "protobufjs/light"; // respectively "./node_modules/protobufjs/light.js"
@@ -707,7 +713,7 @@ annotates a property as a protobuf oneof covering the specified fields.
 两种方式：
 
 1. 将所有.proto文件捆绑到一个.json文件中，这样可以最大程度地减少网络请求的数量，并避免任何解析器开销（提示：仅适用于light库）
-2. （推荐）生成的 js 静态代码，仅适用于最小库
+2. 生成的 js 静态代码，仅适用于最小库（推荐）
 
 ```json
 // package.json
@@ -745,8 +751,548 @@ root.包名称.消息名称.方法() // create/encode/decode/toObject...
 
 # graphql
 
-GraphQL vs gRPC and JSON vs Protocol Buffers
+[测试页面源码](https://github.com/jinven/next-demo/blob/master/pages/graphql.js)、[测试接口Apollo源码](https://github.com/jinven/next-demo/blob/master/pages/api/graphql.js)、[测试接口Next源码](https://github.com/jinven/next-demo/blob/master/pages/api/graphql/next.js)
+
+https://graphql.org/
+https://github.com/graphql/graphiql
+
+一种用于 API 的查询语言，满足数据查询的运行时。
+
+- GraphQL 对 API 中的数据提供了一套易于理解的完整描述。
+- 向 API 发出一个 GraphQL 请求就能准确获得想要的数据，不多不少。
+- 只用一个请求。
+- 基于类型和字段的方式进行组织，而非入口端点。
+- 无需划分版本。
+
+```js
+// 描述数据
+type Project {
+  name: String
+  tagline: String
+  contributors: [User]
+}
+
+// 请求所要的数据
+{
+  project(name: "GraphQL") {
+    tagline
+  }
+}
+
+// 得到可预测的结果
+{
+  "project": {
+    "tagline": "A query language for APIs"
+  }
+}
+```
+
+## 服务端
+
+1. [GraphQL.js](https://github.com/graphql/graphql-js/)
+
+```js
+// hello.js
+var { graphql, buildSchema } = require('graphql');
+var schema = buildSchema(`
+  type Query {
+    hello: String
+  }
+`);
+var root = { hello: () => 'Hello world!' };
+graphql(schema, '{ hello }', root).then((response) => {
+  console.log(response);
+});
+```
+
+```sh
+npm install graphql
+node hello.js
+```
+
+2. [express-graphql](https://github.com/graphql/express-graphql)
+
+```js
+// server.js
+var express = require('express');
+var graphqlHTTP = require('express-graphql');
+var { buildSchema } = require('graphql');
+var schema = buildSchema(`
+  type Query {
+    hello: String
+  }
+`);
+var root = { hello: () => 'Hello world!' };
+var app = express();
+app.use('/graphql', graphqlHTTP({
+  schema: schema,
+  rootValue: root,
+  graphiql: true,
+}));
+app.listen(4000, () => console.log('Now browse to localhost:4000/graphql'));
+```
+
+```sh
+npm install express express-graphql graphql
+node server.js
+```
+
+3. [apollo-server](https://github.com/apollographql/apollo-server)
+
+```js
+// server.js
+const express = require('express');
+const { ApolloServer, gql } = require('apollo-server-express');
+const typeDefs = gql`
+  type Query {
+    hello: String
+  }
+`;
+const resolvers = {
+  Query: {
+    hello: () => 'Hello world!',
+  },
+};
+const server = new ApolloServer({ typeDefs, resolvers });
+const app = express();
+server.applyMiddleware({ app });
+app.listen({ port: 4000 }, () =>
+  console.log('Now browse to http://localhost:4000' + server.graphqlPath)
+);
+```
+
+```sh
+npm install apollo-server-express express
+node server.js
+```
+
+## 客户端
+
+1. [relay](https://github.com/facebook/relay)
+
+用于构建与 GraphQL 后端交流的 React 应用。
+
+2. [Apollo Client](https://github.com/apollographql/apollo-client)
+
+一个强大的 JavaScript GraphQL 客户端，设计用于与 React、React Native、Angular 2 或者原生 JavaScript 一同工作。
+
+3. [graphql-request](https://github.com/prisma/graphql-request)
+
+一个简单灵活的 JavaScript GraphQL 客户端，可以运行于所有的 JavaScript 环境（浏览器，Node.js 和 React Native）—— 基本上是 fetch 的轻度封装。
+
+4. [lokka](https://github.com/kadirahq/lokka)
+
+一个简单的 JavaScript GraphQL 客户端，可以运行于所有的 JavaScript 环境 —— 浏览器，Node.js 和 React Native。
+
+5. [nanogql](https://github.com/yoshuawuyts/nanogql)
+
+一个使用模板字符串的小型 GraphQL 客户端库。
+
+6. [gq-loader](https://github.com/Houfeng/gq-loader)
+
+一个简单的 JavaScript GraphQL 客户端，通过 webpack 加载器让 *.gql 文件作为模块使用。
+
+7. [aws-amplify](https://aws.github.io/aws-amplify)
+
+使用云服务进行应用开发的 JavaScript 库，支持 GraphQL 后端和用于处理 GraphQL 数据的 React 组件。
+
+8. [grafoo](https://github.com/grafoojs/grafoo)
+
+一个通用的 GraphQL 客户端，具有仅 1.6kb 的多框架的视图层集成。
+
+9. [urql](https://github.com/FormidableLabs/urql)
+
+一个用于 React 的高度可定制且用途广泛的 GraphQL 客户端。
+
+## 工具
+
+- [graphiql](https://github.com/graphql/graphiql): 一个交互式的运行于浏览器中的 GraphQL IDE
+- [libgraphqlparser](https://github.com/graphql/libgraphqlparser): 一个 C++ 版 GraphQL 查询语言分析器，提供 C 和 C++ API
+- [Graphql Language Service](https://github.com/graphql/graphql-language-service): 一个用于构建 IDE 的 GraphQL 语言服务（诊断、自动完成等）的接口。
+- [quicktype](https://github.com/quicktype/quicktype): 在 TypeScript、Swift、golang、C#、C++ 等语言中为 GraphQL 查询生成类型。
+
+## 规则
+
+http://spec.graphql.org/draft/
+
+- 层次分明
+- 以产品为中心
+- 强类型
+- 客户端定制
+- 内省
+
+1. 注释
+
+`#` 开头的单行注释。
+
+2. 无语义逗号
+
+`,` 与空白符和行终止符类似，逗号(,)也是提升源文本的易读性、分隔词法记号，对GraphQL查询文档的语法语义上也无显著影响
+
+3. 标点
+
+` ! $ ( ) ... : = @ [ ] { | } `
+
+4. 命名
+
+`/[_A-Za-z][_0-9A-Za-z]*/`
+
+5. 操作
+
+GraphQL做了三类操作模型：
+- `query` 查询 – 只读获取
+- `mutation` 更改 – 先写入再获取
+- `subscription` 订阅 – 一个长期请求，根据源事件获取数据
+
+```js
+mutation {
+  likeStory(storyID: 12345) {
+    story {
+      likeCount
+    }
+  }
+}
+```
+
+6. 查询简写
+
+如果一个文档只包含一个查询操作，也不包含变量和指令，那么这个操作可以省略query关键字和操作名。
+
+```js
+{
+  field
+}
+```
+
+7. 选择集合
+
+一个操作选择了他所需要的信息的集合，然后就会精确地得到他所要的信息，没有一点多余，避免了数据的多取或少取。
+
+```js
+{
+  id
+  firstName
+  lastName
+}
+```
+
+8. 字段
+
+一个选择集合主要由字段组成，一个字段描述了选择集合中对请求可用的一个离散信息片段。
+
+例如，选择复杂数据和关联数据，并深入到嵌套内部，直到标量值字段
+
+```js
+{
+  me {
+    id
+    firstName
+    lastName
+    birthday {
+      month
+      day
+    }
+    friends {
+      name
+    }
+  }
+}
+```
+
+一个操作中，顶层选择集合的字段通常表示对应用和观察者而言全局可见的信息。
+
+典型的案例有顶层字段指向当前登录的观察者，或者引用唯一id来取特定类型数据：
+
+```conf
+# `me` could represent the currently logged in viewer.`me`指代当前登录的观察者
+{
+  me {
+    name
+  }
+}
+
+# `user` represents one of many users in a graph of data, referred to by a
+# unique identifier.
+# `user`表示一个通过id来从图数据中取出来的用户
+{
+  user(id: 4) {
+    name
+  }
+}
+```
+
+9. 参数
+
+字段在概念上是会返回值的函数，偶尔接受参数以改变其行为。
+
+通常这些参数和GraphQL服务器实现的函数参数直接映射。
+
+```js
+{
+  user(id: 4) {
+    id
+    name
+    profilePic(size: 100)
+  }
+}
+```
+
+许多参数也能存在于给定字段：
+
+```js
+{
+  user(id: 4) {
+    id
+    name
+    profilePic(width: 100, height: 50)
+  }
+}
+```
+
+10. 参数无需顺序
+
+参数可以以任意句法顺序排列，都表示同一种语义。
+
+```conf
+{
+  picture(width: 200, height: 100)
+}
+# 等同于
+{
+  picture(height: 100, width: 200)
+}
+```
+
+11. 字段别名
+
+默认情况下，返回对象的键名会采用查询的字段名，然后可以定义不同的键名
+
+```conf
+# 请求参数
+{
+  user(id: 4) {
+    id
+    name
+    smallPic: profilePic(size: 64)
+    bigPic: profilePic(size: 1024)
+  }
+}
+```
+
+```js
+// 返回结果
+{
+  "user": {
+    "id": 4,
+    "name": "Mark Zuckerberg",
+    "smallPic": "https://cdn.site.io/pic-4-64.jpg",
+    "bigPic": "https://cdn.site.io/pic-4-1024.jpg"
+  }
+}
+```
+
+使用别名：
+
+```conf
+# 请求参数
+{
+  zuck: user(id: 4) {
+    id
+    name
+  }
+}
+```
+
+```js
+// 返回结果
+{
+  "zuck": {
+    "id": 4,
+    "name": "Mark Zuckerberg"
+  }
+}
+```
+
+12. 片段
+
+片段是GraphQL组合拼装的基本单元，它通用选择集字段的重用得以实现，减少了文档中的重复文本。
+
+内联片段可以直接在选择集合内使用，通常用于interface（接口）或者union（联合）这种存在类型条件的场合。
+
+如：
+
+```conf
+query noFragments {
+  user(id: 4) {
+    friends(first: 10) {
+      id
+      name
+      profilePic(size: 50)
+    }
+    mutualFriends(first: 10) {
+      id
+      name
+      profilePic(size: 50)
+    }
+  }
+}
+```
+
+这些重复的字段可以提取进一个片段中，然后被父级片段或者query组合：
+
+```conf
+query withFragments {
+  user(id: 4) {
+    friends(first: 10) {
+      ...friendFields
+    }
+    mutualFriends(first: 10) {
+      ...friendFields
+    }
+  }
+}
+
+fragment friendFields on User {
+  id
+  name
+  profilePic(size: 50)
+}
+```
+
+片段可以通过解构操作符(...)被消费掉，片段内的字段将会被添加到片段被调用的同层级选择集合，这一过程也会在多级别片段中解构发生。
+
+```conf
+query withNestedFragments {
+  user(id: 4) {
+    friends(first: 10) {
+      ...friendFields
+    }
+    mutualFriends(first: 10) {
+      ...friendFields
+    }
+  }
+}
+
+fragment friendFields on User {
+  id
+  name
+  ...standardProfilePic
+}
+
+fragment standardProfilePic on User {
+  profilePic(size: 50)
+}
+```
+
+noFragments，withFragments和withNestedFragments三个查询都会产生相同的返回对象。
+
+13. 类型条件
+
+片段需要指定应用于的目标类型，在上述案例中，friendFields在查询User的上下文中使用。
+
+片段不能应用于任何输入值（标量值，枚举型或者输入型对象）。
+
+片段可应用与对象型，接口和联合。
+
+只有在对象的具体类型和片段的应用目标类型匹配的时候，片段内的选择集合才会返回值。
+
+如：
+
+```conf
+query FragmentTyping {
+  profiles(handles: ["zuck", "cocacola"]) {
+    handle
+    ...userFragment
+    ...pageFragment
+  }
+}
+
+fragment userFragment on User {
+  friends {
+    count
+  }
+}
+
+fragment pageFragment on Page {
+  likers {
+    count
+  }
+}
+```
+
+profiles根字段将会返回一个列表，其中的元素可能是Page或者User类型。
+
+当profiles内的对象是User类型时，friends会出现，而likers不会。
+
+反之当结果内的对象是Page时，likers会出现，friends则不会。
+
+```js
+{
+  "profiles": [
+    {
+      "handle": "zuck",
+      "friends": { "count" : 1234 }
+    },
+    {
+      "handle": "cocacola",
+      "likers": { "count" : 90234512 }
+    }
+  ]
+}
+```
+
+14. 内联片段
+
+片段可以在选择集合内以内联格式定义，这用于根据运行时类型条件式地引入字段。
+
+这个特性的标准片段引入版本在query FragmentTyping中已经演示，也可以使用内联片段的方式来实现：
+
+```conf
+query inlineFragmentTyping {
+  profiles(handles: ["zuck", "cocacola"]) {
+    handle
+    ... on User {
+      friends {
+        count
+      }
+    }
+    ... on Page {
+      likers {
+        count
+      }
+    }
+  }
+}
+```
+
+内联片段也用于将指令应用于一群字段的场景。如果省略了类型条件，片段则被视为等同于封装所在的上下文。
+
+```conf
+query inlineFragmentNoType($expandedInfo: Boolean) {
+  user(handle: "zuck") {
+    id
+    name
+    ... @include(if: $expandedInfo) {
+      firstName
+      lastName
+      birthday
+    }
+  }
+}
+```
+
+## 输入值
+
+- `变量`: 可以使用变量作为参数，已最大化查询重用，避免客户端运行时耗费巨大的字符串重建
+- `整数值`: 指定整数不应该使用小数点或指数符号，0、1、2、3...
+- `浮点值`: 需要包含小数点(例如：1.0)或者指数符号(例如：1e50)或者两者
+- `字符串值`: 由双引号(`"`)包起来的字符，譬如 `"Hello World"`
+- `布尔值`: true和false
+- `空值`: 显式-null，隐式-不使用任何值
+- `枚举值`: 表现为没有引号包裹的名称，规范建议使用全大写字母表示枚举值
+- `列表值`: 包在方括号 `[]` 中的有序值序列，列表值可以是任意字面量值或者变量，譬如 `[1, 2, 3]`
+- `对象值 `: 无需键值列表，使用花括号 `{}` 包起来
+- `输入类型`: 具名类型、列表类型、非空类型 具名类型 → 命名
+- `指令`:  @名称 参数? 指令为GraphQL文档提供了另一种运行时执行行为和类型验证行为
 
 ---
-
-***待续***
