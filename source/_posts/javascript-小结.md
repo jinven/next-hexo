@@ -60,7 +60,7 @@ var、let、const、class、function
 
 break、case、catch、continue、default、delete、do、else、finally、for、if、in、instanceof、new、return、switch、this、throw、try、typeof、void、while、with、debugger、exports、import、static、super、async、wait
 
-## 常用函数
+### 常用函数
 
 Symbol、Number、Object、Boolean、String、Function、ArrayBuffer、AudioBufferSourceNode、Blob、FileReader、Map、Promise、Range、RegExp、Set、TypeError、Uint8Array、Uint32Array、WeakMap、WeakSet、Worker
 
@@ -75,16 +75,6 @@ Symbol、Number、Object、Boolean、String、Function、ArrayBuffer、AudioBuff
 - 引用值
 
 存储在堆（heap）中的对象，也就是说，存储在变量处的值是一个指针（point），指向存储对象的内存处。
-
-## typeof 
-
-返回下列值之一：
-
-- `undefined` 如果变量是 Undefined 类型的
-- `boolean` 如果变量是 Boolean 类型的
-- `number` 如果变量是 Number 类型的
-- `string` 如果变量是 String 类型的
-- `object` 如果变量是一种引用类型或 Null 类型的
 
 ## 引用类型
 
@@ -117,20 +107,675 @@ var d = new Date;
 - `ToString()` 返回对象的原始字符串表示。对于 Object 对象，ECMA-262 没有定义这个值，所以不同的 ECMAScript 实现具有不同的值。
 - `ValueOf()` 返回最适合该对象的原始值。对于许多对象，该方法返回的值都与 ToString() 的返回值相同。
 
-#### defineProperty
+#### __proto__
+
+已经从 Web 标准中删除
+
+#### constructor
 
 ```js
+var o = {};
+o.constructor === Object;   // true
+var o = new Object;
+o.constructor === Object;   // true
+var a = [];
+a.constructor === Array;    // true
+var a = new Array;
+a.constructor === Array     // true
+var n = new Number(3);
+n.constructor === Number;   // true
+```
+
+#### assign
+
+将所有可枚举属性的值从一个或多个源对象复制到目标对象。它将返回目标对象。
+
+拷贝的是属性值。假如源对象的属性值是一个对象的引用，那么它也只指向那个引用。
+
+拷贝 symbol 类型的属性。
+
+```js
+// Object.assign(target, ...sources)
+const target = { a: 1, b: 2 };
+const source = { b: 4, c: 5 };
+const returnedTarget = Object.assign(target, source);
+console.log(target);
+// expected output: Object { a: 1, b: 4, c: 5 }
+console.log(returnedTarget);
+// expected output: Object { a: 1, b: 4, c: 5 }
+
+const o1 = { a: 1, b: 1, c: 1 };
+const o2 = { b: 2, c: 2 };
+const o3 = { c: 3 };
+const obj = Object.assign({}, o1, o2, o3);
+console.log(obj); // { a: 1, b: 2, c: 3 }
+
+// 继承属性和不可枚举属性是不能拷贝的
+const obj = Object.create({foo: 1}, { // foo 是个继承属性。
+    bar: {
+        value: 2  // bar 是个不可枚举属性。
+    },
+    baz: {
+        value: 3,
+        enumerable: true  // baz 是个自身可枚举属性。
+    }
+});
+const copy = Object.assign({}, obj);
+console.log(copy); // { baz: 3 }
+
+// 原始类型会被包装为对象
+const v1 = "abc";
+const v2 = true;
+const v3 = 10;
+const v4 = Symbol("foo")
+const obj = Object.assign({}, v1, null, v2, undefined, v3, v4); 
+// null 和 undefined 会被忽略，只有字符串的包装对象才可能有自身可枚举属性。
+console.log(obj); // { "0": "a", "1": "b", "2": "c" }
+
+// 异常会打断后续拷贝任务
+const target = Object.defineProperty({}, "foo", {
+    value: 1,
+    writable: false
+}); // target 的 foo 属性是个只读属性。
+Object.assign(target, {bar: 2}, {foo2: 3, foo: 3, foo3: 3}, {baz: 4});
+// TypeError: "foo" is read-only
+// 注意这个异常是在拷贝第二个源对象的第二个属性时发生的。
+console.log(target.bar);  // 2，说明第一个源对象拷贝成功了。
+console.log(target.foo2); // 3，说明第二个源对象的第一个属性也拷贝成功了。
+console.log(target.foo);  // 1，只读属性不能被覆盖，所以第二个源对象的第二个属性拷贝失败了。
+console.log(target.foo3); // undefined，异常之后 assign 方法就退出了，第三个属性是不会被拷贝到的。
+console.log(target.baz);  // undefined，第三个源对象更是不会被拷贝到的。
+```
+
+Polyfill
+
+```js
+if (typeof Object.assign != 'function') {
+  // Must be writable: true, enumerable: false, configurable: true
+  Object.defineProperty(Object, "assign", {
+    value: function assign(target, varArgs) { // .length of function is 2
+      'use strict';
+      if (target == null) {
+        throw new TypeError('Cannot convert undefined or null to object');
+      }
+      let to = Object(target);
+      for (var index = 1; index < arguments.length; index++) {
+        var nextSource = arguments[index];
+        if (nextSource != null) {
+          for (let nextKey in nextSource) {
+            if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+              to[nextKey] = nextSource[nextKey];
+            }
+          }
+        }
+      }
+      return to;
+    },
+    writable: true,
+    configurable: true
+  });
+}
+```
+
+#### create
+
+创建一个新对象，使用现有的对象来提供新创建的对象的__proto__。
+
+```js
+// Object.create(proto[, propertiesObject])
+const person = {
+  isHuman: false,
+  printIntroduction: function () {
+    console.log(`My name is ${this.name}. Am I human? ${this.isHuman}`);
+  }
+};
+const me = Object.create(person);
+me.name = "Matthew";
+me.isHuman = true;
+me.printIntroduction(); // "My name is Matthew. Am I human? true"
+
+// 创建一个原型为null的空对象
+Object.create(null);
+
+var o = {};
+// 以字面量方式创建的空对象就相当于:
+o = Object.create(Object.prototype);
+
+o = Object.create(Object.prototype, {
+  // foo会成为所创建对象的数据属性
+  foo: { 
+    writable:true,
+    configurable:true,
+    value: "hello" 
+  },
+  // bar会成为所创建对象的访问器属性
+  bar: {
+    configurable: false,
+    get: function() { return 10 },
+    set: function(value) {
+      console.log("Setting `o.bar` to", value);
+    }
+  }
+});
+
+function Constructor(){}
+o = new Constructor();
+// 上面的一句就相当于:
+o = Object.create(Constructor.prototype);
+// 当然,如果在Constructor函数中有一些初始化代码,Object.create不能执行那些代码
+
+//创建一个可写的,可枚举的,可配置的属性p
+o = Object.create({}, {
+  p: {
+    value: 42, 
+    writable: true,
+    enumerable: true,
+    configurable: true 
+  } 
+});
+```
+
+- `propertiesObject`
+
+可选。如果没有指定为 undefined，则是要添加到新创建对象的不可枚举（默认）属性对象的属性描述符以及相应的属性名称。
+
+#### defineProperty
+
+在一个对象上定义一个新属性，或者修改一个对象的现有属性， 并返回这个对象。
+
+```js
+// Object.defineProperty(obj, prop, descriptor)
+// prop 要定义或修改的属性的名称。
+// descriptor 将被定义或修改的属性描述符。
+//    configurable 为 true 时，该属性描述符才能够被改变，也能从对应的对象上被删除。默认为 false。
+//    enumerable 当且仅当该属性的enumerable为true时，才能够出现在对象的枚举属性中。默认为 false。
+//    value 该属性对应的值。任何有效的 JavaScript 值（数值，对象，函数等）。默认为 undefined。
+//    writable 仅当该属性的writable为true时，value才能被赋值运算符改变。默认为 false。
+//    get 给属性提供 getter 的方法，如果没有 getter 则为 undefined。
+//    set 给属性提供 setter 的方法，如果没有 setter 则为 undefined。
 var obj = {};
 Object.defineProperty(obj, 'name', { value: 'n' });
+
+// 使用 __proto__
+var obj = {};
+var descriptor = Object.create(null); // 没有继承的属性
+// 默认没有 enumerable，没有 configurable，没有 writable
+descriptor.value = 'static';
+Object.defineProperty(obj, 'key', descriptor);
+
+// 显式
+Object.defineProperty(obj, "key", {
+  enumerable: false,
+  configurable: false,
+  writable: false,
+  value: "static"
+});
+
+var o = {};
+Object.defineProperty(o, "a", { value : 1, enumerable:true });
+Object.defineProperty(o, "b", { value : 2, enumerable:false });
+Object.defineProperty(o, "c", { value : 3 }); // enumerable defaults to false
+o.d = 4; // 如果使用直接赋值的方式创建对象的属性，则这个属性的enumerable为true
+for (var i in o) {    
+  console.log(i);             // 'a', 'd'
+}
+Object.keys(o);               // ["a", "d"]
+o.propertyIsEnumerable('a');  // true
+o.propertyIsEnumerable('b');  // false
+o.propertyIsEnumerable('c');  // false
+```
+
+#### defineProperties
+
+直接在一个对象上定义新的属性或修改现有属性，并返回该对象。
+
+```js
+// Object.defineProperties(obj, props)
+var obj = {};
+Object.defineProperties(obj, {
+  'property1': {
+    value: true,
+    writable: true
+  },
+  'property2': {
+    value: 'Hello',
+    writable: false
+  }
+  // etc. etc.
+});
+```
+
+#### entries
+
+返回一个给定对象自身可枚举属性的键值对数组，其排列与使用 for...in 循环遍历该对象时返回的顺序一致（区别在于 for-in 循环还会枚举原型链中的属性）。
+
+```js
+let obj = { foo: 'bar', baz: 42 };
+console.log(Object.entries(obj));     // [ ['foo', 'bar'], ['baz', 42] ]
+let obj = { 0: 'a', 1: 'b', 2: 'c' };
+console.log(Object.entries(obj));     // [ ['0', 'a'], ['1', 'b'], ['2', 'c'] ]
+let anObj = { 100: 'a', 2: 'b', 7: 'c' };
+console.log(Object.entries(anObj));   // [ ['2', 'b'], ['7', 'c'], ['100', 'a'] ]
+let myObj = Object.create({}, { getFoo: { value() { return this.foo; } } });
+myObj.foo = 'bar';
+console.log(Object.entries(myObj));   // [ ['foo', 'bar'] ]
+console.log(Object.entries('foo'));   // [ ['0', 'f'], ['1', 'o'], ['2', 'o'] ]
+let obj = { a: 5, b: 7, c: 9 };
+for (const [key, value] of Object.entries(obj)) {
+  console.log(`${key} ${value}`);     // "a 5", "b 7", "c 9"
+}
+var map = new Map(Object.entries({ foo: "bar", baz: 42 }));
+console.log(map);                     // Map { foo: "bar", baz: 42 }
+```
+
+#### freeze、isFrozen
+
+冻结一个对象。一个被冻结的对象再也不能被修改；冻结了一个对象则不能向这个对象添加新的属性，不能删除已有属性，不能修改该对象已有属性的可枚举性、可配置性、可写性，以及不能修改已有属性的值。此外，冻结一个对象后该对象的原型也不能被修改。
+
+```js
+const obj = { prop: 42 };
+Object.freeze(obj);
+obj.prop = 33;                      // Throws an error in strict mode
+console.log(obj.prop);              // expected output: 42
+delete obj.prop;                    // false
+console.log(obj.prop);              // expected output: 42
+console.log(Object.isFrozen(obj));  // true
+Object.defineProperty(obj, 'ohai', { value: 17 });  // 抛出 TypeError
+Object.setPrototypeOf(obj, { x: 20 });              // 抛出 TypeError
+```
+
+#### fromEntries
+
+把键值对列表转换为一个对象。
+
+```js
+const entries = new Map([
+  ['foo', 'bar'],
+  ['baz', 42]
+]);
+console.log(Object.fromEntries(entries)); // Object { foo: "bar", baz: 42 }
+const arr = [ ['0', 'a'], ['1', 'b'], ['2', 'c'] ];
+console.log(Object.fromEntries(arr));     // { 0: "a", 1: "b", 2: "c" }
+const object = Object.fromEntries(Object.entries({ a: 1, b: 2, c: 3 })
+  .map(([ key, val ]) => [ key, val * 2 ]));
+console.log(object);                      // { a: 2, b: 4, c: 6 }
+```
+
+#### getOwnPropertyDescriptor
+
+返回指定对象上一个自有属性对应的属性描述符。
+
+```js
+// Object.getOwnPropertyDescriptor(obj, prop)
+let o = { get foo() { return 17; } };
+let d = Object.getOwnPropertyDescriptor(o, "foo");
+// d {
+//   configurable: true,
+//   enumerable: true,
+//   get: /*the getter function*/,
+//   set: undefined
+// }
+```
+
+#### getOwnPropertyDescriptors
+
+获取一个对象的所有自身属性的描述符。
+
+#### getOwnPropertyNames 
+
+返回一个由指定对象的所有自身属性的属性名（包括不可枚举属性但不包括Symbol值作为名称的属性）组成的数组。
+
+```js
+var arr = ["a", "b", "c"];
+console.log(Object.getOwnPropertyNames(arr).sort()); // ["0", "1", "2", "length"]
+var obj = { 0: "a", 1: "b", 2: "c"};
+console.log(Object.getOwnPropertyNames(obj).sort()); // ["0", "1", "2"]
 ```
 
 #### getOwnPropertySymbols
+
+返回一个给定对象自身的所有 Symbol 属性的数组。
 
 ```js
 var obj = {};
 var symbol = Symbol();
 obj[symbol] = 123;
 Object.getOwnPropertySymbols(obj);
+```
+
+#### getPrototypeOf
+
+返回指定对象的原型（内部`[[Prototype]]`属性的值）。
+
+```js
+const prototype1 = {};
+const object1 = Object.create(prototype1);
+console.log(Object.getPrototypeOf(object1) === prototype1); // true
+var reg = /a/;
+Object.getPrototypeOf(reg) === RegExp.prototype;            // true
+```
+
+#### is
+
+判断两个值是否是相同的值。
+
+```js
+// Object.is(value1, value2);
+Object.is('foo', 'foo');     // true
+Object.is(window, window);   // true
+Object.is('foo', 'bar');     // false
+Object.is([], []);           // false
+var foo = { a: 1 };
+var bar = { a: 1 };
+Object.is(foo, foo);         // true
+Object.is(foo, bar);         // false
+Object.is(null, null);       // true
+// 特例
+Object.is(0, -0);            // false
+Object.is(0, +0);            // true
+Object.is(-0, -0);           // true
+Object.is(NaN, 0/0);         // true
+```
+
+#### isExtensible、preventExtensions
+
+- `isExtensible`: 判断一个对象是否是可扩展的（是否可以在它上面添加新的属性）。
+- `preventExtensions`: 让一个对象变的不可扩展。
+
+```js
+// Object.isExtensible(obj)
+// 新对象默认是可扩展的.
+var empty = {};
+Object.isExtensible(empty);     // === true
+// ...可以变的不可扩展.
+Object.preventExtensions(empty);
+Object.isExtensible(empty);     // === false
+// 密封对象是不可扩展的.
+var sealed = Object.seal({});
+Object.isExtensible(sealed);    // === false
+// 冻结对象也是不可扩展.
+var frozen = Object.freeze({});
+Object.isExtensible(frozen);    // === false
+```
+
+#### isSealed、seal
+
+- `seal`: 封闭一个对象，阻止添加新属性并将所有现有属性标记为不可配置。当前属性的值只要原来是可写的就可以改变。
+- `isSealed`: 判断一个对象是否被密封。
+
+```js
+var obj = {
+  prop: function() {},
+  foo: 'bar'
+};
+obj.foo = 'baz';
+obj.lumpy = 'woof';
+delete obj.prop;
+var o = Object.seal(obj);
+o === obj;                  // true
+Object.isSealed(obj);       // true
+obj.foo = 'quux';
+Object.defineProperty(obj, 'foo', {
+  get: function() { return 'g'; }
+}); // throws a TypeError
+obj.quaxxor = 'the friendly duck';
+delete obj.foo;
+// will throw TypeErrors.
+function fail() {
+  'use strict';
+  delete obj.foo; // throws a TypeError
+  obj.sparky = 'arf'; // throws a TypeError
+}
+fail();
+Object.defineProperty(obj, 'ohai', {
+  value: 17
+}); // throws a TypeError
+Object.defineProperty(obj, 'foo', {
+  value: 'eit'
+}); // changes existing property value
+```
+
+
+#### keys
+
+会返回一个由一个给定对象的自身可枚举属性组成的数组，数组中属性名的排列顺序和使用 for...in 循环遍历该对象时返回的顺序一致。
+
+```js
+var arr = ['a', 'b', 'c'];
+console.log(Object.keys(arr));    // console: ['0', '1', '2']
+var obj = { 0: 'a', 1: 'b', 2: 'c' };
+console.log(Object.keys(obj));    // console: ['0', '1', '2']
+var anObj = { 100: 'a', 2: 'b', 7: 'c' };
+console.log(Object.keys(anObj));  // console: ['2', '7', '100']
+var myObj = Object.create({}, {
+  getFoo: {
+    value: function () { return this.foo; }
+  } 
+});
+myObj.foo = 1;
+console.log(Object.keys(myObj));  // console: ['foo']
+```
+
+### Function
+
+[参数个数限制在65536](https://bugs.webkit.org/show_bug.cgi?id=80797)
+
+```js
+const sum = new Function('a', 'b', 'return a + b');
+console.log(sum(2, 6));   // 8
+```
+
+#### arguments
+
+已经从 Web 标准中删除。
+
+无需明确指出参数名，就能访问它们。
+
+`arguments.length`: 参数个数。
+`arguments.callee`: 当前正在执行的函数。
+
+```js
+// 每个 arg 都是一个参数，最后一个参数是函数主体（要执行的代码）。
+// 这些参数必须是字符串。
+// ECMAScript 可以接受任意多个参数（最多 25 个）
+var function_name = new function(arg1, arg2, ..., argN, function_body)
+```
+
+```js
+var sayHi = new Function("sName", "sMessage", "alert(\"Hello \" + sName + sMessage);");
+// 等同于
+function sayHi(sName, sMessage) {
+  alert("Hello " + sName + sMessage);
+}
+// 属性 length 声明了函数期望的参数个数。
+console.log(sayHi.length);        //输出 "2"
+//  valueOf() 方法和 toString() 方法: 返回的都是函数的源代码，在调试时尤其有用。
+console.log(sayHi.toString());    //输出 "2"
+```
+
+注意：尽管可以使用 Function 构造函数创建函数，但最好不要使用它，因为用它定义函数比用传统方式要慢得多。
+
+不过，所有函数都应看作 Function 类的实例。
+
+#### length
+
+指明函数的形参个数。
+
+```js
+function func1() {}
+function func2(a, b) {}
+console.log(func1.length); // 0
+console.log(func2.length); // 2
+```
+
+#### name
+
+函数实例的名称。
+
+```js
+(new Function).name;                  // "anonymous"
+var f = function() {};
+var object = {
+  someMethod: function() {}
+};
+console.log(f.name);                  // "f"
+console.log(object.someMethod.name);  // "someMethod"
+```
+
+#### prototype 
+
+属性存储了 Function 的原型对象。
+
+#### toString
+
+返回一个表示当前函数源代码的字符串。
+
+#### AOP
+
+```js
+var foo = function(value){
+  value[0]=2;
+  console.log(`call:${value}`); 
+  value[0]=3;
+}
+Function.prototype.before = function(fn){
+  var _this = this;
+  return function() {
+    fn.apply(this,arguments);
+    return _this.apply(this,arguments);
+  }
+}
+Function.prototype.after = function(fn){
+  var _this = this;
+  return function(){
+    var r = _this.apply(this,arguments);
+    fn.apply(this,arguments);
+    return r;
+  }
+}
+foo.before(function(value){
+  console.log(`before:${value}`);
+}).after(function(value){
+  console.log(`after:${value}`);
+})([1]);
+// before:1
+// call:2
+// after:3
+```
+
+#### call/apply
+
+1. 每个函数都包含两个非继承而来的方法：apply()和call()。
+2. 都是在特定的作用域中调用函数。
+
+- `call`: 第一个参数用作 this 的对象。其他参数都直接传递给函数自身。
+- `apply`: 有两个参数，用作 this 的对象和要传递给函数的参数的数组。
+
+call、apply、bind的作用是改变函数运行时this的指向
+
+```js
+function foo(age, position){
+  return `${this.name}: ${age}, ${position}`
+}
+var obj={
+  name: 'a'
+}
+console.log(foo.call(obj, 20, 'web'))     //a: 20, web
+console.log(foo.apply(obj, [20, 'web']))  //a: 20, web
+// 等同于
+obj.foo=foo;
+console.log(obj.foo(20, 'web'))           //a: 20, web
+```
+
+#### bind
+
+bind() 方法创建一个新的函数，在 bind() 被调用时，这个新函数的 this 被指定为 bind() 的第一个参数，而其余参数将作为新函数的参数，供调用时使用。
+
+```js
+const module = {
+  x: 42,
+  getX: function() {
+    return this.x;
+  }
+}
+const unboundGetX = module.getX;
+console.log(unboundGetX()); // The function gets invoked at the global scope
+// expected output: undefined
+const boundGetX = unboundGetX.bind(module);
+console.log(boundGetX());
+// expected output: 42
+```
+
+```js
+// thisArg: 调用绑定函数时作为 this 参数传递给目标函数的值。 
+//          如果使用new运算符构造绑定函数，则忽略该值。
+//          当使用 bind 在 setTimeout 中创建一个函数（作为回调提供）时，作为 thisArg 传递的任何原始值都将转换为 object。
+//          如果 bind 函数的参数列表为空，执行作用域的 this 将被视为新函数的 thisArg。
+// arg1, arg2, ...: 当目标函数被调用时，被预置入绑定函数的参数列表中的参数。
+// return: 返回一个原函数的拷贝，并拥有指定的 this 值和初始参数。
+function.bind(thisArg[, arg1[, arg2[, ...]]])
+```
+
+使一个函数拥有预设的初始参数。只要将这些参数（如果有的话）作为 bind() 的参数写在 this 后面。
+
+当绑定函数被调用时，这些参数会被插入到目标函数的参数列表的开始位置，传递给绑定函数的参数会跟在它们后面。
+
+```js
+function list() {
+  return Array.prototype.slice.call(arguments);
+}
+function addArguments(arg1, arg2) {
+  return arg1 + arg2
+}
+var list1 = list(1, 2, 3);            // [1, 2, 3]
+var result1 = addArguments(1, 2);     // 3
+// 创建一个函数，它拥有预设参数列表。
+var leadingThirtysevenList = list.bind(null, 37);
+// 创建一个函数，它拥有预设的第一个参数
+var addThirtySeven = addArguments.bind(null, 37); 
+var list2 = leadingThirtysevenList();         // [37]
+var list3 = leadingThirtysevenList(1, 2, 3);  // [37, 1, 2, 3]
+var result2 = addThirtySeven(5);              // 37 + 5 = 42 
+var result3 = addThirtySeven(5, 10);          // 37 + 5 = 42 ，第二个参数被忽略
+```
+
+setTimeout
+
+```js
+function LateBloomer() {
+  this.petalCount = Math.ceil(Math.random() * 12) + 1;
+}
+// 在 1 秒钟后声明 bloom
+LateBloomer.prototype.bloom = function() {
+  window.setTimeout(this.declare.bind(this), 1000);
+};
+LateBloomer.prototype.declare = function() {
+  console.log('I am a beautiful flower with ' + this.petalCount + ' petals!');
+};
+var flower = new LateBloomer();
+flower.bloom();  // 一秒钟后, 调用 'declare' 方法
+```
+
+Polyfill
+
+```js
+// Does not work with `new funcA.bind(thisArg, args)`
+if (!Function.prototype.bind) (function(){
+  var slice = Array.prototype.slice;
+  Function.prototype.bind = function() {
+    var thatFunc = this, thatArg = arguments[0];
+    var args = slice.call(arguments, 1);
+    if (typeof thatFunc !== 'function') {
+      // closest thing possible to the ECMAScript 5
+      // internal IsCallable function
+      throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
+    }
+    return function(){
+      var funcArgs = args.concat(slice.call(arguments))
+      return thatFunc.apply(thatArg, funcArgs);
+    };
+  };
+})();
 ```
 
 ### Boolean
@@ -141,6 +786,116 @@ var oBooleanObject = new Boolean(true);
 // ToString() 方法也会被覆盖，返回字符串 "true" 或 "false"。
 var oFalseObject = new Boolean(false);
 var bResult = oFalseObject && true;	//输出 true
+```
+
+#### hasOwnProperty
+
+对象自身属性中是否具有指定的属性。
+
+```js
+o = new Object();
+o.propOne = null;
+o.hasOwnProperty('propOne'); // true
+o.propTwo = undefined;  
+o.hasOwnProperty('propTwo'); // true
+
+o = new Object();
+o.prop = 'exists';
+o.hasOwnProperty('prop');             // true
+o.hasOwnProperty('toString');         // false
+o.hasOwnProperty('hasOwnProperty');   // false
+```
+
+#### isPrototypeOf
+
+一个对象是否存在于另一个对象的原型链上。
+
+```js
+function Foo() {}
+function Bar() {}
+function Baz() {}
+Bar.prototype = Object.create(Foo.prototype);
+Baz.prototype = Object.create(Bar.prototype);
+var baz = new Baz();
+console.log(Baz.prototype.isPrototypeOf(baz));    // true
+console.log(Bar.prototype.isPrototypeOf(baz));    // true
+console.log(Foo.prototype.isPrototypeOf(baz));    // true
+console.log(Object.prototype.isPrototypeOf(baz)); // true
+```
+
+#### propertyIsEnumerable
+
+表示指定的属性是否可枚举。
+
+```js
+var o = {};
+var a = [];
+o.prop = 'is enumerable';
+a[0] = 'is enumerable';
+o.propertyIsEnumerable('prop'); // true
+a.propertyIsEnumerable(0);      // true
+
+var a = ['is enumerable'];
+
+a.propertyIsEnumerable(0);            // true
+a.propertyIsEnumerable('length');     // false
+Math.propertyIsEnumerable('random');  // false
+this.propertyIsEnumerable('Math');    // false
+```
+
+#### toLocaleString
+
+返回一个该对象的字符串表示。此方法被用于派生对象为了特定语言环境的目的而重载使用。
+
+#### valueOf
+
+返回指定对象的原始值。
+
+```js
+var array = ["ABC", true, 12, -5];
+console.log(array.valueOf() === array);       // true
+var date = new Date(2013, 7, 18, 23, 11, 59, 230);
+console.log(date.valueOf());                  // 1376838719230
+var num =  15.26540;
+console.log(num.valueOf());                   // 15.2654
+var bool = true;
+console.log(bool.valueOf() === bool);         // true
+var newBool = new Boolean(true);
+console.log(newBool.valueOf() == newBool);    // true
+// 但是不全等，两者类型不相等，前者是boolean类型，后者是object类型
+console.log(newBool.valueOf() === newBool);   // false
+function foo(){}
+console.log( foo.valueOf() === foo );         // true
+var foo2 =  new Function("x", "y", "return x + y;");
+console.log( foo2.valueOf() );
+var obj = {name: "张三", age: 18};
+console.log( obj.valueOf() === obj );         // true
+var str = "http://www.xyz.com";
+console.log( str.valueOf() === str );         // true
+var str2 = new String("http://www.xyz.com");
+// 两者的值相等，但不全等，因为类型不同，前者为string类型，后者为object类型
+console.log( str2.valueOf() === str2 );       // false
+```
+
+#### setPrototypeOf
+
+设置一个指定的对象的原型 ( 即, 内部[[Prototype]]属性）到另一个对象或  null。
+
+#### values
+
+返回一个给定对象自身的所有可枚举属性值的数组，值的顺序与使用for...in循环的顺序相同 ( 区别在于 for-in 循环枚举原型链中的属性 )。
+
+```js
+var obj = { foo: 'bar', baz: 42 };
+console.log(Object.values(obj));          // ['bar', 42]
+var obj = { 0: 'a', 1: 'b', 2: 'c' };
+console.log(Object.values(obj));          // ['a', 'b', 'c']
+var an_obj = { 100: 'a', 2: 'b', 7: 'c' };
+console.log(Object.values(an_obj));       // ['b', 'c', 'a']
+var my_obj = Object.create({}, { getFoo: { value: function() { return this.foo; } } });
+my_obj.foo = 'bar';
+console.log(Object.values(my_obj));       // ['bar']
+console.log(Object.values('foo'));        // ['f', 'o', 'o']
 ```
 
 ### Number
@@ -156,6 +911,11 @@ console.log(oNumberObject.toExponential(1));  //输出 "6.8e+1"
 console.log(oNumberObject.toPrecision(1));  //输出 "7e+1"
 console.log(oNumberObject.toPrecision(2));  //输出 "68"
 console.log(oNumberObject.toPrecision(3));  //输出 "68.0"
+console.log(Number.MAX_VALUE);              //输出 1.7976931348623157e+308
+console.log(Number.MIN_VALUE);              //输出 5e-324
+console.log(Number.POSITIVE_INFINITY);      //输出 Infinity
+console.log(Number.NEGATIVE_INFINITY);      //输出 -Infinity
+console.log(NaN == NaN);                    //false
 ```
 
 ### String
@@ -171,6 +931,7 @@ console.log(oStringObject.charCodeAt(1));	      //输出 "101"
 console.log(String.fromCharCode(101));	        //输出 "e"
 console.log("hello ".concat("world"));	        //输出 "hello world"
 console.log(oStringObject.indexOf("o"));		    //输出 "4"
+console.log("Blue Whale".indexOf("l", 5));      //输出 8
 console.log(oStringObject.lastIndexOf("o"));	  //输出 "7"
 console.log("1".padStart(3, "0"));	            //输出 "001"
 console.log("1".padEnd(3, "0"));	              //输出 "100"
@@ -189,7 +950,835 @@ console.log(oStringObject.toLocaleUpperCase());	//输出 "HELLO WORLD"
 console.log(oStringObject.toUpperCase());		    //输出 "HELLO WORLD"
 console.log(oStringObject.toLocaleLowerCase());	//输出 "hello world"
 console.log(oStringObject.toLowerCase());		    //输出 "hello world"
+console.log(String.raw`\n\5\xxx\uuu\111`);		  //输出 "\n\5\xxx\uuu\111"
+var str1 = 'Cats are the best!';
+console.log(str1.endsWith('best', 17));         //输出 true
+var str = 'For more information, see Chapter 3.4.5.1';
+var re = /see (chapter \d+(\.\d)*)/i;
+console.log(str.match(re));
+
+var greeting = '   Hello world!   ';
+console.log(greeting.trim());                   //输出 Hello world!
+var str = 'To be, or not to be, that is the question.';
+console.log(str.includes('To be'));             //输出 true
 ```
+
+### Array
+
+#### from
+
+从一个类似数组或可迭代对象创建一个新的，浅拷贝的数组实例。
+
+```js
+// Array.from(arrayLike[, mapFn[, thisArg]])
+// arrayLike  想要转换成数组的伪数组对象或可迭代对象。
+// mapFn      可选，如果指定了该参数，新数组中的每个元素会执行该回调函数。
+// thisArg    可选，可选参数，执行回调函数 mapFn 时 this 对象。
+console.log(Array.from('foo'));                   // ["f", "o", "o"]
+console.log(Array.from([1, 2, 3], x => x + x));   // [2, 4, 6]
+```
+
+#### isArray
+
+确定传递的值是否是一个 Array。
+
+```js
+Array.isArray([1, 2, 3]);   // true
+Array.isArray({foo: 123});  // false
+Array.isArray("foobar");    // false
+Array.isArray(undefined);   // false
+// 下面的函数调用都返回 true
+Array.isArray([]);
+Array.isArray([1]);
+Array.isArray(new Array());
+Array.isArray(new Array('a', 'b', 'c', 'd'))
+// 鲜为人知的事实：其实 Array.prototype 也是一个数组。
+Array.isArray(Array.prototype); 
+// 下面的函数调用都返回 false
+Array.isArray();
+Array.isArray({});
+Array.isArray(null);
+Array.isArray(undefined);
+Array.isArray(17);
+Array.isArray('Array');
+Array.isArray(true);
+Array.isArray(false);
+Array.isArray(new Uint8Array(32))
+Array.isArray({ __proto__: Array.prototype });
+```
+
+Polyfill
+
+```js
+if (!Array.isArray) {
+  Array.isArray = function(arg) {
+    return Object.prototype.toString.call(arg) === '[object Array]';
+  };
+}
+```
+
+#### of
+
+创建一个具有可变数量参数的新数组实例，而不考虑参数的数量或类型。
+
+```js
+// Array.of(element0[, element1[, ...[, elementN]]])
+Array.of(7);       // [7] 
+Array.of(1, 2, 3); // [1, 2, 3]
+Array(7);          // [ , , , , , , ]
+Array(1, 2, 3);    // [1, 2, 3]
+```
+
+#### concat
+
+合并两个或多个数组。不会更改现有数组，而是返回一个新数组。
+
+```js
+const array1 = ['a', 'b', 'c'];
+const array2 = ['d', 'e', 'f'];
+const array3 = array1.concat(array2);
+console.log(array3);    // ["a", "b", "c", "d", "e", "f"]
+```
+
+#### copyWithin
+
+浅复制数组的一部分到同一数组中的另一个位置，并返回它，不会改变原数组的长度。
+
+```js
+// arr.copyWithin(target[, start[, end]])
+const array1 = ['a', 'b', 'c', 'd', 'e'];
+console.log(array1.copyWithin(0, 3, 4));    // ["d", "b", "c", "d", "e"]
+console.log(array1.copyWithin(1, 3));       // ["d", "d", "e", "d", "e"]
+[1, 2, 3, 4, 5].copyWithin(-2)              // [1, 2, 3, 1, 2]
+[1, 2, 3, 4, 5].copyWithin(0, 3)            // [4, 5, 3, 4, 5]
+[1, 2, 3, 4, 5].copyWithin(0, 3, 4)         // [4, 2, 3, 4, 5]
+[1, 2, 3, 4, 5].copyWithin(-2, -3, -1)      // [1, 2, 3, 3, 4]
+[].copyWithin.call({length: 5, 3: 1}, 0, 3);// {0: 1, 3: 1, length: 5}
+var i32a = new Int32Array([1, 2, 3, 4, 5]);
+i32a.copyWithin(0, 2);                      // Int32Array [3, 4, 5, 4, 5]
+[].copyWithin.call(new Int32Array([1, 2, 3, 4, 5]), 0, 3, 4); // Int32Array [4, 2, 3, 4, 5]
+```
+
+#### entries
+
+返回一个新的Array Iterator对象，该对象包含数组中每个索引的键/值对。
+
+```js
+const array1 = ['a', 'b', 'c'];
+const iterator1 = array1.entries();
+console.log(iterator1.next().value);  // Array [0, "a"]
+console.log(iterator1.next().value);  // Array [1, "b"]
+```
+
+#### every
+
+测试一个数组内的所有元素是否都能通过某个指定函数的测试。它返回一个布尔值。
+
+```js
+const isBelowThreshold = (currentValue) => currentValue < 40;
+const array1 = [1, 30, 39, 29, 10, 13];
+console.log(array1.every(isBelowThreshold));    // true
+```
+
+#### fill
+
+用一个固定值填充一个数组中从起始索引到终止索引内的全部元素。不包括终止索引。
+
+```js
+// arr.fill(value[, start[, end]])
+const array1 = [1, 2, 3, 4];
+console.log(array1.fill(0, 2, 4));  // [1, 2, 0, 0]
+console.log(array1.fill(5, 1));     // [1, 5, 5, 5]
+console.log(array1.fill(6));        // [6, 6, 6, 6]
+```
+
+#### filter
+
+创建一个新数组, 其包含通过所提供函数实现的测试的所有元素。 
+
+```js
+// var newArray = arr.filter(callback(element[, index[, array]])[, thisArg])
+const words = ['spray', 'limit', 'elite', 'exuberant', 'destruction', 'present'];
+const result = words.filter(word => word.length > 6);
+console.log(result);    // ["exuberant", "destruction", "present"]
+```
+
+#### find
+
+返回数组中满足提供的测试函数的第一个元素的值。否则返回 undefined。
+
+```js
+// arr.find(callback[, thisArg])
+const array1 = [5, 12, 8, 130, 44];
+const found = array1.find(element => element > 10);
+console.log(found);   // 12
+```
+
+#### findIndex
+
+返回数组中满足提供的测试函数的第一个元素的索引。否则返回-1。
+
+```js
+// arr.findIndex(callback[, thisArg])
+const array1 = [5, 12, 8, 130, 44];
+const isLargeNumber = (element) => element > 13;
+console.log(array1.findIndex(isLargeNumber));     // 3
+```
+
+#### flat
+
+会按照一个可指定的深度递归遍历数组，并将所有元素与遍历到的子数组中的元素合并为一个新数组返回。
+
+```js
+// var newArray = arr.flat([depth])
+var arr1 = [1, 2, [3, 4]];
+arr1.flat();          // [1, 2, 3, 4]
+var arr2 = [1, 2, [3, 4, [5, 6]]];
+arr2.flat();          // [1, 2, 3, 4, [5, 6]]
+var arr3 = [1, 2, [3, 4, [5, 6]]];
+arr3.flat(2);         // [1, 2, 3, 4, 5, 6]
+//使用 Infinity，可展开任意深度的嵌套数组
+var arr4 = [1, 2, [3, 4, [5, 6, [7, 8, [9, 10]]]]];
+arr4.flat(Infinity);  // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+```
+
+#### flatMap
+
+首先使用映射函数映射每个元素，然后将结果压缩成一个新数组。
+
+它与 map 连着深度值为1的 flat 几乎相同，但 flatMap 通常在合并成一种方法的效率稍微高一些。
+
+```js
+// var new_array = arr.flatMap(function callback(currentValue[, index[, array]]) {
+//     // return element for new_array
+// }[, thisArg])
+var arr1 = [1, 2, 3, 4];
+arr1.map(x => [x * 2]);       // [[2], [4], [6], [8]]
+arr1.flatMap(x => [x * 2]);   // [2, 4, 6, 8]
+arr1.flatMap(x => [[x * 2]]); // [[2], [4], [6], [8]]
+```
+
+#### forEach
+
+对数组的每个元素执行一次提供的函数。
+
+```js
+// arr.forEach(callback(currentValue [, index [, array]])[, thisArg]);
+const array1 = ['a', 'b', 'c'];
+array1.forEach(element => console.log(element));  // "a", "b", "c"
+```
+
+#### includes
+
+判断一个数组是否包含一个指定的值，根据情况，如果包含则返回 true，否则返回false。
+
+```js
+// arr.includes(valueToFind[, fromIndex])
+const array1 = [1, 2, 3];
+console.log(array1.includes(2));      // true
+const pets = ['cat', 'dog', 'bat'];
+console.log(pets.includes('cat'));    // true
+console.log(pets.includes('at'));     // false
+```
+
+#### indexOf、lastIndexOf
+
+- `indexOf`: 返回在数组中可以找到一个给定元素的第一个索引，如果不存在，则返回-1。
+- `lastIndexOf`: 返回指定元素（也即有效的 JavaScript 值或变量）在数组中的最后一个的索引，如果不存在则返回 -1。从数组的后面向前查找，从 fromIndex 处开始。
+
+```js
+// arr.indexOf(searchElement[, fromIndex])
+const beasts = ['ant', 'bison', 'camel', 'duck', 'bison'];
+console.log(beasts.indexOf('bison'));       // 1
+console.log(beasts.indexOf('bison', 2));    // 4
+console.log(beasts.indexOf('giraffe'));     // -1
+
+// arr.lastIndexOf(searchElement[, fromIndex])
+const animals = ['Dodo', 'Tiger', 'Penguin', 'Dodo'];
+console.log(animals.lastIndexOf('Dodo'));   // 3
+console.log(animals.lastIndexOf('Tiger'));  // 1
+```
+
+#### join
+
+将一个数组（或一个类数组对象）的所有元素连接成一个字符串并返回这个字符串。
+
+如果数组只有一个项目，那么将返回该项目而不使用分隔符。
+
+```js
+// arr.join([separator])
+const elements = ['Fire', 'Air', 'Water'];
+console.log(elements.join());     // "Fire,Air,Water"
+console.log(elements.join(''));   // "FireAirWater"
+console.log(elements.join('-'));  // "Fire-Air-Water"
+```
+
+#### keys
+
+返回一个包含数组中每个索引键的Array Iterator对象。
+
+```js
+const array1 = ['a', 'b', 'c'];
+const iterator = array1.keys();
+for (const key of iterator) {
+  console.log(key);   // 0, 1, 2
+}
+```
+
+#### map
+
+创建一个新数组，其结果是该数组中的每个元素都调用一个提供的函数后返回的结果。
+
+```js
+// var new_array = arr.map(function callback(currentValue[, index[, array]]) {
+// // Return element for new_array 
+// }[, thisArg])
+const array1 = [1, 4, 9, 16];
+const map1 = array1.map(x => x * 2);
+console.log(map1);    // [2, 8, 18, 32]
+```
+
+#### pop
+
+从数组中删除最后一个元素，并返回该元素的值。此方法更改数组的长度。
+
+```js
+const plants = ['broccoli', 'cauliflower', 'cabbage', 'kale', 'tomato'];
+console.log(plants.pop());    // "tomato"
+console.log(plants);          // ["broccoli", "cauliflower", "cabbage", "kale"]
+plants.pop();
+console.log(plants);          // ["broccoli", "cauliflower", "cabbage"]
+```
+
+#### push
+
+将一个或多个元素添加到数组的末尾，并返回该数组的新长度。
+
+```js
+const animals = ['pigs', 'goats', 'sheep'];
+const count = animals.push('cows');
+console.log(count);     // 4
+console.log(animals);   // ["pigs", "goats", "sheep", "cows"]
+animals.push('chickens', 'cats', 'dogs');
+console.log(animals);   // ["pigs", "goats", "sheep", "cows", "chickens", "cats", "dogs"]
+```
+
+#### reduce
+
+对数组中的每个元素执行一个由您提供的reducer函数(升序执行)，将其结果汇总为单个返回值。
+
+```js
+// arr.reduce(callback(accumulator, currentValue[, index[, array]])[, initialValue])
+const array1 = [1, 2, 3, 4];
+const reducer = (accumulator, currentValue) => accumulator + currentValue;
+console.log(array1.reduce(reducer));    // 10
+console.log(array1.reduce(reducer, 5)); // 15
+```
+
+#### reduceRight
+
+接受一个函数作为累加器（accumulator）和数组的每个值（从右到左）将其减少为单个值。
+
+```js
+// arr.reduceRight(callback(accumulator, currentValue[, index[, array]])[, initialValue])
+const array1 = [[0, 1], [2, 3], [4, 5]].reduceRight(
+  (accumulator, currentValue) => accumulator.concat(currentValue)
+);
+console.log(array1);    // [4, 5, 2, 3, 0, 1]
+```
+
+#### reverse
+
+将数组中元素的位置颠倒，并返回该数组。数组的第一个元素会变成最后一个，数组的最后一个元素变成第一个。该方法会改变原数组。
+
+```js
+const array1 = ['one', 'two', 'three'];
+console.log('array1:', array1);     // "array1:" ["one", "two", "three"]
+const reversed = array1.reverse();
+console.log('reversed:', reversed); // "reversed:" ["three", "two", "one"]
+// Careful: reverse is destructive -- it changes the original array.
+console.log('array1:', array1);     // "array1:" ["three", "two", "one"]
+```
+
+#### shift
+
+从数组中删除第一个元素，并返回该元素的值。此方法更改数组的长度。
+
+```js
+const array1 = [1, 2, 3];
+const firstElement = array1.shift();
+console.log(array1);        // [2, 3]
+console.log(firstElement);  // 1
+```
+
+#### slice
+
+返回一个新的数组对象，这一对象是一个由 begin 和 end 决定的原数组的浅拷贝（包括 begin，不包括end）。原始数组不会被改变。
+
+```js
+// arr.slice([begin[, end]])
+const animals = ['ant', 'bison', 'camel', 'duck', 'elephant'];
+console.log(animals.slice(2));      // ["camel", "duck", "elephant"]
+console.log(animals.slice(2, 4));   // ["camel", "duck"]
+console.log(animals.slice(1, 5));   // ["bison", "camel", "duck", "elephant"]
+```
+
+#### some
+
+测试数组中是不是至少有1个元素通过了被提供的函数测试。它返回的是一个Boolean类型的值。
+
+```js
+// arr.some(callback(element[, index[, array]])[, thisArg])
+const array = [1, 2, 3, 4, 5];
+// checks whether an element is even
+const even = (element) => element % 2 === 0;
+console.log(array.some(even));    // true
+```
+
+#### sort
+
+用[原地算法](https://en.wikipedia.org/wiki/In-place_algorithm)对数组的元素进行排序，并返回数组。默认排序顺序是在将元素转换为字符串，然后比较它们的UTF-16代码单元值序列时构建的
+
+由于它取决于具体实现，因此无法保证排序的时间和空间复杂性。
+
+```js
+// arr.sort([compareFunction])
+const months = ['March', 'Jan', 'Feb', 'Dec'];
+months.sort();
+console.log(months);    // ["Dec", "Feb", "Jan", "March"]
+const array1 = [1, 30, 4, 21, 100000];
+array1.sort();
+console.log(array1);    // [1, 100000, 21, 30, 4]
+var numbers = [4, 2, 5, 1, 3]; 
+numbers.sort((a, b) => a - b); 
+console.log(numbers);   // [1, 2, 3, 4, 5]
+```
+
+#### splice
+
+过删除或替换现有元素或者原地添加新的元素来修改数组,并以数组形式返回被修改的内容。此方法会改变原数组。
+
+```js
+// array.splice(start[, deleteCount[, item1[, item2[, ...]]]])
+const months = ['Jan', 'March', 'April', 'June'];
+months.splice(1, 0, 'Feb');
+// inserts at index 1
+console.log(months);      // ["Jan", "Feb", "March", "April", "June"]
+months.splice(4, 1, 'May');
+console.log(months);      // ["Jan", "Feb", "March", "April", "May"]
+```
+
+#### toLocaleString
+
+返回一个字符串表示数组中的元素。数组中的元素将使用各自的 toLocaleString 方法转成字符串，这些字符串将使用一个特定语言环境的字符串（例如一个逗号 ","）隔开。
+
+```js
+// arr.toLocaleString([locales[,options]]);
+const array1 = [1, 'a', new Date('21 Dec 1997 14:12:00 UTC')];
+const localeString = array1.toLocaleString('en', {timeZone: "UTC"});
+console.log(localeString);  // "1,a,12/21/1997, 2:12:00 PM",
+```
+
+#### unshift
+
+将一个或多个元素添加到数组的开头，并返回该数组的新长度(该方法修改原有数组)。
+
+```js
+// arr.unshift(element1, ..., elementN)
+const array1 = [1, 2, 3];
+console.log(array1.unshift(4, 5));    // 5
+console.log(array1);                  // [4, 5, 1, 2, 3]
+```
+
+#### values
+
+返回一个新的 Array Iterator 对象，该对象包含数组每个索引的值
+
+```js
+const array1 = ['a', 'b', 'c'];
+const iterator = array1.values();
+for (const value of iterator) {
+  console.log(value);   // "a", "b", "c"
+}
+```
+
+#### @@iterator
+
+和 Array.prototype.values() 属性的初始值是同一个函数对象。
+
+```js
+// arr[Symbol.iterator]()
+var arr = ['a', 'b', 'c', 'd', 'e'];
+var eArr = arr[Symbol.iterator]();
+for (let letter of eArr) {
+  console.log(letter);
+}
+var eArr = arr[Symbol.iterator]();
+console.log(eArr.next().value); // a
+console.log(eArr.next().value); // b
+console.log(eArr.next().value); // c
+console.log(eArr.next().value); // d
+console.log(eArr.next().value); // e
+```
+
+### ArrayBuffer
+
+用来表示通用的、固定长度的原始二进制数据缓冲区。
+
+不能直接操作 ArrayBuffer 的内容，而是要通过类型数组对象或 DataView 对象来操作，它们会将缓冲区中的数据表示为特定的格式，并通过这些格式来读写缓冲区的内容。
+
+### Map
+
+保存键值对，并且能够记住键的原始插入顺序。任何值(对象或者原始值) 都可以作为一个键或一个值。
+
+本质上是键值对的集合，类似集合，可以遍历，方法很多可以跟各种数据格式转换。
+
+```js
+// new Map([iterable])
+var map1 = new Map();
+map1.set('a', 'alpha');
+map1.set('b', 'beta');
+map1.set('g', 'gamma');
+console.log(map1.size);               // 3
+map1.clear();
+console.log(map1.size);               // 0
+map1.set('bar', 'foo');
+console.log(map1.delete('bar'));      // true
+console.log(map1.has('bar'));         // false
+map1.set('0', 'foo');
+map1.set(1, 'bar');
+var iterator1 = map1.entries();
+console.log(iterator1.next().value);  // ["0", "foo"]
+console.log(iterator1.next().value);  // [1, "bar"]
+function logMapElements(value, key, map) {
+    console.log("m[" + key + "] = " + value);
+}
+Map([["foo", 3], ["bar", {}], ["baz", undefined]]).forEach(logMapElements);
+// "m[foo] = 3"
+// "m[bar] = [object Object]"
+// "m[baz] = undefined"
+map1.set('bar', 'foo');
+console.log(map1.get('bar'));         // "foo"
+console.log(map1.get('baz'));         // undefined
+map1.set('0', 'foo');
+map1.set(1, 'bar');
+var iterator1 = map1.keys();
+console.log(iterator1.next().value);  // "0"
+console.log(iterator1.next().value);  // 1
+var myMap = new Map();
+myMap.set("0", "foo");
+myMap.set(1, "bar");
+myMap.set({}, "baz");
+var mapIter = myMap.values();
+console.log(mapIter.next().value);    // "foo"
+console.log(mapIter.next().value);    // "bar"
+console.log(mapIter.next().value);    // "baz"
+var map1 = new Map();
+map1.set('0', 'foo');
+map1.set(1, 'bar');
+var iterator1 = map1[Symbol.iterator]();
+for (let item of iterator1) {
+  console.log(item);    // ["0", "foo"], [1, "bar"]
+}
+```
+
+### Promise
+
+用于表示一个异步操作的最终完成 (或失败), 及其结果值。
+
+```js
+// new Promise( function(resolve, reject) {...} /* executor */  );
+const promise1 = new Promise(function(resolve, reject) {
+  setTimeout(function() {
+    resolve('foo');
+  }, 300);
+});
+promise1.then(function(value) {
+  console.log(value);   // "foo"
+});
+console.log(promise1);  // [object Promise]
+
+var promiseCount = 0;
+function testPromise() {
+  let thisPromiseCount = ++promiseCount;
+  let log = document.getElementById('log');
+  log.insertAdjacentHTML('beforeend', thisPromiseCount + ') 开始 (<small>同步代码开始</small>)<br/>');
+  // 新构建一个 Promise 实例：使用Promise实现每过一段时间给计数器加一的过程，每段时间间隔为1~3秒不等
+  let p1 = new Promise(
+    // resolver 函数在 Promise 成功或失败时都可能被调用
+    (resolve, reject) => {
+      log.insertAdjacentHTML('beforeend', thisPromiseCount + ') Promise 开始 (<small>异步代码开始</small>)<br/>');
+      // 创建一个异步调用
+      window.setTimeout(function() {
+        // 填充 Promise
+        resolve(thisPromiseCount);
+      }, Math.random() * 2000 + 1000);
+    }
+  );
+  // Promise 不论成功或失败都会调用 then
+  // catch() 只有当 promise 失败时才会调用
+  p1.then(
+    // 记录填充值
+    function(val) {
+        log.insertAdjacentHTML('beforeend', val + ') Promise 已填充完毕 (<small>异步代码结束</small>)<br/>');
+    })
+  .catch(
+    // 记录失败原因
+    (reason) => {
+        console.log('处理失败的 promise ('+reason+')');
+    }
+  );
+  log.insertAdjacentHTML('beforeend', thisPromiseCount + ') Promise made (<small>同步代码结束</small>)<br/>');
+}
+```
+
+#### all
+
+方法返回一个 Promise 实例，此实例在 iterable 参数内所有的 promise 都“完成（resolved）”或参数中不包含 promise 时回调完成（resolve）；如果参数中  promise 有一个失败（rejected），此实例回调失败（reject），失败原因的是第一个失败 promise 的结果。
+
+```js
+const promise1 = Promise.resolve(3);
+const promise2 = 42;
+const promise3 = new Promise(function(resolve, reject) {
+  setTimeout(resolve, 100, 'foo');
+});
+Promise.all([promise1, promise2, promise3]).then(function(values) {
+  console.log(values);    // [3, 42, "foo"]
+});
+```
+
+#### allSettled
+
+返回一个在所有给定的promise已被决议或被拒绝后决议的promise，并带有一个对象数组，每个对象表示对应的promise结果。
+
+```js
+const promise1 = Promise.resolve(3);
+const promise2 = new Promise((resolve, reject) => setTimeout(reject, 100, 'foo'));
+const promises = [promise1, promise2];
+Promise.allSettled(promises).then((results) => results.forEach((result) => console.log(result.status)));
+// "fulfilled"
+// "rejected"
+```
+
+#### any
+
+接收一个Promise可迭代对象，只要其中的一个 promise 完成，就返回那个已经有完成值的 promise 。如果可迭代对象中没有一个 promise 完成（即所有的 promises 都失败/拒绝），就返回一个拒绝的 promise，返回值还有待商榷：无非是拒绝原因数组或AggregateError类型的实例，它是 Error 的一个子类，用于把单一的错误集合在一起。本质上，这个方法和Promise.all()是相反的。
+
+#### race
+
+返回一个 promise，一旦迭代器中的某个promise解决或拒绝，返回的 promise就会解决或拒绝。
+
+```js
+const promise1 = new Promise(function(resolve, reject) {
+    setTimeout(resolve, 500, 'one');
+});
+const promise2 = new Promise(function(resolve, reject) {
+    setTimeout(resolve, 100, 'two');
+});
+Promise.race([promise1, promise2]).then(function(value) {
+  console.log(value);
+  // Both resolve, but promise2 is faster
+});
+// "two"
+```
+
+#### reject
+
+返回一个带有拒绝原因的Promise对象。
+
+```js
+function resolved(result) {
+  console.log('Resolved');
+}
+function rejected(result) {
+  console.error(result);
+}
+Promise.reject(new Error('fail')).then(resolved, rejected);
+// Error: fail
+```
+
+#### resolve
+
+返回一个以给定值解析后的Promise 对象。如果该值为promise，返回这个promise；如果这个值是thenable（即带有"then" 方法)），返回的promise会“跟随”这个thenable的对象，采用它的最终状态；否则返回的promise将以此值完成。此函数将类promise对象的多层嵌套展平。
+
+```js
+const promise1 = Promise.resolve(123);
+promise1.then(function(value) {
+  console.log(value);   // 123
+});
+```
+
+### Proxy
+
+用于定义基本操作的自定义行为（如属性查找，赋值，枚举，函数调用等）。
+
+```js
+let handler = {
+    get: function(target, name){
+        return name in target ? target[name] : 37;
+    }
+};
+let p = new Proxy({}, handler);
+p.a = 1;
+p.b = undefined;
+console.log(p.a, p.b);          // 1, undefined
+console.log('c' in p, p.c);     // false, 37
+```
+
+### RegExp
+
+创建了一个正则表达式对象，用于将文本与一个模式匹配。
+
+```js
+var regex1 = /\w+/;
+var regex2 = new RegExp('\\w+');
+console.log(regex1);              // /\w+/
+console.log(regex2);              // /\w+/
+console.log(regex1 === regex2);   // false
+var regex1 = RegExp('foo*','g');
+var str1 = 'table football, foosball';
+let array1;
+while ((array1 = regex1.exec(str1)) !== null) {
+  console.log(`Found ${array1[0]}. Next starts at ${regex1.lastIndex}.`);
+  // "Found foo. Next starts at 9."
+  // "Found foo. Next starts at 19."
+}
+
+var str = 'hello world!';
+var result = /^hello/.test(str);
+console.log(result);              // true
+```
+
+### Set
+
+允许存储任何类型的唯一值，无论是原始值或者是对象引用。
+
+成员唯一、无序且不重复。
+
+```js
+const set1 = new Set([1, 2, 3, 4, 5]);
+console.log(set1.has(1));   // true
+console.log(set1.has(5));   // true
+console.log(set1.has(6));   // false
+var mySet = new Set();
+mySet.add(1);
+mySet.add(5).add("some text"); // 可以链式调用
+console.log(mySet);         // Set [1, 5, "some text"]
+mySet.add(5).add(1);
+console.log(mySet);         //Set [1, 5]  // 重复的值没有被添加进去
+
+var mySet = new Set();
+mySet.add(1);
+mySet.add("foo");
+mySet.size;       // 2
+mySet.has("foo"); // true
+mySet.clear();
+mySet.size;       // 0
+mySet.has("bar")  // false
+
+var mySet = new Set();
+mySet.add("foo");
+mySet.delete("bar"); // 返回 false，不包含 "bar" 这个元素
+mySet.delete("foo"); // 返回 true，删除成功
+mySet.has("foo");    // 返回 false，"foo" 已经成功删除
+
+var mySet = new Set();
+mySet.add("foobar");
+mySet.add(1);
+mySet.add("baz");
+var setIter = mySet.entries();
+console.log(setIter.next().value); // ["foobar", "foobar"]
+console.log(setIter.next().value); // [1, 1]
+console.log(setIter.next().value); // ["baz", "baz"]
+
+function logSetElements(value1, value2, set) {
+    console.log("s[" + value1 + "] = " + value2);
+}
+new Set(["foo", "bar", undefined]).forEach(logSetElements);
+// "s[foo] = foo"
+// "s[bar] = bar"
+// "s[undefined] = undefined"
+
+var mySet = new Set();
+mySet.add("foo");
+mySet.add("bar");
+mySet.add("baz");
+var setIter = mySet.values();
+console.log(setIter.next().value); // "foo"
+console.log(setIter.next().value); // "bar"
+console.log(setIter.next().value); // "baz"
+```
+
+### WeakSet
+
+允许将弱保持对象存储在一个集合中。
+
+成员都是对象
+
+成员都是弱引用，可以被垃圾回收机制回收，可以用来保存DOM节点，不容易造成内存泄漏。
+
+- 与Set相比，WeakSet 只能是对象的集合，而不能是任何类型的任意值。
+- WeakSet持弱引用：集合中对象的引用为弱引用。 如果没有其他的对WeakSet中对象的引用，那么这些对象会被当成垃圾回收掉。 这也意味着WeakSet中没有存储当前对象的列表。 正因为这样，WeakSet 是不可枚举的。
+
+```js
+var ws = new WeakSet();
+var foo = {};
+var bar = {};
+ws.add(foo);
+ws.add(bar);
+ws.has(foo);    // true
+ws.has(bar);    // true
+ws.delete(foo); // 从set中删除 foo 对象
+ws.has(foo);    // false, foo 对象已经被删除了
+ws.has(bar);    // true, bar 依然存在
+ws.clear();
+```
+
+### WeakMap
+
+是一组键/值对的集合，其中的键是弱引用的。其键必须是对象，而值可以是任意的。
+
+只接受对象作为键名（null除外），不接受其他类型的值作为键名。
+
+键名是弱引用，键值可以是任意的，键名所指向的对象可以被垃圾回收，此时键名是无效的。
+
+
+WeakMap 的 key 只能是 Object 类型。 原始数据类型 是不能作为 key 的（比如 Symbol）。
+
+```js
+const wm1 = new WeakMap(),
+      wm2 = new WeakMap(),
+      wm3 = new WeakMap();
+const o1 = {},
+      o2 = function(){},
+      o3 = window;
+wm1.set(o1, 37);
+wm1.set(o2, "azerty");
+wm2.set(o1, o2);      // value可以是任意值,包括一个对象或一个函数
+wm2.set(o3, undefined);
+wm2.set(wm1, wm2);    // 键和值可以是任意对象,甚至另外一个WeakMap对象
+wm1.get(o2); // "azerty"
+wm2.get(o2); // undefined,wm2中没有o2这个键
+wm2.get(o3); // undefined,值就是undefined
+wm1.has(o2); // true
+wm2.has(o2); // false
+wm2.has(o3); // true (即使值是undefined)
+wm3.set(o1, 37);
+wm3.get(o1);    // 37
+wm1.has(o1);   // true
+wm1.delete(o1);
+wm1.has(o1);   // false
+```
+
+### typeof 
+
+返回下列值之一：
+
+- `undefined` 如果变量是 Undefined 类型的
+- `boolean` 如果变量是 Boolean 类型的
+- `number` 如果变量是 Number 类型的
+- `string` 如果变量是 String 类型的
+- `object` 如果变量是一种引用类型或 Null 类型的
 
 ### instanceof 
 
@@ -203,6 +1792,70 @@ console.log(a instanceof String);	  //输出 "true"
 console.log(typeof arr);	            //输出 "object"
 console.log(arr instanceof Array);	  //输出 "true"
 ```
+
+### isFinite
+
+判断被传入的参数值是否为一个有限数值。
+
+Number.isFinite() 与全局的 isFinite() 函数不同，全局的 isFinite() 会先把检测值转换为 Number ，然后在检测。
+
+Number.isFinite() 不会将检测值转换为 Number对象，如果检测值不是 Number 类型，则返回 false。
+
+```js
+console.log(isFinite(1));             // true
+console.log(isFinite(1.1));           // true
+console.log(isFinite(1e1));           // true
+console.log(isFinite(010));           // true
+console.log(isFinite(0x10));          // true
+console.log(isFinite([]));            // true
+console.log(isFinite([1]));           // true
+console.log(isFinite(['1']));         // true
+console.log(isFinite(null));          // true
+console.log(isFinite(Infinity));      // false
+console.log(isFinite(NaN));           // false
+console.log(isFinite(undefined));     // false
+console.log(isFinite({}));            // false
+console.log(isFinite('a'));           // false
+console.log(isFinite('2a'));          // false
+console.log(isFinite('1'));           // true
+console.log(Number.isFinite('1'));    // false
+```
+
+### isNaN
+
+检查其参数是否是非数字值。
+
+```js
+console.log(isNaN(666)); // false
+console.log(isNaN("666")); // false
+console.log(isNaN("66b")); // true
+console.log(isNaN(NaN)); // true
+console.log(isNaN(undefined)); // true
+console.log(isNaN([26,1])); // false
+console.log(isNaN(Infinity)); // false
+console.log(isNaN(true)); // false
+console.log(isNaN('2e7')); // false
+console.log(isNaN([])); // false
+console.log(isNaN([26])); // false
+console.log(isNaN(['26'])); // false
+console.log(isNaN(null)); // false
+```
+
+### Object.prototype.toString.call/apply
+
+输出对象的类
+
+- `Object.prototype.toString.call('')`: [object String]
+- `Object.prototype.toString.call(1)`: [object Number]
+- `Object.prototype.toString.call(null)`: [object Null]
+- `Object.prototype.toString.call(undefined)`: [object Undefined]
+- `Object.prototype.toString.call({})`: [object Object]
+- `Object.prototype.toString.call(Symbol())`: [object Symbol]
+- `Object.prototype.toString.call([])`: [object Array]
+- `Object.prototype.toString.call(new Function())`: [object Function]
+- `Object.prototype.toString.call(new Set())`: [object Set]
+- `Object.prototype.toString.call(new Date())`: [object Date]
+
 
 ## 一元运算符
 
@@ -357,6 +2010,60 @@ console.log();//
 console.log();//
 ```
 
+### 优先级
+
+| 值 | 运算符 | 描述 | 实例 |
+| -- | ------ | --- | --- |
+| 20 | ( ) | 表达式分组 | (3 + 4) |
+| 19 | . | 成员 | person.name |
+| 19 | [] | 成员 | person["name"] |
+| 19 | () | 函数调用 | myFunction() |
+| 19 | new | 创建 | new Date() |
+| 17 | ++ | 后缀递增 | i++ |
+| 17 | -- | 后缀递减 | i-- |
+| 16 | ++ | 前缀递增 | ++i |
+| 16 | -- | 前缀递减 | --i |
+| 16 | ! | 逻辑否 | !(x==y) |
+| 16 | typeof | 类型 | typeof x |
+| 15 | ** | 求幂 | (ES7)	10 ** 2 |
+| 14 | * | 乘 | 10 * 5 |
+| 14 | / | 除 | 10 / 5 |
+| 14 | % | 模数除法 | 10 % 5 |
+| 13 | + | 加 | 10 + 5 |
+| 13 | - | 减 | 10 - 5 |
+| 12 | << | 左位移 | x << 2 |
+| 12 | >> | 右位移 | x >> 2 |
+| 12 | >>> | 右位移（无符号） | x >>> 2 |
+| 11 | < | 小于 | x < y |
+| 11 | <= | 小于或等于 | x <= y |
+| 11 | > | 大于 | x > y |
+| 11 | >= | 大于或等于 | 	x >= y |
+| 11 | in | 对象中的属性 | "PI" in Math |
+| 11 | instanceof | 对象的实例 | instanceof Array |
+| 10 | == | 相等 | x == y |
+| 10 | === | 严格相等 | x === y |
+| 10 | != | 不相等 | x != y |
+| 10 | !== | 严格不相等 | x !== y |
+| 9 | & | 按位与 | x & y |
+| 8 | ^ | 按位 | XOR	x ^ y |
+| 7 | &#124; | 按位或 | x | y |
+| 6 | && | 逻辑与 | x && y |
+| 5 | &#124;&#124; | 逻辑否 | x || y |
+| 4 | ? : | 条件 | ? "Yes" : "No" |
+| 3 | = | 赋值 | x = y |
+| 3 | += | 赋值 | x += y |
+| 3 | -= | 赋值 | x -= y |
+| 3 | *= | 赋值 | x *= y |
+| 3 | %= | 赋值 | x %= y |
+| 3 | <<= | 赋值 | x <<= y |
+| 3 | >>= | 赋值 | x >>= y |
+| 3 | >>>= | 赋值 | x >>>= y |
+| 3 | &= | 赋值 | x &= y |
+| 3 | ^= | 赋值 | x ^= y |
+| 3 | &#124;= | 赋值 | x |= y |
+| 2 | yield | 暂停函数 | yield x |
+| 1 | , | 逗号 | 7 , 8 |
+
 ## 标签语句
 
 break 语句和 continue 语句都可以与有标签的语句联合使用，返回代码中的特定位置。
@@ -396,203 +2103,6 @@ var sMessage = "hello";
 with(sMessage) {
   alert(toUpperCase());	//输出 "HELLO"
 }
-```
-
-## 函数
-
-### arguments
-
-无需明确指出参数名，就能访问它们。
-
-`arguments.length`: 参数个数。
-`arguments.callee`: 当前正在执行的函数。
-
-### Function
-
-```js
-// 每个 arg 都是一个参数，最后一个参数是函数主体（要执行的代码）。
-// 这些参数必须是字符串。
-// ECMAScript 可以接受任意多个参数（最多 25 个）
-var function_name = new function(arg1, arg2, ..., argN, function_body)
-```
-
-```js
-var sayHi = new Function("sName", "sMessage", "alert(\"Hello \" + sName + sMessage);");
-// 等同于
-function sayHi(sName, sMessage) {
-  alert("Hello " + sName + sMessage);
-}
-// 属性 length 声明了函数期望的参数个数。
-console.log(sayHi.length);        //输出 "2"
-//  valueOf() 方法和 toString() 方法: 返回的都是函数的源代码，在调试时尤其有用。
-console.log(sayHi.toString());    //输出 "2"
-```
-
-注意：尽管可以使用 Function 构造函数创建函数，但最好不要使用它，因为用它定义函数比用传统方式要慢得多。
-
-不过，所有函数都应看作 Function 类的实例。
-
-### AOP
-
-```js
-var foo = function(value){
-  value[0]=2;
-  console.log(`call:${value}`); 
-  value[0]=3;
-}
-Function.prototype.before = function(fn){
-  var _this = this;
-  return function() {
-    fn.apply(this,arguments);
-    return _this.apply(this,arguments);
-  }
-}
-Function.prototype.after = function(fn){
-  var _this = this;
-  return function(){
-    var r = _this.apply(this,arguments);
-    fn.apply(this,arguments);
-    return r;
-  }
-}
-foo.before(function(value){
-  console.log(`before:${value}`);
-}).after(function(value){
-  console.log(`after:${value}`);
-})([1]);
-// before:1
-// call:2
-// after:3
-```
-
-### Object.prototype.toString.call/apply
-
-输出对象的类
-
-- `Object.prototype.toString.call('')`: [object String]
-- `Object.prototype.toString.call(1)`: [object Number]
-- `Object.prototype.toString.call(null)`: [object Null]
-- `Object.prototype.toString.call(undefined)`: [object Undefined]
-- `Object.prototype.toString.call({})`: [object Object]
-- `Object.prototype.toString.call(Symbol())`: [object Symbol]
-- `Object.prototype.toString.call([])`: [object Array]
-- `Object.prototype.toString.call(new Function())`: [object Function]
-- `Object.prototype.toString.call(new Set())`: [object Set]
-- `Object.prototype.toString.call(new Date())`: [object Date]
-
-### call/apply
-
-1. 每个函数都包含两个非继承而来的方法：apply()和call()。
-2. 都是在特定的作用域中调用函数。
-
-- `call`: 第一个参数用作 this 的对象。其他参数都直接传递给函数自身。
-- `apply`: 有两个参数，用作 this 的对象和要传递给函数的参数的数组。
-
-call、apply、bind的作用是改变函数运行时this的指向
-
-```js
-function foo(age, position){
-  return `${this.name}: ${age}, ${position}`
-}
-var obj={
-  name: 'a'
-}
-console.log(foo.call(obj, 20, 'web'))     //a: 20, web
-console.log(foo.apply(obj, [20, 'web']))  //a: 20, web
-// 等同于
-obj.foo=foo;
-console.log(obj.foo(20, 'web'))           //a: 20, web
-```
-
-### bind
-
-bind() 方法创建一个新的函数，在 bind() 被调用时，这个新函数的 this 被指定为 bind() 的第一个参数，而其余参数将作为新函数的参数，供调用时使用。
-
-```js
-const module = {
-  x: 42,
-  getX: function() {
-    return this.x;
-  }
-}
-const unboundGetX = module.getX;
-console.log(unboundGetX()); // The function gets invoked at the global scope
-// expected output: undefined
-const boundGetX = unboundGetX.bind(module);
-console.log(boundGetX());
-// expected output: 42
-```
-
-```js
-// thisArg: 调用绑定函数时作为 this 参数传递给目标函数的值。 
-//          如果使用new运算符构造绑定函数，则忽略该值。
-//          当使用 bind 在 setTimeout 中创建一个函数（作为回调提供）时，作为 thisArg 传递的任何原始值都将转换为 object。
-//          如果 bind 函数的参数列表为空，执行作用域的 this 将被视为新函数的 thisArg。
-// arg1, arg2, ...: 当目标函数被调用时，被预置入绑定函数的参数列表中的参数。
-// return: 返回一个原函数的拷贝，并拥有指定的 this 值和初始参数。
-function.bind(thisArg[, arg1[, arg2[, ...]]])
-```
-
-使一个函数拥有预设的初始参数。只要将这些参数（如果有的话）作为 bind() 的参数写在 this 后面。
-
-当绑定函数被调用时，这些参数会被插入到目标函数的参数列表的开始位置，传递给绑定函数的参数会跟在它们后面。
-
-```js
-function list() {
-  return Array.prototype.slice.call(arguments);
-}
-function addArguments(arg1, arg2) {
-  return arg1 + arg2
-}
-var list1 = list(1, 2, 3);            // [1, 2, 3]
-var result1 = addArguments(1, 2);     // 3
-// 创建一个函数，它拥有预设参数列表。
-var leadingThirtysevenList = list.bind(null, 37);
-// 创建一个函数，它拥有预设的第一个参数
-var addThirtySeven = addArguments.bind(null, 37); 
-var list2 = leadingThirtysevenList();         // [37]
-var list3 = leadingThirtysevenList(1, 2, 3);  // [37, 1, 2, 3]
-var result2 = addThirtySeven(5);              // 37 + 5 = 42 
-var result3 = addThirtySeven(5, 10);          // 37 + 5 = 42 ，第二个参数被忽略
-```
-
-setTimeout
-
-```js
-function LateBloomer() {
-  this.petalCount = Math.ceil(Math.random() * 12) + 1;
-}
-// 在 1 秒钟后声明 bloom
-LateBloomer.prototype.bloom = function() {
-  window.setTimeout(this.declare.bind(this), 1000);
-};
-LateBloomer.prototype.declare = function() {
-  console.log('I am a beautiful flower with ' + this.petalCount + ' petals!');
-};
-var flower = new LateBloomer();
-flower.bloom();  // 一秒钟后, 调用 'declare' 方法
-```
-
-Polyfill
-
-```js
-// Does not work with `new funcA.bind(thisArg, args)`
-if (!Function.prototype.bind) (function(){
-  var slice = Array.prototype.slice;
-  Function.prototype.bind = function() {
-    var thatFunc = this, thatArg = arguments[0];
-    var args = slice.call(arguments, 1);
-    if (typeof thatFunc !== 'function') {
-      // closest thing possible to the ECMAScript 5
-      // internal IsCallable function
-      throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
-    }
-    return function(){
-      var funcArgs = args.concat(slice.call(arguments))
-      return thatFunc.apply(thatArg, funcArgs);
-    };
-  };
-})();
 ```
 
 ## 闭包（closure）
@@ -747,8 +2257,6 @@ console.log(new fooB());
 // { name: 'ab', __proto__: { id: 123, __proto__: { a:1, b:{c:2}, __proto__: Object.prototype } } }
 ```
 
-## 优先级
-
 # 技巧
 
 ## call/apply
@@ -814,85 +2322,6 @@ Function.prototype.uncurrying = function() {
 var push = Array.prototype.push.uncurrying()
 push(obj, 2) //{0: 1, 1: 2, length: 2}
 ```
-
-
-
-
-
-
-
-Number.MAX_VALUE = 1.7976931348623157e+308
-Number.MIN_VALUE = 5e-324
-Number.POSITIVE_INFINITY = Infinity
-Number.NEGATIVE_INFINITY = -Infinity
-(NaN == NaN) = false
-
-
-# 关键词
-
-debugger
-
-## 添加、触发、移除监听
-
-- addEventListener
-- dispatchEvent
-- removeEventListener
-
-
-设置HTMLElement对象属性值
-var newAttr = document.createAttribute(strAttrName);
-newAttr.value=strAttrValue;
-ele.attributes.setNamedItem(newAttr);
-判断元素是否为HTML节点元素
-return HTMLElement.prototype.isPrototypeOf(anyTarget);
-html符号转义
-a.replace(/[<>&"]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];})
-文件下载
-var objBolb = new Blob(['\ufeff'+content],{type:'text/plain,charset=UTF-8'});
-var eleLink = document.createElement('a');
-eleLink.target = '_blank';
-eleLink.href = URL.createObjectURL(objBolb);
-eleLink.download = name;
-document.body.appendChild(eleLink);
-eleLink.click();
-eleLink.remove();
-复制到粘贴板
-window.getSelection().removeAllRanges();
-var range = document.createRange();
-range.selectNode(objTarget);
-window.getSelection().addRange(range);
-successFul = document.execCommand('copy');
-
-
-
-
-
-
-
-
-
-
-
-
-# 类型判断
-
-typeof 
-instanceOf
-isFinite
-isNaN
-isNaN("666") = false
-isNaN("66b") = true
-\0nnn	八进制
-\xnn	十六进制
-\unnnn	十六进制
-
-# 对象
-
-Object
-
-# 函数
-
-function
 
 Object.assign
     <script src="https://cn.vuejs.org/js/vue.js"></script>
@@ -1093,22 +2522,6 @@ function createCurry(func, args) {
     }
 }
 
-Set成员唯一、无序且不重复
-
-
-Map
-本质上是键值对的集合，类似集合
-可以遍历，方法很多可以跟各种数据格式转换
-
-WeakSet 
-成员都是对象
-成员都是弱引用，可以被垃圾回收机制回收，可以用来保存DOM节点，不容易造成内存泄漏
-不能遍历，方法有add、delete、has
-
-WeakMap
-只接受对象作为键名（null除外），不接受其他类型的值作为键名
-键名是弱引用，键值可以是任意的，键名所指向的对象可以被垃圾回收，此时键名是无效的
-不能遍历，方法有get、set、has、delete
 
 深度优先遍历和广度优先遍历
 递归、队列
@@ -1142,6 +2555,42 @@ HTTP2中
 
 1. 服务器不重启，客户继续工作，就会发现对方没有回应(ETIMEOUT)，路由器聪明的话，则是目的地不可达(EHOSTUNREACH)。
 2. 服务器重启后，客户继续工作，然而服务器已丢失客户信息，收到客户数据后响应RST。
+
+# 浏览器
+
+## 事件处理
+
+- `addEventListener`: 添加监听事件
+- `dispatchEvent`: 触发事件
+- `removeEventListener`: 移除监听事件
+
+## 元素操作
+
+```js
+// 设置HTMLElement对象属性值
+var newAttr = document.createAttribute(strAttrName);
+newAttr.value=strAttrValue;
+ele.attributes.setNamedItem(newAttr);
+// 判断元素是否为HTML节点元素
+return HTMLElement.prototype.isPrototypeOf(anyTarget);
+// html符号转义
+a.replace(/[<>&"]/g,function(c){return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];})
+// 文件下载
+var objBolb = new Blob(['\ufeff'+content],{type:'text/plain,charset=UTF-8'});
+var eleLink = document.createElement('a');
+eleLink.target = '_blank';
+eleLink.href = URL.createObjectURL(objBolb);
+eleLink.download = name;
+document.body.appendChild(eleLink);
+eleLink.click();
+eleLink.remove();
+// 复制到粘贴板
+window.getSelection().removeAllRanges();
+var range = document.createRange();
+range.selectNode(objTarget);
+window.getSelection().addRange(range);
+successFul = document.execCommand('copy');
+```
 
 # Node
 
