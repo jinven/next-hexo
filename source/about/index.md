@@ -11,5 +11,4 @@ angular+ng.ant测试： https://angular-new.now.sh
 代表作品： https://www.xiu.top
 nextjs测试： https://next-new.now.sh/
 博客源码： https://github.com/jinven/next-hexo
-https://jinwen.typlog.io/
 
