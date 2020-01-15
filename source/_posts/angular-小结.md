@@ -44,12 +44,12 @@ npx eslint --init
 
 ```json
 {
-    "scripts": {
-        "eslint": "eslint --ext .js,.ts --ignore-path .gitignore .",
-        // 或者指定ts： eslint src/**/*.ts
-        // 修复不规范
-        "eslint-fix": "eslint --ext .js,.ts --ignore-path .gitignore . --fixed"
-    }
+  "scripts": {
+    "eslint": "eslint --ext .js,.ts --ignore-path .gitignore .",
+    // 或者指定ts： eslint src/**/*.ts
+    // 修复不规范
+    "eslint-fix": "eslint --ext .js,.ts --ignore-path .gitignore . --fixed"
+  }
 }
 ```
 
@@ -65,39 +65,39 @@ npm install --save-dev eslint-plugin-prettier
 
 ```js
 module.exports = {
-    "extends": [
-        // 此配置会出现 '***' is defined but never used  no-unused-vars 问题
-        // "eslint:recommended",
-        "plugin:prettier/recommended"
-    ],
-    "plugins": [
-        "prettier"
-    ],
-    "rules": {
-        // 禁止使用 console: 0 = off, 1 = warn, 2 = error
-        "no-console": 1,
-        "indent": ["error", 2, {
-            "SwitchCase": 1
-        }],
-        // https://prettier.io/
-        "prettier/prettier": [
-          "error",
-          {
-            // auto lf(\n) crlf(\r\n) cr(\r)
-            "endOfLine": "crlf",
-            "singleQuote": true,
-            "trailingComma": "none",
-            "bracketSpacing": true,
-            "printWidth": 300,
-            // 句尾添加分号
-            "prettier.semi": true,
-            "jsxBracketSameLine": true,
-            "tabWidth": 4,
-            // 在对象或数组最后一个元素后面是否加逗号（在ES5中加尾逗号）
-            "trailingComma": "all"
-          }
-        ]
-    }
+  "extends": [
+    // 此配置会出现 '***' is defined but never used  no-unused-vars 问题
+    // "eslint:recommended",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": [
+    "prettier"
+  ],
+  "rules": {
+    // 禁止使用 console: 0 = off, 1 = warn, 2 = error
+    "no-console": 1,
+    "indent": ["error", 2, {
+      "SwitchCase": 1
+    }],
+    // https://prettier.io/
+    "prettier/prettier": [
+      "error",
+      {
+        // auto lf(\n) crlf(\r\n) cr(\r)
+        "endOfLine": "crlf",
+        "singleQuote": true,
+        "trailingComma": "none",
+        "bracketSpacing": true,
+        "printWidth": 300,
+        // 句尾添加分号
+        "prettier.semi": true,
+        "jsxBracketSameLine": true,
+        "tabWidth": 4,
+        // 在对象或数组最后一个元素后面是否加逗号（在ES5中加尾逗号）
+        "trailingComma": "all"
+      }
+    ]
+  }
 }
 ```
 
@@ -264,13 +264,13 @@ export class HighlightDirective {
 ```ts
 import { Component } from '@angular/core';
 @Component({
-    selector: 'app-home',
-    templateUrl: './app.home.html',
-    styleUrls: ['./app.home.scss'],
+  selector: 'app-home',
+  templateUrl: './app.home.html',
+  styleUrls: ['./app.home.scss'],
 })
 export class AppHome {
-    // 定义一个变量，可在文档中直接使用
-    text = 'Welcome';
+  // 定义一个变量，可在文档中直接使用
+  text = 'Welcome';
 }
 ```
 
@@ -328,8 +328,8 @@ import { AppHome } from './app.home';
 ```ts
 import { OnInit } from '@angular/core';
 export class AppHome implements OnInit {
-    ngOnInit() {
-    }
+  ngOnInit() {
+  }
 }
 ```
 
@@ -343,8 +343,8 @@ import { Input, Output, EventEmitter } from '@angular/core';
   template: `<span>{{product.name}}</span><button (click)="notify.emit()">Click Me</button>`,
 })
 export class AppHome implements OnInit {
-    @Input() product;
-    @Output() notify = new EventEmitter();
+  @Input() product;
+  @Output() notify = new EventEmitter();
 }
 
 // app.component.ts
@@ -353,12 +353,12 @@ export class AppHome implements OnInit {
   template: '<app-product [product]="product" (notify)="onNotify()"></app-product>',
 })
 export class AppComponent {
-    product = {
-        name: '手机'
-    }
-    onNotify() {
-        window.alert('ok');
-    }
+  product = {
+    name: '手机'
+  }
+  onNotify() {
+    window.alert('ok');
+  }
 }
 ```
 
@@ -458,18 +458,18 @@ import { Routes } from '@angular/router';
 import { AppLogin } from './app.login'
 import { AppAbout } from './app.about'
 const routes: Routes = [
-    {
-        path: '',
-        component: AppLogin
-    },
-    {
-        path: 'login',
-        component: AppLogin
-    },
-    {
-        path: 'about',
-        component: AppAbout
-    }
+  {
+    path: '',
+    component: AppLogin
+  },
+  {
+    path: 'login',
+    component: AppLogin
+  },
+  {
+    path: 'about',
+    component: AppAbout
+  }
 ]
 ```
 
@@ -496,14 +496,14 @@ const routes: Routes = [
 import { Injectable } from '@angular/core'
 @Injectable({ providedIn: 'root' })
 export class LoginService {
-    private loginState: boolean = false;
-    setLogin(state: boolean) {
-        this.loginState = state;
-    }
-    getLogin(): boolean {
-        return this.loginState;
-    }
-    constructor() {}
+  private loginState: boolean = false;
+  setLogin(state: boolean) {
+    this.loginState = state;
+  }
+  getLogin(): boolean {
+    return this.loginState;
+  }
+  constructor() {}
 }
 ```
 
@@ -552,14 +552,14 @@ import { Injectable, ApplicationRef } from '@angular/core'
 import { ReplaySubject, Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class LoginRxjsService {
-    private loginState: ReplaySubject<boolean> = new ReplaySubject<boolean>();
-    public getLogin(): Observable<boolean> {
-        return this.loginState;
-    }
-    public setLogin(state: boolean) {
-        this.loginState.next(state)
-    }
-    constructor(private ref: ApplicationRef) {}
+  private loginState: ReplaySubject<boolean> = new ReplaySubject<boolean>();
+  public getLogin(): Observable<boolean> {
+    return this.loginState;
+  }
+  public setLogin(state: boolean) {
+    this.loginState.next(state)
+  }
+  constructor(private ref: ApplicationRef) {}
 }
 
 // /src/app/pages/app.login.ts
@@ -670,9 +670,9 @@ export function HttpLoaderFactory(http: HttpClient){
 // app.component.ts
 import {TranslateService} from '@ngx-translate/core';
 export class AppComponent {
-    constructor(private translate: TranslateService) {
-        translate.setDefaultLang('zh');
-    }
+  constructor(private translate: TranslateService) {
+    translate.setDefaultLang('zh');
+  }
 }
 ```
 
@@ -697,56 +697,56 @@ https://angular.cn/guide/i18n
 
 ```json
 {
-    "project": {
-        "项目名称": {
-            "architect": {
-                "build": {
-                    "configurations": {
-                        "production-zh": {
-                            "fileReplacements": [
-                                {
-                                    "replace": "src/environments/environment.ts",
-                                    "with": "src/environments/environment.prod.ts"
-                                }
-                            ],
-                            "optimization": true,
-                            "outputHashing": "all",
-                            "sourceMap": false,
-                            "extractCss": true,
-                            "namedChunks": false,
-                            "aot": true,
-                            "extractLicenses": true,
-                            "vendorChunk": false,
-                            "buildOptimizer": true,
-                            "outputPath": "dist/my-project-zh/",
-                            "i18nFile": "src/locale/messages.zh.xlf",
-                            "i18nFormat": "xlf",
-                            "i18nLocale": "zh",
-                            "i18nMissingTranslation": "error"
-                        },
-                        "zh": {
-                            "aot": true,
-                            "outputPath": "dist/my-project-zh/",
-                            "i18nFile": "src/locale/messages.zh.xlf",
-                            "i18nFormat": "xlf",
-                            "i18nLocale": "zh",
-                            "i18nMissingTranslation": "error"
-                        }
-                    }
-                },
-                "serve": {
-                    "configurations": {
-                        "production": {
-                            "browserTarget": "项目名称:build:production"
-                        },
-                        "zh": {
-                            "browserTarget": "项目名称:build:zh"
-                        }
-                    }
+  "project": {
+    "项目名称": {
+      "architect": {
+        "build": {
+          "configurations": {
+            "production-zh": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
                 }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "outputPath": "dist/my-project-zh/",
+              "i18nFile": "src/locale/messages.zh.xlf",
+              "i18nFormat": "xlf",
+              "i18nLocale": "zh",
+              "i18nMissingTranslation": "error"
+            },
+            "zh": {
+              "aot": true,
+              "outputPath": "dist/my-project-zh/",
+              "i18nFile": "src/locale/messages.zh.xlf",
+              "i18nFormat": "xlf",
+              "i18nLocale": "zh",
+              "i18nMissingTranslation": "error"
             }
+          }
+        },
+        "serve": {
+          "configurations": {
+            "production": {
+              "browserTarget": "项目名称:build:production"
+            },
+            "zh": {
+              "browserTarget": "项目名称:build:zh"
+            }
+          }
         }
+      }
     }
+  }
 }
 ```
 
