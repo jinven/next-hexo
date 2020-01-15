@@ -54,7 +54,11 @@ HTML 或 XML 页面的每个部分都是一个节点的衍生物。
 
 ## 声明/定义
 
-var、let、const、class、function
+- `var`: 没有块作用域，变量会提升到顶端。
+- `let`: 块作用域（Block Scope），在循环中使用的变量没有重新声明循环外的变量，循环内才可见。
+- `const`: 常量，与 let 变量类似，但不能重新赋值。
+- `class`: 
+- `function`: 
 
 ## 关键字
 
@@ -64,7 +68,28 @@ break、case、catch、continue、default、delete、do、else、finally、for�
 
 Symbol、Number、Object、Boolean、String、Function、ArrayBuffer、AudioBufferSourceNode、Blob、FileReader、Map、Promise、Range、RegExp、Set、TypeError、Uint8Array、Uint32Array、WeakMap、WeakSet、Worker
 
-## 值
+## 类型
+
+### 五种可包含值的数据类型
+
+- 字符串（string）
+- 数字（number）
+- 布尔（boolean）
+- 对象（object）
+- 函数（function）
+
+### 三种对象类型
+
+- 对象（Object）
+- 日期（Date）
+- 数组（Array）
+
+### 两种不能包含值的数据类型：
+
+- null
+- undefined
+
+### 值
 
 - 原始值
 
@@ -75,6 +100,58 @@ Symbol、Number、Object、Boolean、String、Function、ArrayBuffer、AudioBuff
 - 引用值
 
 存储在堆（heap）中的对象，也就是说，存储在变量处的值是一个指针（point），指向存储对象的内存处。
+
+### 类型判断
+
+#### typeof 
+
+返回下列值之一：
+
+- `undefined` 如果变量是 Undefined 类型的
+- `boolean` 如果变量是 Boolean 类型的
+- `number` 如果变量是 Number 类型的
+- `string` 如果变量是 String 类型的
+- `object` 如果变量是一种引用类型或 Null 类型的
+
+#### instanceof 
+
+在使用 typeof 运算符时采用引用类型存储值会出现一个问题，无论引用的是什么类型的对象，它都返回 "object"。ECMAScript 引入了另一个 Java 运算符 instanceof 来解决这个问题。
+
+```js
+var a = new String('a')
+var arr = []
+console.log(typeof a);	            //输出 "object"
+console.log(a instanceof String);	  //输出 "true"
+console.log(typeof arr);	            //输出 "object"
+console.log(arr instanceof Array);	  //输出 "true"
+```
+
+#### Object.prototype.toString.call/apply
+
+输出对象的类
+
+- `Object.prototype.toString.call('')`: [object String]
+- `Object.prototype.toString.call(1)`: [object Number]
+- `Object.prototype.toString.call(null)`: [object Null]
+- `Object.prototype.toString.call(undefined)`: [object Undefined]
+- `Object.prototype.toString.call({})`: [object Object]
+- `Object.prototype.toString.call(Symbol())`: [object Symbol]
+- `Object.prototype.toString.call([])`: [object Array]
+- `Object.prototype.toString.call(new Function())`: [object Function]
+- `Object.prototype.toString.call(new Set())`: [object Set]
+- `Object.prototype.toString.call(new Date())`: [object Date]
+
+#### constructor
+
+```js
+"Bill".constructor                 // 返回 "function String()  { [native code] }"
+(3.14).constructor                 // 返回 "function Number()  { [native code] }"
+false.constructor                  // 返回 "function Boolean() { [native code] }"
+[1,2,3,4].constructor              // 返回 "function Array()   { [native code] }"
+{name:'Bill', age:62}.constructor  // 返回" function Object()  { [native code] }"
+new Date().constructor             // 返回 "function Date()    { [native code] }"
+function () {}.constructor         // 返回 "function Function(){ [native code] }"
+```
 
 ## 引用类型
 
@@ -786,6 +863,18 @@ var oBooleanObject = new Boolean(true);
 // ToString() 方法也会被覆盖，返回字符串 "true" 或 "false"。
 var oFalseObject = new Boolean(false);
 var bResult = oFalseObject && true;	//输出 true
+console.log(Boolean());                     //false
+console.log(Boolean(''));                   //false
+console.log(Boolean(null));                 //false
+console.log(Boolean(undefined));            //false
+console.log(Boolean(NaN));                  //false
+console.log(Boolean(0));                    //false
+console.log(Boolean('hello'));              //true
+console.log(Boolean(50));                   //true
+console.log(Boolean({}));                   //true
+console.log(Boolean([]));                   //true
+console.log(Boolean(Infinity));             //true
+console.log(Boolean(-Infinity));            //true
 ```
 
 #### hasOwnProperty
@@ -904,18 +993,30 @@ console.log(Object.values('foo'));        // ['f', 'o', 'o']
 var oNumberObject = new Number(68);
 var iNumber = oNumberObject.valueOf();
 // 返回的是具有指定位数小数的数字的字符串表示，能表示具有 0 到 20 位小数的数字，超过这个范围的值会引发错误。
-console.log(oNumberObject.toFixed(2));  //输出 "68.00"
+console.log(oNumberObject.toFixed(2));      //输出 "68.00"
 // 返回的是用科学计数法表示的数字的字符串形式。
-console.log(oNumberObject.toExponential(1));  //输出 "6.8e+1"
+console.log(oNumberObject.toExponential(1));//输出 "6.8e+1"
 // 返回数字的预定形式或指数形式。它有一个参数，即用于表示数的数字总数（不包括指数）。
 console.log(oNumberObject.toPrecision(1));  //输出 "7e+1"
 console.log(oNumberObject.toPrecision(2));  //输出 "68"
 console.log(oNumberObject.toPrecision(3));  //输出 "68.0"
+console.log(oNumberObject.toString(2));     //输出 "1000100"
+console.log(oNumberObject.toString(8));     //输出 "104"
+console.log(oNumberObject.toString(16));    //输出 "44"
+console.log(oNumberObject.toString(36));    //输出 "1w"
 console.log(Number.MAX_VALUE);              //输出 1.7976931348623157e+308
 console.log(Number.MIN_VALUE);              //输出 5e-324
 console.log(Number.POSITIVE_INFINITY);      //输出 Infinity
 console.log(Number.NEGATIVE_INFINITY);      //输出 -Infinity
 console.log(NaN == NaN);                    //false
+console.log(Number());                      //0
+console.log(Number(false));                 //0
+console.log(Number(true));                  //1
+console.log(Number(undefined));             //NaN
+console.log(Number(null));                  //0
+console.log(Number('1.2'));                 //1.2
+console.log(Number('1.2.3'));               //1.2.3
+console.log(Number({}));                    //NaN
 ```
 
 ### String
@@ -926,6 +1027,15 @@ var oStringObject = new String("hello world");
 console.log(oStringObject.valueOf() == oStringObject.toString());	//输出 "true"
 // 和调用 toString() 的不同之处在于，对 null 和 undefined 值强制类型转换可以生成字符串而不引发错误
 console.log(new String(null).toString());       //输出 "null"
+console.log(String());                          //输出 ""
+console.log(String(undefined));                 //输出 "undefined"
+console.log(String([]));                        //输出 ""
+console.log(String([1, 2, 3]));                 //输出 "1,2,3"
+console.log(String({}));                        //输出 "[object Object]"
+console.log(String(false));                     //输出 "false"
+console.log(String(()=>0));                     //输出 "()=>0"
+console.log(String(function(){}));              //输出 "function(){}"
+console.log(String([[-1,2,[3]],[4,[5]]]));      //输出 "-1,2,3,4,5"
 console.log(oStringObject.charAt(1));	          //输出 "e"
 console.log(oStringObject.charCodeAt(1));	      //输出 "101"
 console.log(String.fromCharCode(101));	        //输出 "e"
@@ -1427,61 +1537,6 @@ console.log(eArr.next().value); // e
 
 不能直接操作 ArrayBuffer 的内容，而是要通过类型数组对象或 DataView 对象来操作，它们会将缓冲区中的数据表示为特定的格式，并通过这些格式来读写缓冲区的内容。
 
-### Map
-
-保存键值对，并且能够记住键的原始插入顺序。任何值(对象或者原始值) 都可以作为一个键或一个值。
-
-本质上是键值对的集合，类似集合，可以遍历，方法很多可以跟各种数据格式转换。
-
-```js
-// new Map([iterable])
-var map1 = new Map();
-map1.set('a', 'alpha');
-map1.set('b', 'beta');
-map1.set('g', 'gamma');
-console.log(map1.size);               // 3
-map1.clear();
-console.log(map1.size);               // 0
-map1.set('bar', 'foo');
-console.log(map1.delete('bar'));      // true
-console.log(map1.has('bar'));         // false
-map1.set('0', 'foo');
-map1.set(1, 'bar');
-var iterator1 = map1.entries();
-console.log(iterator1.next().value);  // ["0", "foo"]
-console.log(iterator1.next().value);  // [1, "bar"]
-function logMapElements(value, key, map) {
-    console.log("m[" + key + "] = " + value);
-}
-Map([["foo", 3], ["bar", {}], ["baz", undefined]]).forEach(logMapElements);
-// "m[foo] = 3"
-// "m[bar] = [object Object]"
-// "m[baz] = undefined"
-map1.set('bar', 'foo');
-console.log(map1.get('bar'));         // "foo"
-console.log(map1.get('baz'));         // undefined
-map1.set('0', 'foo');
-map1.set(1, 'bar');
-var iterator1 = map1.keys();
-console.log(iterator1.next().value);  // "0"
-console.log(iterator1.next().value);  // 1
-var myMap = new Map();
-myMap.set("0", "foo");
-myMap.set(1, "bar");
-myMap.set({}, "baz");
-var mapIter = myMap.values();
-console.log(mapIter.next().value);    // "foo"
-console.log(mapIter.next().value);    // "bar"
-console.log(mapIter.next().value);    // "baz"
-var map1 = new Map();
-map1.set('0', 'foo');
-map1.set(1, 'bar');
-var iterator1 = map1[Symbol.iterator]();
-for (let item of iterator1) {
-  console.log(item);    // ["0", "foo"], [1, "bar"]
-}
-```
-
 ### Promise
 
 用于表示一个异步操作的最终完成 (或失败), 及其结果值。
@@ -1649,6 +1704,61 @@ var result = /^hello/.test(str);
 console.log(result);              // true
 ```
 
+### Map
+
+保存键值对，并且能够记住键的原始插入顺序。任何值(对象或者原始值) 都可以作为一个键或一个值。
+
+本质上是键值对的集合，类似集合，可以遍历，方法很多可以跟各种数据格式转换。
+
+```js
+// new Map([iterable])
+var map1 = new Map();
+map1.set('a', 'alpha');
+map1.set('b', 'beta');
+map1.set('g', 'gamma');
+console.log(map1.size);               // 3
+map1.clear();
+console.log(map1.size);               // 0
+map1.set('bar', 'foo');
+console.log(map1.delete('bar'));      // true
+console.log(map1.has('bar'));         // false
+map1.set('0', 'foo');
+map1.set(1, 'bar');
+var iterator1 = map1.entries();
+console.log(iterator1.next().value);  // ["0", "foo"]
+console.log(iterator1.next().value);  // [1, "bar"]
+function logMapElements(value, key, map) {
+    console.log("m[" + key + "] = " + value);
+}
+Map([["foo", 3], ["bar", {}], ["baz", undefined]]).forEach(logMapElements);
+// "m[foo] = 3"
+// "m[bar] = [object Object]"
+// "m[baz] = undefined"
+map1.set('bar', 'foo');
+console.log(map1.get('bar'));         // "foo"
+console.log(map1.get('baz'));         // undefined
+map1.set('0', 'foo');
+map1.set(1, 'bar');
+var iterator1 = map1.keys();
+console.log(iterator1.next().value);  // "0"
+console.log(iterator1.next().value);  // 1
+var myMap = new Map();
+myMap.set("0", "foo");
+myMap.set(1, "bar");
+myMap.set({}, "baz");
+var mapIter = myMap.values();
+console.log(mapIter.next().value);    // "foo"
+console.log(mapIter.next().value);    // "bar"
+console.log(mapIter.next().value);    // "baz"
+var map1 = new Map();
+map1.set('0', 'foo');
+map1.set(1, 'bar');
+var iterator1 = map1[Symbol.iterator]();
+for (let item of iterator1) {
+  console.log(item);    // ["0", "foo"], [1, "bar"]
+}
+```
+
 ### Set
 
 允许存储任何类型的唯一值，无论是原始值或者是对象引用。
@@ -1770,29 +1880,6 @@ wm1.delete(o1);
 wm1.has(o1);   // false
 ```
 
-### typeof 
-
-返回下列值之一：
-
-- `undefined` 如果变量是 Undefined 类型的
-- `boolean` 如果变量是 Boolean 类型的
-- `number` 如果变量是 Number 类型的
-- `string` 如果变量是 String 类型的
-- `object` 如果变量是一种引用类型或 Null 类型的
-
-### instanceof 
-
-在使用 typeof 运算符时采用引用类型存储值会出现一个问题，无论引用的是什么类型的对象，它都返回 "object"。ECMAScript 引入了另一个 Java 运算符 instanceof 来解决这个问题。
-
-```js
-var a = new String('a')
-var arr = []
-console.log(typeof a);	            //输出 "object"
-console.log(a instanceof String);	  //输出 "true"
-console.log(typeof arr);	            //输出 "object"
-console.log(arr instanceof Array);	  //输出 "true"
-```
-
 ### isFinite
 
 判断被传入的参数值是否为一个有限数值。
@@ -1841,25 +1928,11 @@ console.log(isNaN(['26'])); // false
 console.log(isNaN(null)); // false
 ```
 
-### Object.prototype.toString.call/apply
+## 运算符
 
-输出对象的类
+### 一元运算符
 
-- `Object.prototype.toString.call('')`: [object String]
-- `Object.prototype.toString.call(1)`: [object Number]
-- `Object.prototype.toString.call(null)`: [object Null]
-- `Object.prototype.toString.call(undefined)`: [object Undefined]
-- `Object.prototype.toString.call({})`: [object Object]
-- `Object.prototype.toString.call(Symbol())`: [object Symbol]
-- `Object.prototype.toString.call([])`: [object Array]
-- `Object.prototype.toString.call(new Function())`: [object Function]
-- `Object.prototype.toString.call(new Set())`: [object Set]
-- `Object.prototype.toString.call(new Date())`: [object Date]
-
-
-## 一元运算符
-
-### delete
+#### delete
 
 ```js
 var o = new Object;
@@ -1869,13 +1942,13 @@ delete o.name;
 alert(o.name);	//输出 "undefined"
 ```
 
-### void
+#### void
 
-### 前增量(++i)/前减量运算符(--i)
+#### 前增量(++i)/前减量运算符(--i)
 
-### 后增量(i++)/后减量运算符(i--)
+#### 后增量(i++)/后减量运算符(i--)
 
-### 一元加法和一元减法
+#### 一元加法和一元减法
 
 ```js
 var sNum = "20";
@@ -1884,9 +1957,9 @@ var iNum = +sNum;
 alert(typeof iNum);	//输出 "number"
 ```
 
-## 位运算符
+### 位运算符
 
-### NOT(~)
+#### NOT(~)
 
 ```js
 var iNum1 = 25;		      //25 等于 00000000000000000000000000011001
@@ -1898,7 +1971,7 @@ var iNum2 = -iNum1 -1;
 alert(iNum2);	          //输出 -26
 ```
 
-### AND(&)
+#### AND(&)
 
 ```js
 var iResult = 25 & 3;
@@ -1912,7 +1985,7 @@ alert(iResult);	        //输出 "1"
 AND = 0000 0000 0000 0000 0000 0000 0000 0001
 ```
 
-### OR(|)
+#### OR(|)
 
 ```js
 var iResult = 25 | 3;
@@ -1926,7 +1999,7 @@ alert(iResult);	        //输出 "27"
 OR = 0000 0000 0000 0000 0000 0000 0001 1011
 ```
 
-### XOR(^)
+#### XOR(^)
 
 ```js
 var iResult = 25 ^ 3;
@@ -1940,21 +2013,21 @@ alert(iResult);	        //输出 "26"
 XOR = 0000 0000 0000 0000 0000 0000 0001 1010
 ```
 
-### 左移运算(<<)
+#### 左移运算(<<)
 
 ```js
 var iOld = 2;		        //等于二进制 10
 var iNew = iOld << 5;	  //等于二进制 1000000 十进制 64
 ```
 
-### 有符号右移运算(>>)
+#### 有符号右移运算(>>)
 
 ```js
 var iOld = 64;		      //等于二进制 1000000
 var iNew = iOld >> 5;	  //等于二进制 10 十进制 2
 ```
 
-### 无符号右移运算(>>>)
+#### 无符号右移运算(>>>)
 
 ```js
 var iOld = 64;		                    //等于二进制 1000000
@@ -1964,9 +2037,9 @@ console.log(iUnsigned64.toString(2)); //11111111111111111111111111000000
 console.log(-1>>>31);                 //1
 ```
 
-## 运算
+### 运算操作
 
-### Infinity
+#### Infinity
 
 ```js
 console.log(Infinity*0);          //NaN
@@ -2010,7 +2083,7 @@ console.log();//
 console.log();//
 ```
 
-### 优先级
+#### 优先级
 
 | 值 | 运算符 | 描述 | 实例 |
 | -- | ------ | --- | --- |
@@ -2064,7 +2137,9 @@ console.log();//
 | 2 | yield | 暂停函数 | yield x |
 | 1 | , | 逗号 | 7 , 8 |
 
-## 标签语句
+## 语句/块
+
+### 标签语句
 
 break 语句和 continue 语句都可以与有标签的语句联合使用，返回代码中的特定位置。
 
@@ -2096,7 +2171,7 @@ for (var i=0; i<10; i++) {
 console.log(iNum);	//输出 "95"
 ```
 
-## with
+### with
 
 ```js
 var sMessage = "hello";
@@ -2105,32 +2180,34 @@ with(sMessage) {
 }
 ```
 
-## 闭包（closure）
+### 闭包（closure）
 
 指的是词法表示包括不被计算的变量的函数，也就是说，函数可以使用函数之外定义的变量。
 
-## 面向对象
+## 对象
+
+### 面向对象
 
 1. 封装 - 把相关的信息（无论数据或方法）存储在对象中的能力
 2. 聚集 - 把一个对象存储在另一个对象内的能力
 3. 继承 - 由另一个类（或多个类）得来类的属性和方法的能力
 4. 多态 - 编写能以多种方法运行的函数或方法的能力
 
-## 对象类型
+### 对象类型
 
 在 ECMAScript 中，所有对象并非同等创建的。
 
 一般来说，可以创建并使用的对象有三种
 
-## 本地对象
+### 本地对象
 
 `Object`、`Function`、`Array`、`String`、`Boolean`、`Number`、`Date`、`RegExp`、`Error`、`EvalError`、`RangeError`、`ReferenceError`、`SyntaxError`、`TypeError`、`URIError`
 
-## 内置对象
+### 内置对象
 
 只定义了两个内置对象，即 Global 和 Math （它们也是本地对象，根据定义，每个内置对象都是本地对象）。
 
-## 宿主对象
+### 宿主对象
 
 所有非本地对象都是宿主对象（host object），即由 ECMAScript 实现的宿主环境提供的对象。
 
@@ -2232,9 +2309,25 @@ objB.sayColor(); // red
 objB.sayName(); // John
 console.log(objB instanceof ClassA);	//输出 "true"
 console.log(objB instanceof ClassB);	//输出 "true"
+
+function fooA(){}
+function fooB(){}
+function fooC(){}
+function fooD(){}
+function fooE(){}
+fooA.prototype.a = 1;
+fooB.prototype = Object.create(fooA.prototype);
+fooB.prototype.b = 2;
+fooC.prototype = Object.create(fooB.prototype);
+fooC.prototype.c = 3;
+fooD.prototype = Object.create(fooC.prototype);
+fooD.prototype.d = 4;
+fooE.prototype = Object.create(fooD.prototype);
+fooE.prototype.e = 5;
+var obj = new fooE();
 ```
 
-### __proto__
+### __proto__(不推荐)
 
 ```js
 var obj = {
@@ -2257,7 +2350,356 @@ console.log(new fooB());
 // { name: 'ab', __proto__: { id: 123, __proto__: { a:1, b:{c:2}, __proto__: Object.prototype } } }
 ```
 
-# 技巧
+## async、await
+
+### Async
+
+```js
+async function f() {
+  return 1
+}
+```
+
+这个函数总是返回一个`promise`，如果代码中有`return <非promise>`语句，JavaScript会自动把返回的这个value值包装成`promise`的`resolved`值。
+
+```js
+async function f() {
+  return 1
+}
+f().then(alert) // 1
+```
+
+也可以显式的返回一个`promise`，这个将会是同样的结果：
+
+```js
+async function f() {
+  return Promise.resolve(1)
+}
+f().then(alert) // 1
+```
+
+### Await
+
+```js
+// 只能在async函数内部使用
+let value = await promise
+```
+
+`await`可以让JavaScript进行等待，直到一个`promise`执行并返回它的结果，JavaScript才会继续往下执行。
+
+```js
+async function f() {
+  let promise = new Promise((resolve, reject) => {
+    setTimeout(() => resolve('done!'), 1000)
+  })
+  let result = await promise;
+  // 直到promise返回一个resolve值（*）
+  alert(result);
+  // 'done!' 
+}
+f()
+```
+
+`await`字面上使得JavaScript等待，直到`promise`处理完成，这并不会花费任何的cpu资源，因为引擎能够同时做其他工作：执行其他脚本，处理事件等等。
+
+不能在常规函数里使用`await`
+
+```js
+async function showAvatar() {
+    // read our JSON
+    let response = await fetch('/article/promise-chaining/user.json');
+    let user = await response.json();
+    // read github user
+    let githubResponse = await fetch(`https://api.github.com/users/${user.name}`);
+    let githubUser = await githubResponse.json();
+    // 展示头像
+    let img = document.createElement('img');
+    img.src = githubUser.avatar_url;
+    img.className = 'promise-avatar-example';
+    documenmt.body.append(img)
+    // 等待3s
+    await new Promise((resolve, reject) => {
+        setTimeout(resolve, 3000)
+    });
+    img.remove();
+    return githubUser;
+}
+showAvatar();
+```
+
+# 安全
+
+## CORS
+
+跨域资源共享(CORS) 是一种机制，它使用额外的 HTTP 头来告诉浏览器，让运行在一个 origin (domain) 上的Web应用被准许访问来自不同源服务器上的指定的资源。
+
+当一个资源从与该资源本身所在的服务器不同的域、协议或端口请求一个资源时，资源会发起一个跨域 HTTP 请求。
+
+- 前文提到的由 XMLHttpRequest 或 Fetch 发起的跨域 HTTP 请求。
+- Web 字体 (CSS 中通过 @font-face 使用跨域字体资源), 因此，网站就可以发布 TrueType 字体资源，并只允许已授权网站进行跨站调用。
+- WebGL 贴图
+- 使用 drawImage 将 Images/video 画面绘制到 canvas
+
+新增了一组 HTTP 首部字段，允许服务器声明哪些源站通过浏览器有权限访问哪些资源。
+
+对那些可能对服务器数据产生副作用的 HTTP 请求方法（特别是 GET 以外的 HTTP 请求，或者搭配某些 MIME 类型的 POST 请求），浏览器必须首先使用 OPTIONS 方法发起一个预检请求（preflight request），从而获知服务端是否允许该跨域请求。
+
+在预检请求的返回中，服务器端也可以通知客户端，是否需要携带身份凭证（包括 Cookies 和 HTTP 认证相关数据）。
+
+``` conf
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Headers: content-type
+Access-Control-Allow-Origin: http://xxx.xxx
+# Access-Control-Allow-Origin: *
+Access-Control-Max-Age: 200
+```
+
+### 简单请求 
+
+请求不会触发 CORS 预检请求，这样的请求为“简单请求”
+
+满足所有下述条件：
+
+- 使用下列方法之一：
+
+  - GET
+  - HEAD
+  - POST
+
+- Fetch 规范定义了对 CORS 安全的首部字段集合，不得人为设置该集合之外的其他首部字段：
+
+  - Accept
+  - Accept-Language
+  - Content-Language
+  - Content-Type （需要注意额外的限制）
+  - DPR
+  - Downlink
+  - Save-Data
+  - Viewport-Width
+  - Width
+
+- Content-Type 的值仅限于下列三者之一：
+
+  - text/plain
+  - multipart/form-data
+  - application/x-www-form-urlencoded
+
+### 预检请求
+
+必须首先使用 OPTIONS 方法发起一个预检请求到服务器，以获知服务器是否允许该实际请求。
+
+### 附带身份凭证的请求
+
+Fetch 与 CORS 的一个的特性是，可以基于 HTTP cookies 和 HTTP 认证信息发送身份凭证。
+
+一般而言，对于跨域 XMLHttpRequest 或 Fetch 请求，浏览器不会发送身份凭证信息。
+
+如果要发送凭证信息，需要设置 XMLHttpRequest 的某个特殊标志位。
+
+```js
+// 因为这是一个简单 GET 请求，所以浏览器不会对其发起“预检请求”。
+var invocation = new XMLHttpRequest();
+var url = 'http://bar.other/resources/credentialed-content/';
+function callOtherDomain(){
+  if(invocation) {
+    invocation.open('GET', url, true);
+    invocation.withCredentials = true;
+    invocation.onreadystatechange = handler;
+    invocation.send(); 
+  }
+}
+```
+
+如果服务器端的响应中未携带 Access-Control-Allow-Credentials: true ，浏览器将不会把响应内容返回给请求的发送者。
+
+对于附带身份凭证的请求，服务器不得设置 Access-Control-Allow-Origin 的值为“*”。
+
+将 Access-Control-Allow-Origin 的值设置为 http://foo.example，则请求将成功执行。
+
+### HTTP 响应首部字段
+
+#### Access-Control-Allow-Origin
+
+```
+Access-Control-Allow-Origin: <origin> | *
+```
+
+指定了允许访问该资源的外域 URI。对于不需要携带身份凭证的请求，服务器可以指定该字段的值为通配符，表示允许来自所有域的请求。
+
+服务端指定了具体的域名而非“*”，那么响应首部中的 Vary 字段的值必须包含 Origin。这将告诉客户端：服务器对不同的源站返回不同的内容。
+
+#### Access-Control-Expose-Headers
+
+```conf
+Access-Control-Expose-Headers: X-My-Custom-Header, X-Another-Custom-Header
+# 默认情况下，只有六种 simple response headers （简单响应首部）可以暴露给外部：
+# Cache-Control
+# Content-Language
+# Content-Type
+# Expires
+# Last-Modified
+# Pragma
+# 如果想要让客户端可以访问到其他的首部信息，可以将它们在 Access-Control-Expose-Headers 里面列出来。
+```
+
+让服务器把允许浏览器访问的头放入白名单，这样浏览器就能够通过getResponseHeader访问X-My-Custom-Header和 X-Another-Custom-Header 响应头了。
+
+#### Access-Control-Max-Age
+
+```
+Access-Control-Max-Age: <delta-seconds>
+```
+
+指定了preflight请求的结果能够被缓存多久，delta-seconds 参数表示preflight请求的结果在多少秒内有效。
+
+上限是24小时 （即86400秒），而在Chromium 中则是10分钟（即600秒）。Chromium 同时规定了一个默认值 5 秒。
+如果值为 -1，则表示禁用缓存，每一次请求都需要提供预检请求，即用OPTIONS请求进行检测。
+
+#### Access-Control-Allow-Credentials
+
+```
+Access-Control-Allow-Credentials: true
+```
+
+指定了当浏览器的credentials设置为true时是否允许浏览器读取response的内容。
+
+当用在对preflight预检测请求的响应中时，它指定了实际的请求是否可以使用credentials。
+
+简单 GET 请求不会被预检；如果对此类请求的响应中不包含该字段，这个响应将被忽略掉，并且浏览器也不会将相应内容返回给网页。
+
+Credentials可以是 cookies, authorization headers 或 TLS client certificates。
+
+#### Access-Control-Allow-Methods
+
+```conf
+Access-Control-Allow-Methods: <method>[, <method>]*
+# 用逗号隔开的允许使用的 HTTP request methods 列表。
+# Access-Control-Allow-Methods: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH
+```
+
+用于预检请求的响应。其指明了实际请求所允许使用的 HTTP 方法。
+
+#### Access-Control-Allow-Headers
+
+```conf
+Access-Control-Allow-Headers: <field-name>[, <field-name>]*
+```
+
+用于预检请求的响应。其指明了实际请求中允许携带的首部字段。
+
+以下这些特定的首部是一直允许的：Accept, Accept-Language, Content-Language, Content-Type （但只在其值属于 MIME 类型 application/x-www-form-urlencoded, multipart/form-data 或 text/plain中的一种时）。这些被称作simple headers，无需特意声明它们。
+
+
+## CSP
+
+HTTP 响应头Content-Security-Policy允许站点管理者控制用户代理能够为指定的页面加载哪些资源。
+
+除了少数例外情况，设置的政策主要涉及指定服务器的源和脚本结束点。
+
+这将帮助防止跨站脚本攻击（Cross-Site Script）（XSS）。
+
+```
+Content-Security-Policy: <policy-directive>; <policy-directive>
+```
+
+- `child-src`：为 web workers 和其他内嵌浏览器内容（例如用`<frame>`和`<iframe>`加载到页面的内容）定义合法的源地址。
+
+如果开发者希望管控内嵌浏览器内容和 web worker 应分别使用frame-src和worker-src 指令，来相对的取代 child-src。
+
+- `connect-src`：限制能通过脚本接口加载的URL。
+- `default-src`：为其他取指令提供备用服务fetch directives。
+- `font-src`：设置允许通过@font-face加载的字体源地址。
+- `frame-src`： 设置允许通过类似`<frame>`和`<iframe>`标签加载的内嵌内容的源地址。
+- `img-src`: 限制图片和图标的源地址
+- `manifest-src` ： 限制应用声明文件的源地址。
+- `media-src`：限制通过`<audio>`、`<video>`或`<track>`标签加载的媒体文件的源地址。
+- `object-src`：限制`<object>`、`<embed>`、`<applet>`标签的源地址。
+
+被object-src控制的元素可能碰巧被当作遗留HTML元素，导致不支持新标准中的功能（例如`<iframe>`中的安全属性sandbox和allow）。
+
+因此建议限制该指令的使用（比如，如果可行，将`object-src`显式设置为`none`）。
+
+- `prefetch-src`: 指定预加载或预渲染的允许源地址。
+- `script-src`: 限制JavaScript的源地址。
+- `style-src`: 限制层叠样式表文件源。
+- `webrtc-src`: 指定WebRTC连接的合法源地址。
+- `worker-src`: 限制Worker、SharedWorker或者ServiceWorker脚本源。
+
+文档指令管理文档属性或者worker环境应用的策略。
+
+- `base-uri`: 限制在DOM中`<base>`元素可以使用的URL。
+- `plugin-types`: 通过限制可以加载的资源类型来限制哪些插件可以被嵌入到文档中。
+- `sandbox`: 类似`<iframe>` sandbox属性，为请求的资源启用沙盒。
+- `disown-opener`:  确保资源在导航的时候能够脱离父页面。（windown.opener 对象）
+
+导航指令管理用户能打开的链接或者表单可提交的链接
+
+- `form-action`: 限制能被用来作为给定上下文的表单提交的目标 URL（说白了，就是限制 form 的 action 属性的链接地址）
+- `frame-ancestors`: 指定可能嵌入页面的有效父项`<frame>`, `<iframe>`, `<object>`, `<embed>`, or `<applet>`
+- `navigation-to`: 限制文档可以通过以下任何方式访问URL (a, form, window.location, window.open, etc.)
+
+报告指令控制 CSP 违规的报告过程. 更多请看 Content-Security-Policy-Report-Only 报头.
+
+report-uri 当出现可能违反CSP的操作时，让客户端提交报告。这些违规报告会以JSON文件的格式通过POST请求发送到指定的URI
+report-to Fires a SecurityPolicyViolationEvent.
+
+其他指令 | Other directives
+
+- `block-all-mixed-content`: 当使用HTTPS加载页面时阻止使用HTTP加载任何资源。
+- `referrer`: 用来指定会离开当前页面的跳转链接的 referer header 信息。应该使用 Referrer-Policy 替代。
+- `require-sri-for`: 需要使用 SRI 作用于页面上的脚本或样式。
+- `upgrade-insecure-requests`: 让浏览器把一个网站所有的不安全 URL（通过 HTTP 访问）当做已经被安全的 URL 链接（通过 HTTPS 访问）替代。这个指令是为了哪些有量大不安全的传统 URL 需要被重写时候准备的。
+
+### 多内容安全策略
+
+CSP 允许在一个资源中指定多个策略, 包括通过 Content-Security-Policy 头, 以及 Content-Security-Policy-Report-Only 头，和 <meta> 组件。
+
+```
+Content-Security-Policy: default-src 'self' http://example.com; connect-src 'none';
+Content-Security-Policy: connect-src http://example.com/; script-src http://example.com/
+```
+
+尽管第二个策略允许连接, 第一个策略仍然包括了 connect-src 'none'。
+
+添加了附加的策略后，只会让资源保护的能力更强，也就是说不会有接口可以被允许访问，等同于最严格的策略，connect-src 'none' 强制开启。
+
+### 示例
+
+禁用不安全的内联/动态执行, 只允许通过 https加载这些资源 (images, fonts, scripts, etc.)
+
+```js
+// header
+Content-Security-Policy: default-src https:
+
+// meta tag
+<meta http-equiv="Content-Security-Policy" content="default-src https:">
+```
+
+已经存在的一个网站，用了太多内联代码修复问题，而且想确保资源只从 https 加载，并且禁止插件：
+
+```
+Content-Security-Policy: default-src https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'
+```
+
+还没有开始实施上面的策略；相反，只是开始上报可能会发生违反安全策略的行为：
+
+```
+Content-Security-Policy-Report-Only: default-src https:; report-uri /csp-violation-report-endpoint/
+```
+
+## XSS
+
+跨站脚本攻击Cross-site scripting (XSS)是一种安全漏洞，攻击者可以利用这种漏洞在网站上注入恶意的客户端代码。当被攻击者登陆网站时就会自动运行这些恶意代码，从而，攻击者可以突破网站的访问权限，冒充受害者。
+
+如果Web应用程序没有部署足够的安全验证，那么，这些攻击很容易成功。浏览器无法探测到这些恶意脚本是不可信的，所以，这些脚本可以任意读取cookie，session tokens，或者其它敏感的网站信息，或者让恶意脚本重写HTML内容。
+
+在以下2种情况下，容易发生XSS攻击：1）数据从一个不可靠的链接进入到一个web应用程序。2）没有过滤掉恶意代码的动态内容被发送给web用户。
+
+恶意内容一般包括 JavaScript，但是，有时候也会包括HTML，FLASH。XSS攻击的形式千差万别，但是，它们的共同点为：将一些隐私数据像cookie、session发送给攻击者，将受害者重定向到一个由攻击者控制的网站，在受害者的机器上进行一些恶意操作。
+
+XSS攻击可以分为3类：存储型（持久型）、反射型（非持久型）、基于DOM。
+
+# 技巧/解答
 
 ## call/apply
 
@@ -2323,155 +2765,35 @@ var push = Array.prototype.push.uncurrying()
 push(obj, 2) //{0: 1, 1: 2, length: 2}
 ```
 
-Object.assign
-    <script src="https://cn.vuejs.org/js/vue.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+## 高阶函数
 
-slice
-reverse
+接受一个或多个函数作为输入
 
-NumberObject.toString(radix)  radix	可选。规定表示数字的基数，使 2 ~ 36 之间的整数。若省略该参数，则使用基数 10。
-arrayObject.toString()返回值与没有参数的 join() 方法返回的字符串相同。
-var arr = new Array(3)
-arr[0] = "George"
-arr[1] = "John"
-arr[2] = "Thomas"
-arr.toString()George,John,Thomas
-booleanObject.toString()返回字符串 "true" 或 "false"。
-dateObject.toString()使用本地时间表示。
-parseInt()首先查看位置 0 处的字符，判断它是否是个有效数字；如果不是，该方法将返回 NaN，不再继续执行其他操作。但如果该字符是有效数字，该方法将查看位置 1 处的字符，进行同样的测试。这一过程将持续到发现非有效数字的字符为止，此时 parseInt() 将把该字符之前的字符串转换成数字。把字符串 "12345red" 转换成整数，那么 parseInt() 将返回 12345。字符串中包含的数字字面量会被正确转换为数字，比如 "0xA" 会被正确转换为数字 10。不过，字符串 "22.5" 将被转换成 22，因为对于整数来说，小数点是无效字符。还有基模式，可以把二进制、八进制、十六进制或其他任何进制的字符串转换成整数。基是由 parseInt() 方法的第二个参数指定的，parseInt(string, radix)string	必需。要被解析的字符串。radix	
-可选。表示要解析的数字的基数。该值介于 2 ~ 36 之间。
+函数的柯里化
 
-如果省略该参数或其值为 0，则数字将以 10 为基础来解析。如果它以 “0x” 或 “0X” 开头，将以 16 为基数。
+接收函数A作为参数，运行后能够返回一个新的函数。并且这个新的函数能够处理函数A的剩余参数。
 
-如果该参数小于 2 或者大于 36，则 parseInt() 将返回 NaN。
-parseFloat()从位置 0 开始查看每个字符，直到找到第一个非有效的字符为止，然后把该字符之前的字符串转换成整数。第一个出现的小数点是有效字符。如果有两个小数点，第二个小数点将被看作无效的。字符串 "11.22.33" 将被解析成 11.22。字符串必须以十进制形式表示浮点数，没有基模式。
-Boolean()
-var b1 = Boolean("");		//false - 空字符串
-var b2 = Boolean("hello");		//true - 非空字符串
-var b1 = Boolean(50);		//true - 非零数字
-var b1 = Boolean(null);		//false - null
-var b1 = Boolean(0);		//false - 零
-var b1 = Boolean(new object());	//true - 对象
-Number()
-Number(false)	0
-Number(true)	1
-Number(undefined)	NaN
-Number(null)	0
-Number("1.2")	1.2
-Number("12")	12
-Number("1.2.3")	NaN
-Number(new object())	NaN
-Number(50)	50
-String()
-var s1 = String(null);	//"null"
-var oNull = null;
-var s2 = oNull.toString();	//会引发错误
-String(123)"123"
-String([1,2,3])"1,2,3"
-要执行这种强制类型转换，只需要调用作为参数传递进来的值的 toString() 方法，即把 12 转换成 "12"，把 true 转换成 "true"，把 false 转换成 "false"，以此类推。
-
-强制转换成字符串：
-
-
-
-
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-Access-Control-Allow-Credentials: true
-
-Access-Control-Allow-Headers: content-type
-
-Access-Control-Allow-Origin: http://xxx.xxx
-
-Access-Control-Max-Age: 200
-
-Async
-async function f() {
-    return 1
+```js
+// 简单实现，参数只能从右到左传递
+function createCurry(func, args) {
+    var arity = func.length;
+    var args = args || [];
+    return function() {
+        var _args = [].slice.call(arguments);
+        [].push.apply(_args, args);
+        // 如果参数个数小于最初的func.length，则递归调用，继续收集参数
+        if (_args.length < arity) {
+            return createCurry.call(this, func, _args);
+        }
+        // 参数收集完毕，则执行func
+        return func.apply(this, _args);
+    }
 }
-这个函数总是返回一个promise，如果代码中有return <非promise>语句，JavaScript会自动把返回的这个value值包装成promise的resolved值。
+```
 
-async function f() {
-    return 1
-}
-f().then(alert) // 1
-也可以显式的返回一个promise，这个将会是同样的结果：
+## 字符串
 
-async function f() {
-    return Promise.resolve(1)
-}
-f().then(alert) // 1
-Await
-// 只能在async函数内部使用
-let value = await promise
-await可以让JavaScript进行等待，直到一个promise执行并返回它的结果，JavaScript才会继续往下执行。
-
-async function f() {
-    let promise = new Promise((resolve, reject) => {
-        setTimeout(() => resolve('done!'), 1000)
-    })
-    let result = await promise;
-    // 直到promise返回一个resolve值（*）
-    alert(result);
-    // 'done!' 
-}
-f()
-await字面上使得JavaScript等待，直到promise处理完成，这并不会花费任何的cpu资源，因为引擎能够同时做其他工作：执行其他脚本，处理事件等等。
-
-不能在常规函数里使用await
-async function showAvatar() {
-    // read our JSON
-    let response = await fetch('/article/promise-chaining/user.json');
-    let user = await response.json();
-    // read github user
-    let githubResponse = await fetch(`https://api.github.com/users/${user.name}`);
-    let githubUser = await githubResponse.json();
-    // 展示头像
-    let img = document.createElement('img');
-    img.src = githubUser.avatar_url;
-    img.className = 'promise-avatar-example';
-    documenmt.body.append(img)
-    // 等待3s
-    await new Promise((resolve, reject) => {
-        setTimeout(resolve, 3000)
-    });
-    img.remove();
-    return githubUser;
-}
-showAvatar();
-
-String.raw 非转义序列的模板字符串，如： String.rawHi\n\5\xxx\uuu\111
-
-
-
-
-
-ArrayBuffer
-
-
-function Func(){console.log(this.constructor())}
-
-
-
-
-# ECMAScript 对象类型
-
-
-# StringBuffer 
+### StringBuffer 
 
 ```js
 function StringBuffer () {
@@ -2490,53 +2812,33 @@ buffer.append("world");
 var result = buffer.toString();
 ```
 
+## 解疑
 
-# 高阶函数
+### setTimeout、Promise、Async/Await 的区别
 
-接受一个或多个函数作为输入.
+事件循环分两种情况的，即宏任务(macrotask)和微任务(microtask)。
 
+当主线程任务完成为空去Event Quenu读取函数的时候，是先读取的微任务，当微任务执行完毕之后，才会继续执行宏任务。
 
+执行顺序
 
+- 同步 > 异步
+- 微任务 > 宏任务
 
-函数的柯里化
+- 微任务：Promise，process.nextTick。
+- 宏任务：整体代码script，setTimeout，setInterval
 
-接收函数A作为参数，运行后能够返回一个新的函数。并且这个新的函数能够处理函数A的剩余参数。
+## 解答
 
-// 简单实现，参数只能从右到左传递
-function createCurry(func, args) {
+### 将数组扁平化去并除其中重复部分数据
 
-    var arity = func.length;
-    var args = args || [];
-
-    return function() {
-        var _args = [].slice.call(arguments);
-        [].push.apply(_args, args);
-
-        // 如果参数个数小于最初的func.length，则递归调用，继续收集参数
-        if (_args.length < arity) {
-            return createCurry.call(this, func, _args);
-        }
-
-        // 参数收集完毕，则执行func
-        return func.apply(this, _args);
-    }
-}
-
-
-深度优先遍历和广度优先遍历
-递归、队列
-
-用深度优先思想和广度优先思想实现一个拷贝函数
-
-setTimeout、Promise、Async/Await 的区别
-
-Async/Await 如何通过同步的方式实现异步
-
-将数组扁平化去并除其中重复部分数据，最终得到一个升序且不重复的数组
+```js
 var arr = [ [1, 2, 2], [3, 4, 5, 5], [6, 7, 8, 9, [11, 12, [12, 13, [14] ] ] ], 10];
 Array.from(new Set(arr.flat(Infinity))).sort((a,b)=>{ return a-b})
+```
 
-简单讲解一下http2的多路复用
+### 简单讲解一下http2的多路复用
+
 HTTP2采用二进制格式传输，取代了HTTP1.x的文本格式，二进制格式解析更高效。
 多路复用代替了HTTP1.x的序列和阻塞机制，所有的相同域名请求都通过同一个TCP连接并发完成。在HTTP1.x中，并发多个请求需要多个TCP连接，浏览器为了控制资源会有6-8个TCP连接都限制。
 HTTP2中
@@ -2544,19 +2846,157 @@ HTTP2中
 同域名下所有通信都在单个连接上完成，消除了因多个 TCP 连接而带来的延时和内存消耗。
 单个连接上可以并行交错的请求和响应，之间互不干扰
 
-对TCP三次握手和四次挥手的理解
+### 对TCP三次握手和四次挥手的理解
+
 三次握手：
 1、客户端发送syn包到服务器，等待服务器确认接收。
 2、服务器确认接收syn包并确认客户的syn，并发送回来一个syn+ack的包给客户端。
 3、客户端确认接收服务器的syn+ack包，并向服务器发送确认包ack，二者相互建立联系后，完成tcp三次握手。
 四次挥手：中间多了一层 等待服务器再一次响应回复相关数据的过程
 
-### A、B 机器正常连接后，B 机器突然重启，问 A 此时处于 TCP 什么状态
+### 深度优先遍历和广度优先遍历
 
-1. 服务器不重启，客户继续工作，就会发现对方没有回应(ETIMEOUT)，路由器聪明的话，则是目的地不可达(EHOSTUNREACH)。
-2. 服务器重启后，客户继续工作，然而服务器已丢失客户信息，收到客户数据后响应RST。
+递归、队列
+
+用深度优先思想和广度优先思想实现一个拷贝函数
 
 # 浏览器
+
+## AJAX
+
+AJAX = Asynchronous JavaScript and XML（异步的 JavaScript 和 XML） 是一种在无需重新加载整个网页的情况下，能够更新部分网页的技术。
+
+1. 创建 XMLHttpRequest 对象
+2. 设置 onreadystatechange 状态更改事件
+3. 调用对象的 open 方法并规定请求类型（GET、POST、PUT、DELETE、HEAD、OPTIONS）、URL以及是否异步处理请求 async(true-异步|false-同步)
+4. 可选，setRequestHeader 方法设置请求头
+5. 调用对象的 send 方法将请求发送到服务器，当请求类型为 POST、PUT 时，可发送请求数据 send(string)
+
+### 请求头
+
+content-type
+
+```
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+```
+
+- `application/x-www-form-urlencoded`: Form Data
+- `multipart/form-data`: Request Payload，可上传文件
+- `application/json`: Request Payload
+- `text/xml`: Request Payload
+- `charset=UTF-8`
+
+### 请求类型比较
+
+所有HTTP请求都是这种格式：HTTP请求头+HTTP请求体。
+
+```
+<method> <url> HTTP/1.1
+<header1>: <headerValue1>
+<header2>: <headerValue2>
+...
+<headerN>: <headerValueN>
+
+<body data...>
+```
+
+- `POST`: 一般只用于新增数据
+- `GET`: chrome浏览器限制请求URL长度20000+个字符 一般只用于获取数据
+- `PUT`: 只用于更新数据
+- `DELETE`: 只用于删除数据
+- `HEAD`: 只用于头请求
+- `OPTIONS`: 只用于检测是否可访问，用于跨域检测
+
+### 方法/事件
+
+- `getAllResponseHeaders`: 检索资源（文件）的头信息
+- `onreadystatechange`: 存有 XMLHttpRequest 的状态。从 0 到 4 发生变化。
+
+readyState:
+
+- `0`: 请求未初始化
+- `1`: 服务器连接已建立
+- `2`: 请求已接收
+- `3`: 请求处理中
+- `4`: 请求已完成，且响应已就绪
+
+status: 
+
+- `1xx`: 信息响应类，表示接收到请求并且继续处理
+- `2xx`: 处理成功响应类，表示动作被成功接收、理解和接受
+- `3xx`: 重定向响应类，为了完成指定的动作，必须接受进一步处理
+- `4xx`: 客户端错误，客户请求包含语法错误或者是不能正确执行
+- `5xx`: 服务端错误，服务器不能正确执行一个正确的请求
+
+```
+100——客户必须继续发出请求
+101——客户要求服务器根据请求转换HTTP协议版本
+200——"OK"交易成功
+201——提示知道新文件的URL
+202——接受和处理、但处理未完成
+203——返回信息不确定或不完整
+204——请求收到，但返回信息为空
+205——服务器完成了请求，用户代理必须复位当前已经浏览过的文件
+206——服务器已经完成了部分用户的GET请求
+300——请求的资源可在多处得到
+301——删除请求数据
+302——在其他地址发现了请求数据
+303——建议客户访问其他URL或访问方式
+304——客户端已经执行了GET，但文件未变化
+305——请求的资源必须从服务器指定的地址得到
+306——前一版本HTTP中使用的代码，现行版本中不再使用
+307——申明请求的资源临时性删除
+400——错误请求，如语法错误
+401——请求授权失败
+402——保留有效ChargeTo头响应
+403——请求不允许
+404——没有发现文件、查询或URl
+405——用户在Request-Line字段定义的方法不允许
+406——根据用户发送的Accept拖，请求资源不可访问
+407——类似401，用户必须首先在代理服务器上得到授权
+408——客户端没有在用户指定的饿时间内完成请求
+409——对当前资源状态，请求不能完成
+410——服务器上不再有此资源且无进一步的参考地址
+411——服务器拒绝用户定义的Content-Length属性请求
+412——一个或多个请求头字段在当前请求中错误
+413——请求的资源大于服务器允许的大小
+414——请求的资源URL长于服务器允许的长度
+415——请求资源不支持请求项目格式
+416——请求中包含Range请求头字段，在当前请求资源范围内没有range指示值，请求也不包含If-Range请求头字段
+417——服务器不满足请求Expect头字段指定的期望值，如果是代理服务器，可能是下一级服务器不能满足请求
+500——服务器产生内部错误
+501——服务器不支持请求的函数
+502——服务器暂时不可用，有时是为了防止发生系统过载
+503——服务器过载或暂停维修
+504——关口过载，服务器使用另一个关口或服务来响应用户，等待时间设定值较长
+505——服务器不支持或拒绝支请求头中指定的HTTP版本
+```
+
+### 返回结果
+
+- `responseText`: 获得字符串形式的响应数据。
+- `responseXML`: 获得 XML 形式的响应数据。
+
+### 例子
+
+```js
+var xmlhttp;
+if (window.XMLHttpRequest) {
+    //  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+    xmlhttp=new XMLHttpRequest();
+} else {
+    // IE6, IE5 浏览器执行代码
+    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+}
+xmlhttp.onreadystatechange=function() {
+    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+        console.log(xmlhttp.responseText);
+    }
+}
+xmlhttp.open("GET","/try/ajax/ajax_info.txt",true);
+xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+xmlhttp.send();
+```
 
 ## 事件处理
 
@@ -2592,25 +3032,30 @@ window.getSelection().addRange(range);
 successFul = document.execCommand('copy');
 ```
 
+
+## A、B 机器正常连接后，B 机器突然重启，问 A 此时处于 TCP 什么状态
+
+1. 服务器不重启，客户继续工作，就会发现对方没有回应(ETIMEOUT)，路由器聪明的话，则是目的地不可达(EHOSTUNREACH)。
+2. 服务器重启后，客户继续工作，然而服务器已丢失客户信息，收到客户数据后响应RST。
+
 # Node
 
-介绍下 npm 模块安装机制，为什么输入 npm install 就可以自动安装对应的模块？
-发出npm install命令
-查询node_modules目录之中是否已经存在指定模块
-若存在，不再重新安装
-若不存在
-npm 向 registry 查询模块压缩包的网址
-下载压缩包，存放在根目录下的.npm目录里
-解压压缩包到当前项目的node_modules目录
+## 介绍下 npm 模块安装机制，为什么输入 npm install 就可以自动安装对应的模块？
 
+发出npm install命令，查询node_modules目录之中是否已经存在指定模块，若存在，不再重新安装；
+若不存在，npm 向 registry 查询模块压缩包的网址，下载压缩包，存放在根目录下的.npm目录里，解压压缩包到当前项目的node_modules目录。
 
 # React
 
-React 中 setState 什么时候是同步的，什么时候是异步的？
+## React 中 setState 什么时候是同步的，什么时候是异步的？
+
 如果是由React引发的事件处理（比如通过onClick引发的事件处理），调用setState不会同步更新this.state，除此之外的setState调用会同步执行this.state。
+
 指的是绕过React通过addEventListener直接添加的事件处理函数，还有通过setTimeout/setInterval产生的异步调用。
+
 在React的setState函数实现中，会根据一个变量isBatchingUpdates判断是直接更新this.state还是放到队列中回头再说，而isBatchingUpdates默认是false，也就表示setState会同步更新this.state，但是，有一个函数batchedUpdates，这个函数会把isBatchingUpdates修改为true，而当React在调用事件处理函数之前就会调用这个batchedUpdates，造成的后果，就是由React控制的事件处理过程setState不会同步更新this.state。
-这里所说的同步异步， 并不是真正的同步异步， 它还是同步执行的。
+
+这里所说的同步异步，并不是真正的同步异步，它还是同步执行的。
 
 这里的异步指的是多个state会合成到一起进行批量更新。
 
@@ -2647,10 +3092,3 @@ class Example extends React.Component {
 // 2、两次 setState 时，获取到 this.state.val 都是 0，所以执行时都是将 0 设置成 1，在 react 内部会被合并掉，只执行一次。设置完成后 state.val 值为 1。
 // 3、setTimeout 中的代码，触发时 isBatchingUpdates 为 false，所以能够直接进行更新，所以连着输出 2，3。
 ```
-
-
-
-
-
-
-
