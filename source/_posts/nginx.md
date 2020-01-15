@@ -1,9 +1,13 @@
 ---
 title: nginx
-date: 2019-12-29 15:56:11
+date: 2019-12-01 00:00:31
 tags:
 - web
 ---
+
+HTTP和反向代理服务器，邮件代理服务器和通用 `TCP/UDP` 代理服务器
+
+<!-- more -->
 
 # centos安装
 
@@ -19,7 +23,6 @@ tags:
         yum install -y zlib zlib-devel
         yum install -y openssl openssl-devel
 
-<!-- more -->
 
 2. 解压：
 

@@ -1,11 +1,13 @@
 ---
 title: less
-date: 2019-12-29 16:01:48
+date: 2019-12-01 00:00:41
 tags: 
 - css
 ---
 
 一门 CSS 预处理语言，它扩展了 CSS 语言，增加了变量、Mixin、函数等特性，使 CSS 更易维护和扩展。
+
+<!-- more -->
 
 ```sh
 npm install -g less
@@ -13,8 +15,6 @@ lessc styles.less
 lessc styles.less styles.css
 lessc --clean-css styles.less styles.min.css
 ```
-
-<!-- more -->
 
 # 用法
 
@@ -74,7 +74,9 @@ less.render('.class { width: (1 + 1) }', {
 
 cdn 
 
-`<script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.3/less.min.js"></script>`
+```html
+<script src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.5.3/less.min.js"></script>
+```
 
 # 规则
 

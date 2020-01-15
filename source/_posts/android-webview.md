@@ -1,6 +1,6 @@
 ---
 title: android-webview
-date: 2019-12-29 16:00:57
+date: 2019-12-01 00:00:13
 tags:
 - android
 ---
@@ -9,7 +9,9 @@ tags:
 
 ## 1.1. 图标指定位置
 
-`app -> manifests -> AndroidManifest.xml` 中的 application 节点的属性 `android:icon="@mipmap/ic_launcher"`
+`app/manifests/AndroidManifest.xml` 文件中的 application 节点的属性 `android:icon="@mipmap/ic_launcher"`
+
+<!-- more -->
 
 ## 1.2. 修改
 
@@ -23,7 +25,6 @@ tags:
 
     <uses-permission android:name="android.permission.INTERNET"/>
     
-<!-- more -->
 
 # 2. 取得 webview
 

@@ -1,6 +1,6 @@
 ---
 title: next-小结
-date: 2019-12-29 16:01:47
+date: 2019-12-01 00:00:49
 tags:
 - react
 - javascript
@@ -10,6 +10,7 @@ https://nextjs.org/
 
 一个轻量级的 React 服务端渲染应用框架。
 
+在线演示： https://next-new.now.sh
 源码示例： https://github.com/jinven/next-demo
 
 <!-- more -->

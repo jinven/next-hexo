@@ -1,16 +1,18 @@
 ---
 title: linux网络设置
-date: 2019-12-29 16:02:30
+date: 2019-12-01 00:00:29
 tags: 
 - linux
 ---
 
 1. 查看网络
 
-    ifconfig
-    ifconfig 网卡名称
-    ip addr
-    ip addr show dev 网卡名称
+```
+ifconfig
+ifconfig 网卡名称
+ip addr
+ip addr show dev 网卡名称
+```
 
 <!-- more -->
 

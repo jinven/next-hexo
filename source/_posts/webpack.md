@@ -1,9 +1,13 @@
 ---
 title: webpack
-date: 2019-12-29 16:04:50
+date: 2019-12-01 00:00:09
 tags:
 - node
 ---
+
+是用于现代JavaScript应用程序的静态模块捆绑器。 当webpack处理您的应用程序时，它会在内部构建一个依赖关系图，该图映射您项目所需的每个模块并生成一个或多个捆绑包。
+
+<!-- more -->
 
 # 起步
 
@@ -19,7 +23,6 @@ npm init -y
 npm install webpack webpack-cli --save-dev
 ```
 
-<!-- more -->
 
 创建以下目录结构、文件和内容：
 

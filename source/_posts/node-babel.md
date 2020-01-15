@@ -1,14 +1,19 @@
 ---
 title: node-babel
-date: 2019-12-29 16:01:42
+date: 2019-12-01 00:00:35
 tags: 
 - node
 - javascript
 ---
 
+babel-node是一个与Node.js CLI完全相同的CLI，具有在运行Babel预设和插件之前进行编译的附加好处。
+
+<!-- more -->
+
 - [babel](https://github.com/babel/babel)
 - [core-js](https://github.com/zloirock/core-js)
 - [polyfill](https://github.com/financial-times/polyfill-service)
+
 
 # `.babelrc`
 
@@ -21,7 +26,6 @@ Babel的配置文件
 }
 ```
 
-<!-- more -->
 
 - `presets` 转码规则
 

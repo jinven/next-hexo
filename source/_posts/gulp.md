@@ -1,16 +1,19 @@
 ---
 title: gulp
-date: 2019-12-29 16:02:08
+date: 2019-12-01 00:00:10
 tags: 
 - node
 - javascript
 ---
 
+是一个工具包，用于在开发工作流程中自动化繁琐或耗时的任务，因此您可以避免混乱并构建一些东西。
+
+<!-- more -->
+
 # task
 
 每个 gulp 任务（task）都是一个异步的 JavaScript 函数，此函数是一个可以接收 callback 作为参数的函数，或者是一个返回 stream、promise、event emitter、child process 或 observable 类型值的函数。由于某些平台的限制而不支持异步任务，因此 gulp 还提供了一个漂亮 [替代品](https://www.gulpjs.com.cn/docs/getting-started/async-completion#using-async-await)。
 
-<!-- more -->
 
 ## 导出任务
 

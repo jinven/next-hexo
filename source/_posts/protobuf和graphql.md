@@ -1,6 +1,6 @@
 ---
 title: protobuf和graphql
-date: 2020-01-11 14:30:28
+date: 2019-12-01 00:00:50
 tags:
 - protobuf
 - graphql
@@ -184,32 +184,32 @@ message MyMessage {\
 }";
 var root = protobuf.parse(proto, { keepCase: true }).root;
 function toCamelCase(str) {
-    return str.substring(0,1) + str.substring(1).replace(/_([a-z])(?=[a-z]|$)/g, function($0, $1) { return $1.toUpperCase(); });
+  return str.substring(0,1) + str.substring(1).replace(/_([a-z])(?=[a-z]|$)/g, function($0, $1) { return $1.toUpperCase(); });
 }
 function addAliasProperty(type, name, aliasName) {
-    if (aliasName !== name)
-        Object.defineProperty(type.ctor.prototype, aliasName, {
-            get: function() { return this[name]; },
-            set: function(value) { this[name] = value; }
-        });
+  if (aliasName !== name)
+    Object.defineProperty(type.ctor.prototype, aliasName, {
+      get: function() { return this[name]; },
+      set: function(value) { this[name] = value; }
+    });
 }
 function addVirtualCamelcaseFields(type) {
-    type.fieldsArray.forEach(function(field) {
-        addAliasProperty(type, field.name, toCamelCase(field.name));
-    });
-    type.oneofsArray.forEach(function(oneof) {
-        addAliasProperty(type, oneof.name, toCamelCase(oneof.name));
-    });
-    return type;
+  type.fieldsArray.forEach(function(field) {
+    addAliasProperty(type, field.name, toCamelCase(field.name));
+  });
+  type.oneofsArray.forEach(function(oneof) {
+    addAliasProperty(type, oneof.name, toCamelCase(oneof.name));
+  });
+  return type;
 }
 var MyMessage = addVirtualCamelcaseFields(root.lookup("MyMessage"));
 var myMessage = MyMessage.create({
-    some_field: "hello world"
+  some_field: "hello world"
 });
 console.log(
-    "someField:", myMessage.someField,
-    "\nsome_field:", myMessage.some_field,
-    "\nJSON:", JSON.stringify(myMessage)
+  "someField:", myMessage.someField,
+  "\nsome_field:", myMessage.some_field,
+  "\nJSON:", JSON.stringify(myMessage)
 );
 // 输出
 // someField: hello world
@@ -235,20 +235,20 @@ message Bar {\
 protobuf.parse.filename = "traverse-types.proto";
 var root = protobuf.parse(proto).root;
 function traverseTypes(current, fn) {
-    if (current instanceof protobuf.Type) 
-        fn(current);
-    if (current.nestedArray)
-        current.nestedArray.forEach(function(nested) {
-            traverseTypes(nested, fn);
-        });
+  if (current instanceof protobuf.Type) 
+    fn(current);
+  if (current.nestedArray)
+    current.nestedArray.forEach(function(nested) {
+      traverseTypes(nested, fn);
+    });
 }
 traverseTypes(root, function(type) {
-    console.log(
-        type.constructor.className + " " + type.name
-        + "\n  fully qualified name: " + type.fullName
-        + "\n  defined in: " + type.filename
-        + "\n  parent: " + type.parent + " in " + type.parent.filename
-    );
+  console.log(
+    type.constructor.className + " " + type.name
+    + "\n  fully qualified name: " + type.fullName
+    + "\n  defined in: " + type.filename
+    + "\n  parent: " + type.parent + " in " + type.parent.filename
+  );
 });
 ```
 
@@ -308,7 +308,7 @@ function performRequestOverTransportChannel(requestData, callback) {
     var request = Hello.decodeDelimited(requestData);
     var response = { message: "Hello " + request.name };
     setTimeout(function() {
-        callback(World.encodeDelimited(response).finish());
+      callback(World.encodeDelimited(response).finish());
     }, Math.random() * 250);
   }, Math.random() * 250);
 }
@@ -350,7 +350,7 @@ setTimeout(function() {
 package awesomepackage;
 syntax = "proto3";
 message AwesomeMessage {
-    string awesome_field = 1; // becomes awesomeField
+  string awesome_field = 1; // becomes awesomeField
 }
 ```
 
@@ -377,10 +377,10 @@ protobuf.load("awesome.proto", function(err, root) {
   // If the application uses length-delimited buffers, there is also encodeDelimited and decodeDelimited.
   // Maybe convert the message back to a plain object
   var object = AwesomeMessage.toObject(message, {
-      longs: String,
-      enums: String,
-      bytes: String,
-      // see ConversionOptions
+    longs: String,
+    enums: String,
+    bytes: String,
+    // see ConversionOptions
   });
 });
 ```
@@ -388,11 +388,9 @@ protobuf.load("awesome.proto", function(err, root) {
 可以使用 `promise` 语法
 
 ```js
-protobuf.load("awesome.proto")
-  .then(function(root) {
-    // ...
-  }
-);
+protobuf.load("awesome.proto").then(function(root) {
+  // ...
+});
 ```
 
 
@@ -422,8 +420,8 @@ protobuf.load("awesome.proto")
 
 ```js
 protobuf.load("awesome.json", function(err, root) {
-    if (err) throw err;
-    // Continue at "Obtain a message type" above
+  if (err) throw err;
+  // Continue at "Obtain a message type" above
 });
 ```
 
@@ -539,9 +537,8 @@ greeter.sayHello({ name: 'you' }, function(err, response) {
 也支持 `promise`
 
 ```js
-greeter.sayHello({ name: 'you' })
-  .then(function(response) {
-      console.log('Greeting:', response.message);
+greeter.sayHello({ name: 'you' }).then(function(response) {
+    console.log('Greeting:', response.message);
   }
 );
 ```

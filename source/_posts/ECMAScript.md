@@ -1,6 +1,6 @@
 ---
 title: ECMAScript
-date: 2019-12-29 16:09:23
+date: 2019-12-01 00:00:15
 tags:
 - javascript
 ---

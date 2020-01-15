@@ -1,20 +1,22 @@
 ---
 title: markdown
-date: 2019-12-29 16:08:30
+date: 2019-12-01 00:00:12
 tags:
 - md
 ---
 
-## 一、资料
+## 资料
 
 1. <https://daringfireball.net/projects/markdown/>
 
-## 二、例子
+## 例子
 
 1. <a href="http://daringfireball.net/projects/downloads/Markdown_1.0.1.zip" target="_blank">Markdown_1.0.1.zip</a>
 2. <a href="https://jinven.github.io/blog/demo/office/markdown.html" target="_blank">demo</a>
 
-## 三、正文
+<!-- more -->
+
+## 正文
 
 - [简介](#fir-intro)
 - [1.标题](#fir-head)
@@ -32,7 +34,6 @@ tags:
 - [13.反斜杠](#fir-backslash)
 - [License](#fir-license)
 
-<!-- more -->
 
 <h2 id="fir-intro">简介</h2>
 

@@ -1,17 +1,18 @@
 ---
 title: scss
-date: 2019-12-29 16:00:10
+date: 2019-12-01 00:00:42
 tags:
 - css
 ---
 
 Sass 是对 CSS 的扩展，允许使用变量、嵌套规则、 mixins、导入等功能， 完全兼容 CSS 语法。
 
-Sass 有两种语法。
+Sass 有两种语法：
 
-第一种被称为 SCSS (Sassy CSS)，是一个 CSS3 语法的扩充版本
+- 第一种被称为 SCSS (Sassy CSS)，是一个 CSS3 语法的扩充版本
+- 第二种比较老的语法：缩排语法（或者就称为 "Sass"）
 
-第二种比较老的语法：缩排语法（或者就称为 "Sass"）
+<!-- more -->
 
 https://www.npmjs.com/package/sass
 https://www.npmjs.com/package/node-sass
@@ -33,7 +34,6 @@ var result = sass.renderSync({
 });
 ```
 
-<!-- more -->
 
 例子
 

@@ -1,11 +1,10 @@
 ---
 title: npm
-date: 2019-12-29 16:01:54
+date: 2019-12-01 00:00:36
 tags: 
 - node
 - javascript
 ---
-
 
 # npm init
 
@@ -13,6 +12,8 @@ tags:
 `npm init -y` 直接生成 `package.json` 文件
 
 `package.json` 文件描述：http://package.json.is/
+
+<!-- more -->
 
 # npm install
 
@@ -30,7 +31,6 @@ package（包）
 - f. `<name>` 具有满足 `e` 的“最新”标签的a
 - g. `<git remote url>` 解析为 `a` 的 `a`
 
-<!-- more -->
 
 即使从未发布过软件包，如果只想编写一个节点程序 `a`，或者如果还希望能够在打包后将其轻松安装到其他地方，使用npm仍然可以获得很多好处。放入压缩档 `b`。
 

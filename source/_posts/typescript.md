@@ -1,9 +1,14 @@
 ---
 title: typescript
-date: 2019-12-29 16:01:41
+date: 2019-12-01 00:00:40
 tags:
 - typescript
 ---
+
+TypeScript是JavaScript的类型化超集，可编译为纯JavaScript。
+任何浏览器、主机、操作系统，开源。
+
+<!-- more -->
 
 # 说明
 
@@ -15,7 +20,6 @@ npm install -g typescript
 
 ## 第一个TypeScript文件
 
-<!-- more -->
 
 1. 新建 `greeter.ts` 文件
 

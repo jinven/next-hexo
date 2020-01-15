@@ -1,6 +1,6 @@
 ---
 title: docker-node测试
-date: 2019-12-29 16:01:25
+date: 2019-12-01 00:00:33
 tags: 
 - docker
 ---
@@ -8,15 +8,11 @@ tags:
 # 搭建环境
 
 使用 `CentOS 7`
-
 1. 安装 `docker`
-
 ```sh
 yum -y install docker-ce
 ```
-
 2. 启动 `docker`
-
 ```sh
 systemctl start docker
 ```

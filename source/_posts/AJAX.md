@@ -1,6 +1,6 @@
 ---
 title: AJAX
-date: 2019-12-29 16:08:49
+date: 2019-12-01 00:00:04
 tags:
 - javascript
 ---

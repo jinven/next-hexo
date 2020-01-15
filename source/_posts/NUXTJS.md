@@ -1,6 +1,6 @@
 ---
-title: NUXTJS
-date: 2019-12-29 16:00:47
+title: NuxtJs
+date: 2019-12-01 00:00:47
 tags: 
 - vue
 - javascript

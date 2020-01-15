@@ -1,9 +1,13 @@
 ---
 title: elasticsearch-基本
-date: 2019-12-29 16:06:33
+date: 2019-12-01 00:00:20
 tags: 
 - database
 ---
+
+一个分布式的RESTful搜索和分析引擎，能够解决越来越多的用例。 作为Elastic Stack的核心，它集中存储您的数据，以便您发现期望的数据并发现意外的数据。
+
+<!-- more -->
 
 ## 1. 安装
 
@@ -20,7 +24,6 @@ tar zxvf elasticsearch-7.4.0-linux-x86_64.tar.gz
 cd elasticsearch-7.4.0
 ```
 
-<!-- more -->
 
 ## 2. 运行
 

@@ -1,9 +1,13 @@
 ---
 title: springboot
-date: 2019-12-29 16:01:41
+date: 2019-12-01 00:00:39
 tags:
 - spring
 ---
+
+使用Spring Boot可以轻松地创建独立的，基于生产级别的基于Spring的应用程序。
+
+<!-- more -->
 
 # 先决条件
 
@@ -19,7 +23,6 @@ tags:
 2. 配置 `JAVA_HOME` 环境变量
 3. 将 `JAVA_HOME` 环境变量加入 `PATH` 变量
 
-<!-- more -->
 
 ## 安装 vs code 插件
 

@@ -1,14 +1,16 @@
 ---
 title: node
-date: 2019-12-29 16:01:41
+date: 2019-12-01 00:00:34
 tags: 
 - node
 - javascript
 ---
 
-# 1. 知识点
+Node 使用事件驱动机制，有一个事件轮询线程负责任务编排(JavaScript回调和非阻塞I/O)，和一个专门处理繁重任务的工作线程池(k个工作线程)
 
-重点：Node 使用事件驱动机制，有一个事件轮询线程负责任务编排(JavaScript回调和非阻塞I/O)，和一个专门处理繁重任务的工作线程池(k个工作线程)
+<!-- more -->
+
+# 1. 知识点
 
 运行流程：
 
@@ -18,7 +20,6 @@ tags:
 事件轮询线程本身不维护队列，它持有一堆要求操作系统使用诸如 [epoll-Linux](http://man7.org/linux/man-pages/man7/epoll.7.html)、[kqueue-OSX](https://developer.apple.com/library/content/documentation/Darwin/Conceptual/FSEvents_ProgGuide/KernelQueues/KernelQueues.html)、event ports-Solaris、[IOCP-Windows](https://msdn.microsoft.com/en-us/library/windows/desktop/aa365198.aspx)等机制支监听的文件描述符。可能代表一个网络套接字、监听的文件等等。当操作系统确定某个文件的描述符发生变化，事件轮询线程将把它转换成合适的事件，然后触发与该事件对应的回调函数。
 工作线程池使用一个真实的队列，装着要被处理的任务，一个工作线程从这个队列中取出一个任务开始处理，完成后向事件循环线程中发出一个“至少有一个任务完成了”的消息。
 
-<!-- more -->
 
 注意事项：
 

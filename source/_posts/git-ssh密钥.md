@@ -1,6 +1,6 @@
 ---
 title: git-ssh临时连接
-date: 2019-12-29 16:02:08
+date: 2019-12-01 00:00:38
 tags:
 - git
 ---
@@ -8,11 +8,13 @@ tags:
 # 生成密钥
 
 ```sh
-# 直接生成
+# 1. 直接生成
 git目录/usr/bin/ssh-keygen.exe 
-# 或指定生成（选择）
+# 2. 指定生成（选择）
 ssh-keygen -t rsa -b 4096 -C "备注" -f 密钥名称
 ```
+
+<!-- more -->
 
 将生成两个文件
 
@@ -21,7 +23,6 @@ ssh-keygen -t rsa -b 4096 -C "备注" -f 密钥名称
 
 前往 [`github`](https://github.com/settings/keys) 或 `git服务器`，将公钥内容加入服务器
 
-<!-- more -->
 
 # 临时连接
 

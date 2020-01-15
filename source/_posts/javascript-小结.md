@@ -1,6 +1,6 @@
 ---
 title: javascript-小结
-date: 2019-12-29 16:01:49
+date: 2019-12-01 00:00:43
 tags:
 - javascript
 ---
@@ -57,8 +57,8 @@ HTML 或 XML 页面的每个部分都是一个节点的衍生物。
 - `var`: 没有块作用域，变量会提升到顶端。
 - `let`: 块作用域（Block Scope），在循环中使用的变量没有重新声明循环外的变量，循环内才可见。
 - `const`: 常量，与 let 变量类似，但不能重新赋值。
-- `class`: 
-- `function`: 
+- `class`: 特殊的函数，有两个组成部分：类表达式和类声明。
+- `function`: 函数，被设计为执行特定任务的代码块。
 
 ## 关键字
 
@@ -120,10 +120,10 @@ Symbol、Number、Object、Boolean、String、Function、ArrayBuffer、AudioBuff
 ```js
 var a = new String('a')
 var arr = []
-console.log(typeof a);	            //输出 "object"
-console.log(a instanceof String);	  //输出 "true"
-console.log(typeof arr);	            //输出 "object"
-console.log(arr instanceof Array);	  //输出 "true"
+console.log(typeof a);              //输出 "object"
+console.log(a instanceof String);   //输出 "true"
+console.log(typeof arr);            //输出 "object"
+console.log(arr instanceof Array);  //输出 "true"
 ```
 
 #### Object.prototype.toString.call/apply
@@ -184,7 +184,7 @@ var d = new Date;
 - `ToString()` 返回对象的原始字符串表示。对于 Object 对象，ECMA-262 没有定义这个值，所以不同的 ECMAScript 实现具有不同的值。
 - `ValueOf()` 返回最适合该对象的原始值。对于许多对象，该方法返回的值都与 ToString() 的返回值相同。
 
-#### __proto__
+#### `__proto__`
 
 已经从 Web 标准中删除
 
@@ -2327,7 +2327,7 @@ fooE.prototype.e = 5;
 var obj = new fooE();
 ```
 
-### __proto__(不推荐)
+### `__proto__`(不推荐)
 
 ```js
 var obj = {

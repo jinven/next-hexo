@@ -1,30 +1,34 @@
 ---
 title: linux用户操作
-date: 2019-12-29 16:02:49
+date: 2019-12-01 00:00:30
 tags: 
 - linux
 ---
 
-# 1. 查看所有用户：
+# 1. 查看用户
 
-`cat /etc/passwd`
-`cat /etc/shadow`
+```sh
+cat /etc/passwd
+cat /etc/shadow
+```
 
 <!-- more -->
 
 如：
 
-    root:x:0:0:root:/root:/bin/bash
+```
+root:x:0:0:root:/root:/bin/bash
+```
 
-`/etc/passwd` 中一行记录对应着一个用户，每行用 `:` 分隔为7个字段：
+- `/etc/passwd` 中一行记录对应着一个用户，每行用 `:` 分隔为7个字段：
 
-    用户名:口令:用户标识号:组标识号:注释性描述:主目录:登录Shell
+用户名:口令:用户标识号:组标识号:注释性描述:主目录:登录Shell
 
 有一类用户称为伪用户（pseudo users），占有一条记录，但是不能登录，它们的存在主要是方便系统管理，满足相应的系统进程对文件属主的要求
 
-`/etc/shadow` 中的记录行与/etc/passwd中的一一对应，它由pwconv命令根据/etc/passwd中的数据自动产生，它的文件格式与/etc/passwd类似，由若干个字段组成：
+- `/etc/shadow` 中的记录行与/etc/passwd中的一一对应，它由pwconv命令根据/etc/passwd中的数据自动产生，它的文件格式与/etc/passwd类似，由若干个字段组成：
 
-    登录名:加密口令:最后一次修改时间:最小时间间隔:最大时间间隔:警告时间:不活动时间:失效时间:标志
+登录名:加密口令:最后一次修改时间:最小时间间隔:最大时间间隔:警告时间:不活动时间:失效时间:标志
 
 # 2. 增加用户：
 
@@ -52,9 +56,11 @@ tags:
 
 user.txt：
 
-    user001::600:100:user:/home/user001:/bin/bash
-    user002::601:100:user:/home/user002:/bin/bash
-    user003::602:100:user:/home/user003:/bin/bash
+```
+user001::600:100:user:/home/user001:/bin/bash
+user002::601:100:user:/home/user002:/bin/bash
+user003::602:100:user:/home/user003:/bin/bash
+```
 
 先取消 shadow password 功能：
 
@@ -66,9 +72,11 @@ user.txt：
 
 passwd.txt：
 
-    user001:密码
-    user002:密码
-    user003:密码
+```
+user001:密码
+user002:密码
+user003:密码
+```
 
 # 3. 删除用户：
 
@@ -132,7 +140,9 @@ passwd.txt：
 
 `cat /etc/group`
 
-    组名:口令:组标识号:组内用户列表
+```
+组名:口令:组标识号:组内用户列表
+```
 
 # 7. 增加新用户组
 

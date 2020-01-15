@@ -1,6 +1,6 @@
 ---
 title: npm-发布
-date: 2019-12-29 16:01:54
+date: 2019-12-01 00:00:37
 tags: 
 - node
 - javascript
@@ -22,17 +22,17 @@ npm init -y
 
 ```json
 {
-    "name": "publish-test",
-    "version": "1.0.0",
-    "description": "first publish test.",
-    "main": "index.js",
-    "script:": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node index.js"
-    },
-    "keywords": [],
-    "author": "auser",
-    "license": "ISC"
+  "name": "publish-test",
+  "version": "1.0.0",
+  "description": "first publish test.",
+  "main": "index.js",
+  "script:": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "auser",
+  "license": "ISC"
 }
 ```
 
@@ -82,9 +82,9 @@ npm install --save-dev publish-test
 
 ```json
 {
-    "scripts": {
-        "start": "node index.js"
-    }
+  "scripts": {
+    "start": "node index.js"
+  }
 }
 ```
 
