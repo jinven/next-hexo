@@ -250,6 +250,24 @@ function LI(){
 ReactDOM.render(<ul><LI /></ul>, document.getElementById('root'));
 ```
 
+默认 props
+
+```js
+class App extends React.Component {
+  static defaultProps = {
+    name: 'react'
+  }
+  render() {
+    return (
+      <div>{this.props.name}: {this.props.age}</div>
+    )
+  }
+}
+App.defaultProps = {
+  age: 20
+}
+```
+
 ## State和生命周期
 
 ```jsx
@@ -1207,7 +1225,7 @@ const [state, setState] = useState(() => {
 
 ```
 
-## Effect
+## useEffect
 
 跟 class 组件中的 componentDidMount、componentDidUpdate 和 componentWillUnmount 具有相同的用途
 
