@@ -1,6 +1,6 @@
 ---
 title: node
-date: 2019-12-01 00:00:34
+date: 2019-12-01 00:34:00
 tags: 
 - node
 - javascript

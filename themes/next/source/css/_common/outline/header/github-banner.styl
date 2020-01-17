@@ -12,6 +12,20 @@
   }
 }
 
+@keyframes fills {
+  0% {   color: #fff; }
+  10% {  color: #888; }
+  20% {  color: #000; }
+  30% {  color: #333; }
+  40% {  color: #666; }
+  50% {  color: #999; }
+  60% {  color: #ccc; }
+  70% {  color: #fff; }
+  80% {  color: #aaa; }
+  90% {  color: #555; }
+  100% { color: #ea8; }
+}
+
 .github-corner {
   $scheme = hexo-config('scheme');
   $bg-color = unquote(hexo-config('android_chrome_color'));
@@ -28,13 +42,15 @@
     right: 0;
     top: 0;
     z-index: $zindex-0;
+    animation: fills 30s ease-in-out infinite;
+    animation-direction: alternate;
   }
 
   +tablet-mobile() {
     svg {
       if (($scheme == 'Pisces') || ($scheme == 'Gemini')) {
         color: $bg-color;
-        fill: white;
+        fill: #333;
       }
     }
 

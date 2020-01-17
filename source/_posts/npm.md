@@ -1,6 +1,6 @@
 ---
 title: npm
-date: 2019-12-01 00:00:36
+date: 2019-12-01 00:36:00
 tags: 
 - node
 - javascript

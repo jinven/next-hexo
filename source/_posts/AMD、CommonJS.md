@@ -1,6 +1,6 @@
 ---
 title: AMD、CommonJS
-date: 2019-12-01 00:00:05
+date: 2019-12-01 00:05:00
 tags:
 - javascript
 ---

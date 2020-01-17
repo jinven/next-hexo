@@ -1,6 +1,6 @@
 ---
 title: typescript
-date: 2019-12-01 00:00:40
+date: 2019-12-01 00:40:00
 tags:
 - typescript
 ---

@@ -1,6 +1,6 @@
 ---
 title: nuxt-小结
-date: 2019-12-01 00:00:48
+date: 2019-12-01 00:48:00
 tags:
 - vue
 - javascript
