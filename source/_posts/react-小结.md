@@ -772,6 +772,7 @@ function withSubscription(WrappedComponent, selectData) {
       super(props);
       this.handleChange = this.handleChange.bind(this);
       this.state = {
+        // 假设 "DataSource" 是个全局范围内的数据源变量
         data: selectData(DataSource, props)
       };
     }

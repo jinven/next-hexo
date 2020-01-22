@@ -82,7 +82,7 @@ console.log(`a: ${d}, b: ${e}, c: ${f}`);
 console.log(`a: ${x}, b: ${y}, c: ${z}`);
 ```
 
-7. 延展操作符
+7. 延展操作符(spread/rest)
 
 ```js
 const arr = ['a1', 'a2', 'a3'];
