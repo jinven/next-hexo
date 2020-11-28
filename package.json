@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "next-build": "hexo clean && hexo generate && next build",
     "new": "hexo new ",
     "analyze": "cross-env ANALYZE=true yarn build",
     "lint": "eslint --ext .js --ignore-path .gitignore .",
@@ -19,7 +20,7 @@
     "server": "hexo clean && hexo generate && hexo server"
   },
   "hexo": {
-    "version": "4.2.0"
+    "version": "4.2.1"
   },
   "dependencies": {
     "@hapi/hapi": "^18.4.0",
